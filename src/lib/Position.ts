@@ -1,4 +1,4 @@
-import { LengthPercentage, px } from './LengthPercentage';
+import { type LengthPercentage, px } from './LengthPercentage';
 
 export class Position {
 	x: XDimension;
