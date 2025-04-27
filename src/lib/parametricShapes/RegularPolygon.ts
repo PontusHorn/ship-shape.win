@@ -28,13 +28,23 @@ export class RegularPolygon implements ParametricShape {
 		for (let i = 0; i < this.sides; i++) {
 			const angle =
 				this.rotation % 1 !== 0
-					? `calc((${i}turn + ${this.rotation}turn) / ${this.sides})`
-					: `calc(${i}turn / ${this.sides})`;
-			const x = raw(`calc(${this.center.x} + ${this.radius} * cos(${angle}))`);
-			const y = raw(`calc(${this.center.y} + ${this.radius} * sin(${angle}))`);
+					? `calc(var(--rotation) + ${i}turn / var(--sides))`
+					: `calc(${i}turn / var(--sides))`;
+			const x = raw(`calc(var(--center-x) + var(--radius) * cos(${angle}))`);
+			const y = raw(`calc(var(--center-y) + var(--radius) * sin(${angle}))`);
 			coordinates.push(new CoordinatePair(x, y));
 		}
 		return coordinates;
+	}
+
+	get #customProperties(): Record<string, string> {
+		return {
+			['--sides']: this.sides.toString(),
+			['--radius']: this.radius.toString(),
+			['--rotation']: `calc(${this.rotation}turn / var(--sides))`,
+			['--center-x']: this.center.x.toString(),
+			['--center-y']: this.center.y.toString()
+		};
 	}
 
 	toShape(): Shape {
@@ -43,5 +53,14 @@ export class RegularPolygon implements ParametricShape {
 			new From(fromCoordinate),
 			restCoordinates.map((coordinate) => new Line(coordinate))
 		);
+	}
+
+	toCSS(propertyName: string): string {
+		const properties = this.#customProperties;
+		properties[propertyName] = this.toShape().toString();
+
+		return Object.entries(properties)
+			.map(([key, value]) => `${key}: ${value};`)
+			.join('\n');
 	}
 }

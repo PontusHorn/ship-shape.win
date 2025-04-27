@@ -8,10 +8,11 @@
 	let rotation = $state(0);
 	const center = new CoordinatePair(percent(50), percent(50));
 	const polygon = $derived(new RegularPolygon(sides, raw(radius), center, rotation));
+	const cssString = $derived(polygon.toCSS('clip-path'));
 </script>
 
 <main>
-	<div class="preview" style:clip-path={polygon.toShape().toString()}></div>
+	<div class="preview" style={cssString}></div>
 
 	<form>
 		<label for="sides">Number of sides:</label>
@@ -23,7 +24,7 @@
 	</form>
 
 	<output>
-		<pre>clip-path: {polygon.toShape().toString()};</pre>
+		<pre>{cssString}</pre>
 	</output>
 </main>
 
@@ -59,5 +60,6 @@
 		border-radius: 0.5rem;
 		overflow: auto;
 		inline-size: 80dvw;
+		tab-size: 2;
 	}
 </style>
