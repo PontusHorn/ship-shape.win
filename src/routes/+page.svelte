@@ -46,6 +46,7 @@
 	form {
 		display: grid;
 		grid-template-columns: auto 1fr;
+		align-items: baseline;
 		gap: 0.5rem 0.25rem;
 	}
 

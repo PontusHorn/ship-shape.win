@@ -1,0 +1,75 @@
+/* Declare layer order */
+@layer reset, core, utilities;
+
+@layer reset {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
+
+	html,
+	body,
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	p,
+	blockquote,
+	dl,
+	dt,
+	dd,
+	ol,
+	ul,
+	li,
+	figure,
+	figcaption {
+		margin: 0;
+		padding: 0;
+	}
+
+	html {
+		/* Prevent font size inflation */
+		-moz-text-size-adjust: none;
+		-webkit-text-size-adjust: none;
+		text-size-adjust: none;
+
+		/* Allow animating to `height: auto` and similar */
+		interpolate-size: allow-keywords;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6,
+	button,
+	input,
+	label,
+	select {
+		font: inherit;
+		line-height: 1.2;
+		text-wrap: balance;
+	}
+
+	p {
+		text-wrap: pretty;
+	}
+
+	img,
+	picture,
+	svg,
+	video {
+		max-width: 100%;
+		height: auto;
+		display: block;
+	}
+
+	/* Add scroll margin to items targeted by URL fragment */
+	:target {
+		scroll-margin-block: 2rem;
+	}
+}
