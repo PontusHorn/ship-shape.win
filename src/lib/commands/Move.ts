@@ -22,5 +22,5 @@ export function moveBy(x: LengthPercentage, y: LengthPercentage) {
 }
 
 export function moveTo(x: LengthPercentage, y: LengthPercentage) {
-	return new Move(new CoordinatePair(x, y), 'by');
+	return new Move(new CoordinatePair(x, y), 'to');
 }
