@@ -11,6 +11,10 @@
 	const cssString = $derived(polygon.toCSS('clip-path'));
 </script>
 
+<svelte:head>
+	<script type="module" src="/elements/copy-button.js"></script>
+</svelte:head>
+
 <main>
 	<div class="preview" style={cssString}></div>
 
@@ -24,8 +28,9 @@
 	</form>
 
 	<output>
-		<pre>{cssString}</pre>
+		<pre id="css-output">{cssString}</pre>
 	</output>
+	<copy-button target="css-output"></copy-button>
 </main>
 
 <style>
@@ -62,5 +67,25 @@
 		overflow: auto;
 		inline-size: 80dvw;
 		tab-size: 2;
+		anchor-name: --css-output;
+	}
+
+	copy-button::part(button) {
+		position: absolute;
+		position-anchor: --css-output;
+		inset-block-end: anchor(end);
+		inset-inline-end: anchor(end);
+		margin: 0.5rem;
+
+		/* Flash a green inset box-shadow covering the button as confirmation */
+		transition: box-shadow 1s 3s ease-in;
+		box-shadow: inset 0 0 0 3em transparent;
+	}
+
+	copy-button::part(button):active {
+		box-shadow: inset 0 0 0 3em rgb(0 255 0 / 0.25);
+		/* Make the transition instant as you click, so that it only fades out
+		slowly afterwards */
+		transition: none;
 	}
 </style>
