@@ -13,7 +13,7 @@ export class Move implements Command {
 	}
 
 	toString() {
-		return `move ${this.method} ${this.coords}`;
+		return `move ${this.method}\n\t\t${this.coords.x}\n\t\t${this.coords.y}`;
 	}
 }
 

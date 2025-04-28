@@ -13,7 +13,7 @@ export class Line implements Command {
 	}
 
 	toString() {
-		return `line ${this.method} ${this.coords}`;
+		return `line ${this.method}\n\t\t${this.coords.x}\n\t\t${this.coords.y}`;
 	}
 }
 

@@ -10,7 +10,7 @@ export class From implements Command {
 	}
 
 	toString() {
-		return `from ${this.coords}`;
+		return `from\n\t\t${this.coords.x}\n\t\t${this.coords.y}`;
 	}
 }
 
