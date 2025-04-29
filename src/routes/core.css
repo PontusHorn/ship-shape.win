@@ -56,4 +56,11 @@
 		outline: 3px solid var(--jade);
 		outline-offset: 1px;
 	}
+
+	pre {
+		/* https://github.com/system-fonts/modern-font-stacks?tab=readme-ov-file#monospace-code */
+		font-family:
+			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
+			monospace;
+	}
 }
