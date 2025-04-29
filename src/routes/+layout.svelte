@@ -20,6 +20,10 @@
 
 <slot />
 
+<footer>
+	Made by <a href="https://pontushorn.me">Pontus Horn</a>. Use the output however you like!
+</footer>
+
 <style>
 	header {
 		display: flex;
@@ -40,5 +44,10 @@
 		.win {
 			font-size: 0.5em;
 		}
+	}
+
+	footer {
+		padding-block: 4rem 2rem;
+		text-align: center;
 	}
 </style>
