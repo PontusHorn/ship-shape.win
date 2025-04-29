@@ -23,13 +23,16 @@ export class RegularPolygon implements ParametricShape {
 		this.rotation = rotation;
 	}
 
+	get #isRotated(): boolean {
+		return this.rotation % 1 !== 0;
+	}
+
 	get #coordinates(): CoordinatePair[] {
 		const coordinates: CoordinatePair[] = [];
 		for (let i = 0; i < this.sides; i++) {
-			const angle =
-				this.rotation % 1 !== 0
-					? `calc(var(--rotation) + ${i}turn / var(--sides))`
-					: `calc(${i}turn / var(--sides))`;
+			const angle = this.#isRotated
+				? `calc(var(--rotation) + ${i}turn / var(--sides))`
+				: `calc(${i}turn / var(--sides))`;
 			const x = raw(`calc(var(--center-x) + var(--radius) * cos(${angle}))`);
 			const y = raw(`calc(var(--center-y) + var(--radius) * sin(${angle}))`);
 			coordinates.push(new CoordinatePair(x, y));
@@ -38,13 +41,19 @@ export class RegularPolygon implements ParametricShape {
 	}
 
 	get #customProperties(): Record<string, string> {
-		return {
+		const properties: Record<string, string> = {
 			['--sides']: this.sides.toString(),
 			['--radius']: this.radius.toString(),
 			['--rotation']: `calc(${this.rotation}turn / var(--sides))`,
 			['--center-x']: this.center.x.toString(),
 			['--center-y']: this.center.y.toString()
 		};
+
+		if (!this.#isRotated) {
+			delete properties['--rotation'];
+		}
+
+		return properties;
 	}
 
 	toShape(): Shape {
