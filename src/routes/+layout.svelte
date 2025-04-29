@@ -1,7 +1,13 @@
 <script lang="ts">
 	import './reset.css';
 	import './core.css';
+	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 </script>
+
+<svelte:head>
+	<title>{SITE_TITLE}</title>
+	<meta name="description" content={SITE_DESCRIPTION} />
+</svelte:head>
 
 <header>
 	<div class="site-title">

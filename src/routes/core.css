@@ -12,10 +12,20 @@
 		--fjord: oklch(35.71% 37.2% 217.27);
 		--midnight: oklch(25.68% 39.21% 242.99);
 		--abyss: oklch(22.1% 39.5% 268.7);
+		--link: oklch(47% 75% 263.67);
 
 		background-color: var(--buttercream);
 		color: var(--midnight);
 		accent-color: var(--jade);
+	}
+
+	h1 {
+		font-size: 2rem;
+		font-weight: 600;
+	}
+
+	a {
+		color: var(--link);
 	}
 
 	input:where(

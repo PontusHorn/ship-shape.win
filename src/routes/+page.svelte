@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import { CoordinatePair } from '$lib/CoordinatePair';
 	import { percent, raw } from '$lib/LengthPercentage';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
@@ -12,34 +13,47 @@
 </script>
 
 <svelte:head>
+	<title>Regular polygon shape() generator - {SITE_TITLE}</title>
+	<meta
+		name="description"
+		content={`Generates anything from a triangle to an icosagon. ${SITE_DESCRIPTION}`}
+	/>
 	<script type="module" src="/elements/copy-button.js"></script>
 </svelte:head>
 
 <main>
-	<form>
-		<label for="sides">Number of sides:</label>
-		<input id="sides" type="number" bind:value={sides} min="3" max="20" />
-		<label for="radius">Radius:</label>
-		<input id="radius" type="text" bind:value={radius} />
-		<label for="rotation">Rotation:</label>
-		<input id="rotation" type="range" bind:value={rotation} min="0" max="1" step="0.01" />
-	</form>
+	<div class="input-pane">
+		<h1>Regular polygon</h1>
+		<p>
+			Generates anything from a triangle to an <a href="https://en.wikipedia.org/wiki/Icosagon"
+				>icosagon</a
+			>.
+		</p>
+		<form>
+			<label for="sides">Number of sides:</label>
+			<input id="sides" type="number" bind:value={sides} min="3" max="20" />
+			<label for="radius">Radius:</label>
+			<input id="radius" type="text" bind:value={radius} />
+			<label for="rotation">Rotation:</label>
+			<input id="rotation" type="range" bind:value={rotation} min="0" max="1" step="0.01" />
+		</form>
+	</div>
 
 	<div class="preview-pane">
 		<div class="preview" style={cssString}></div>
 	</div>
 
-	<output>
+	<div class="output-pane">
 		<pre id="css-output">{cssString}</pre>
 		<copy-button target="css-output"></copy-button>
-	</output>
+	</div>
 </main>
 
 <style>
 	main {
 		display: grid;
 		grid-template-areas:
-			'form preview'
+			'input preview'
 			'output output';
 		grid-template-columns: auto 1fr;
 		min-block-size: 100vh;
@@ -47,8 +61,14 @@
 		gap: 1rem;
 	}
 
+	.input-pane {
+		grid-area: input;
+		display: grid;
+		align-content: start;
+		gap: 1rem;
+	}
+
 	form {
-		grid-area: form;
 		display: grid;
 		grid-template-columns: auto 1fr;
 		align-items: baseline;
@@ -78,7 +98,7 @@
 		height: 300px;
 	}
 
-	output {
+	.output-pane {
 		grid-area: output;
 	}
 
