@@ -16,8 +16,6 @@
 </svelte:head>
 
 <main>
-	<div class="preview" style={cssString}></div>
-
 	<form>
 		<label for="sides">Number of sides:</label>
 		<input id="sides" type="number" bind:value={sides} min="3" max="20" />
@@ -27,31 +25,34 @@
 		<input id="rotation" type="range" bind:value={rotation} min="0" max="1" step="0.01" />
 	</form>
 
+	<div class="preview-pane">
+		<div class="preview" style={cssString}></div>
+	</div>
+
 	<output>
 		<pre id="css-output">{cssString}</pre>
+		<copy-button target="css-output"></copy-button>
 	</output>
-	<copy-button target="css-output"></copy-button>
 </main>
 
 <style>
 	main {
 		display: grid;
-		place-items: center;
-		place-content: center;
+		grid-template-areas:
+			'form preview'
+			'output output';
+		grid-template-columns: auto 1fr;
 		min-block-size: 100vh;
+		padding: 1rem;
 		gap: 1rem;
 	}
 
-	.preview {
-		background-color: #67803f;
-		width: 300px;
-		height: 300px;
-	}
-
 	form {
+		grid-area: form;
 		display: grid;
 		grid-template-columns: auto 1fr;
 		align-items: baseline;
+		align-content: start;
 		gap: 0.5rem 0.25rem;
 	}
 
@@ -59,13 +60,34 @@
 		text-align: right;
 	}
 
+	.preview-pane {
+		grid-area: preview;
+		display: grid;
+		place-items: center;
+		place-content: center;
+		padding: 2rem;
+
+		background: var(--pistachio);
+		border-radius: 0.5rem;
+		box-shadow: inset 1px 2px 4px rgb(0 0 0 / 0.05);
+	}
+
+	.preview {
+		background-color: var(--jade);
+		width: 300px;
+		height: 300px;
+	}
+
+	output {
+		grid-area: output;
+	}
+
 	pre {
-		background-color: #333;
-		color: #fafafa;
+		background-color: var(--fjord);
+		color: var(--linen);
 		padding: 1rem;
 		border-radius: 0.5rem;
 		overflow: auto;
-		inline-size: 80dvw;
 		tab-size: 2;
 		anchor-name: --css-output;
 	}
@@ -73,7 +95,7 @@
 	copy-button::part(button) {
 		position: absolute;
 		position-anchor: --css-output;
-		inset-block-end: anchor(end);
+		inset-block-start: anchor(start);
 		inset-inline-end: anchor(end);
 		margin: 0.5rem;
 

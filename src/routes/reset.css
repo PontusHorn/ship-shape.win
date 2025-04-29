@@ -25,7 +25,8 @@
 	ul,
 	li,
 	figure,
-	figcaption {
+	figcaption,
+	pre {
 		margin: 0;
 		padding: 0;
 	}
