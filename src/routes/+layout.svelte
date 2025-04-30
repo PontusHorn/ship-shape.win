@@ -14,7 +14,9 @@
 	<div class="site-title">
 		<a href="/">
 			<span class="icon" aria-hidden="true">⚓︎</span>
-			ship-shape(<span class="win">.win</span>)
+			ship-shape<span class="parenthesis">&hairsp;(&hairsp;</span><span class="win">.win</span><span
+				class="parenthesis">&hairsp;)</span
+			>
 		</a>
 	</div>
 
@@ -45,7 +47,18 @@
 
 		a {
 			color: inherit;
+			--decoration-color: color-mix(in srgb, currentColor 50%, transparent);
 			text-underline-offset: 0.2em;
+			text-decoration-color: var(--decoration-color);
+
+			&:hover,
+			&:focus-visible {
+				--decoration-color: currentColor;
+			}
+		}
+
+		.parenthesis {
+			color: var(--decoration-color);
 		}
 
 		.win {
