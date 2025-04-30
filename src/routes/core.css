@@ -26,6 +26,12 @@
 
 	a {
 		color: var(--link);
+		border-radius: 0.2em;
+
+		&:focus-visible {
+			outline: 3px solid var(--jade);
+			outline-offset: 0.2em;
+		}
 	}
 
 	input:where(

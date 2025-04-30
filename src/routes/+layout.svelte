@@ -1,6 +1,7 @@
 <script lang="ts">
 	import './reset.css';
 	import './core.css';
+	import { page } from '$app/state';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 </script>
 
@@ -16,6 +17,11 @@
 			ship-shape(<span class="win">.win</span>)
 		</a>
 	</div>
+
+	<nav>
+		<a href="/" aria-current={page.url.pathname === '/'}>Regular polygon</a>
+		<a href="/star" aria-current={page.url.pathname === '/star'}>Star</a>
+	</nav>
 </header>
 
 <slot />
@@ -28,6 +34,7 @@
 	header {
 		display: flex;
 		align-items: center;
+		justify-content: space-between;
 		background: var(--midnight);
 		color: var(--linen);
 		padding: 1rem;
@@ -43,6 +50,34 @@
 
 		.win {
 			font-size: 0.5em;
+		}
+	}
+
+	nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1rem;
+
+		a {
+			padding-block: 0.2em;
+			padding-inline: 0.25em;
+			color: inherit;
+			font-size: 1.2rem;
+			font-weight: 600;
+			text-underline-offset: 0.2em;
+			text-decoration-color: color-mix(in srgb, currentColor 80%, transparent);
+
+			&:hover,
+			&:focus-visible {
+				text-decoration-color: currentColor;
+				text-decoration-thickness: 0.15em;
+			}
+
+			&[aria-current='true'] {
+				background-color: var(--linen);
+				color: var(--midnight);
+				text-decoration: none;
+			}
 		}
 	}
 
