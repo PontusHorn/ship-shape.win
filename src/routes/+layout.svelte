@@ -23,8 +23,13 @@
 	</div>
 
 	<nav>
-		<a href="/" aria-current={page.url.pathname === '/'}>Regular polygon</a>
-		<a href="/star" aria-current={page.url.pathname === '/star'}>Star</a>
+		<a
+			href="/generators/regular-polygon"
+			aria-current={page.url.pathname === '/generators/regular-polygon'}
+		>
+			Regular polygon
+		</a>
+		<a href="/generators/star" aria-current={page.url.pathname === '/generators/star'}> Star </a>
 	</nav>
 </header>
 

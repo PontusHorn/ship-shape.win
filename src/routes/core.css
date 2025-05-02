@@ -24,6 +24,11 @@
 		font-weight: 600;
 	}
 
+	h2 {
+		font-size: 1.4rem;
+		font-weight: 500;
+	}
+
 	a {
 		color: var(--link);
 		border-radius: 0.2em;
