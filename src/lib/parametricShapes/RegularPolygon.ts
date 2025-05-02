@@ -1,3 +1,6 @@
+import { close } from '$lib/commands/Close';
+import type { Command } from '$lib/commands/Command';
+import { Curve } from '$lib/commands/Curve';
 import { From } from '$lib/commands/From';
 import { Line } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
@@ -10,40 +13,54 @@ export class RegularPolygon implements ParametricShape {
 	radius: LengthPercentage;
 	center: CoordinatePair;
 	rotation: number;
+	swell: number;
 
 	constructor(
 		sides: number,
 		radius: LengthPercentage = percent(50),
 		center = new CoordinatePair(percent(50), percent(50)),
-		rotation = 0
+		rotation = 0,
+		swell: number = 1
 	) {
 		this.sides = sides;
 		this.radius = radius;
 		this.center = center;
 		this.rotation = rotation;
+		this.swell = swell;
 	}
 
 	get #isRotated(): boolean {
 		return this.rotation % 1 !== 0;
 	}
 
-	get #coordinates(): CoordinatePair[] {
-		const coordinates: CoordinatePair[] = [];
-		for (let i = 0; i < this.sides; i++) {
-			const angle = this.#isRotated
-				? `calc(var(--rotation) + ${i}turn / var(--sides))`
-				: `calc(${i}turn / var(--sides))`;
-			const x = raw(`calc(var(--center-x) + var(--radius) * cos(${angle}))`);
-			const y = raw(`calc(var(--center-y) + var(--radius) * sin(${angle}))`);
-			coordinates.push(new CoordinatePair(x, y));
-		}
-		return coordinates;
+	get #hasSwell(): boolean {
+		return this.swell !== 1;
+	}
+
+	#getCornerCoordinates(pointIndex: number): CoordinatePair {
+		const angle = this.#isRotated
+			? `var(--rotation) + ${pointIndex}turn / var(--sides)`
+			: `${pointIndex}turn / var(--sides)`;
+		const x = raw(`calc(var(--center-x) + var(--radius) * cos(${angle}))`);
+		const y = raw(`calc(var(--center-y) + var(--radius) * sin(${angle}))`);
+		return new CoordinatePair(x, y);
+	}
+
+	#getSwellCoordinates(toPointIndex: number): CoordinatePair {
+		const angle = this.#isRotated
+			? `var(--rotation) + ${toPointIndex - 0.5}turn / var(--sides)`
+			: `${toPointIndex - 0.5}turn / var(--sides)`;
+		const x = raw(`calc(var(--center-x) + var(--swell-radius) * cos(${angle}))`);
+		const y = raw(`calc(var(--center-y) + var(--swell-radius) * sin(${angle}))`);
+		return new CoordinatePair(x, y);
 	}
 
 	get #customProperties(): Record<string, string> {
 		const properties: Record<string, string> = {
 			['--sides']: this.sides.toString(),
 			['--radius']: this.radius.toString(),
+			['--swell']: this.swell.toString(),
+			['--swell-radius']: `calc(${this.radius.toString()} * cos(pi / var(--sides)) * var(--swell))`,
 			['--rotation']: `calc(${this.rotation}turn / var(--sides))`,
 			['--center-x']: this.center.x.toString(),
 			['--center-y']: this.center.y.toString()
@@ -53,15 +70,28 @@ export class RegularPolygon implements ParametricShape {
 			delete properties['--rotation'];
 		}
 
+		if (!this.#hasSwell) {
+			delete properties['--swell-radius'];
+			delete properties['--swell'];
+		}
+
 		return properties;
 	}
 
 	toShape(): Shape {
-		const [fromCoordinate, ...restCoordinates] = this.#coordinates;
-		return new Shape(
-			new From(fromCoordinate),
-			restCoordinates.map((coordinate) => new Line(coordinate))
-		);
+		const from = new From(this.#getCornerCoordinates(0));
+		const commands: Command[] = [];
+		for (let i = 1; i <= this.sides; i++) {
+			const cornerCoordinates = this.#getCornerCoordinates(i);
+			const swellCoordinates = this.#getSwellCoordinates(i);
+			commands.push(
+				this.#hasSwell
+					? new Curve(cornerCoordinates, swellCoordinates)
+					: new Line(cornerCoordinates)
+			);
+		}
+		commands.push(close());
+		return new Shape(from, commands);
 	}
 
 	toCSS(propertyName: string): string {

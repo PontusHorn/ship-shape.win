@@ -7,8 +7,9 @@
 	let sides = $state(6);
 	let radius = $state('50%');
 	let rotation = $state(0);
+	let swell = $state(1);
 	const center = new CoordinatePair(percent(50), percent(50));
-	const polygon = $derived(new RegularPolygon(sides, raw(radius), center, rotation));
+	const polygon = $derived(new RegularPolygon(sides, raw(radius), center, rotation, swell));
 	const cssString = $derived(polygon.toCSS('clip-path'));
 </script>
 
@@ -25,17 +26,35 @@
 	<div class="input-pane">
 		<h1>Regular polygon</h1>
 		<p>
-			Generates anything from a triangle to an <a href="https://en.wikipedia.org/wiki/Icosagon"
+			Generate anything from a triangle to an <a href="https://en.wikipedia.org/wiki/Icosagon"
 				>icosagon</a
-			>.
+			>. Then make it less regular if you want!
 		</p>
 		<form>
 			<label for="sides">Number of sides:</label>
 			<input id="sides" type="number" bind:value={sides} min="3" max="20" />
+
 			<label for="radius">Radius:</label>
 			<input id="radius" type="text" bind:value={radius} />
+
 			<label for="rotation">Rotation:</label>
 			<input id="rotation" type="range" bind:value={rotation} min="0" max="1" step="0.01" />
+
+			<label for="swell">Swell:</label>
+			<input
+				id="swell"
+				type="range"
+				bind:value={swell}
+				min="0"
+				max="2"
+				step="0.01"
+				list="swell-ticks"
+			/>
+			<datalist id="swell-ticks">
+				<option value="0"></option>
+				<option value="1"></option>
+				<option value="2"></option>
+			</datalist>
 		</form>
 	</div>
 
@@ -55,7 +74,7 @@
 		grid-template-areas:
 			'input preview'
 			'output output';
-		grid-template-columns: auto 1fr;
+		grid-template-columns: min(50ch, 50%) 1fr;
 		min-block-size: 100vh;
 		padding: 1rem;
 		gap: 1rem;
