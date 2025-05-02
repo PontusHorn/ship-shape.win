@@ -3,6 +3,7 @@
 	import { CoordinatePair } from '$lib/CoordinatePair';
 	import { cssPropertiesToCss } from '$lib/css';
 	import CssOutput from '$lib/CssOutput.svelte';
+	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
 	import { percent, raw } from '$lib/LengthPercentage';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
 
@@ -24,85 +25,65 @@
 	<script type="module" src="/elements/copy-button.js"></script>
 </svelte:head>
 
-<main>
-	<div class="input-pane">
-		<h1>Regular polygon</h1>
-		<p>
-			Generate anything from a triangle to an <a href="https://en.wikipedia.org/wiki/Icosagon"
-				>icosagon</a
-			>. Then make it less regular if you want!
-		</p>
-		<form>
-			<label for="sides">Number of sides:</label>
-			<input id="sides" type="number" bind:value={sides} min="3" max="20" />
+<GeneratorLayout>
+	<h1>Regular polygon</h1>
+	<p>
+		Generate anything from a triangle to an <a href="https://en.wikipedia.org/wiki/Icosagon"
+			>icosagon</a
+		>. Then make it less regular if you want!
+	</p>
+	<form>
+		<label for="sides">Number of sides:</label>
+		<input id="sides" type="number" bind:value={sides} min="3" max="20" />
 
-			<label for="radius">Radius:</label>
-			<input id="radius" type="text" bind:value={radius} />
+		<label for="radius">Radius:</label>
+		<input id="radius" type="text" bind:value={radius} />
 
-			<label for="rotation">Rotation:</label>
-			<input
-				id="rotation"
-				type="range"
-				bind:value={rotation}
-				min="0"
-				max="1"
-				step="0.01"
-				list="rotation-ticks"
-			/>
-			<datalist id="rotation-ticks">
-				<option value="0"></option>
-				<option value="0.25"></option>
-				<option value="0.5"></option>
-				<option value="0.75"></option>
-				<option value="1"></option>
-			</datalist>
+		<label for="rotation">Rotation:</label>
+		<input
+			id="rotation"
+			type="range"
+			bind:value={rotation}
+			min="0"
+			max="1"
+			step="0.01"
+			list="rotation-ticks"
+		/>
+		<datalist id="rotation-ticks">
+			<option value="0"></option>
+			<option value="0.25"></option>
+			<option value="0.5"></option>
+			<option value="0.75"></option>
+			<option value="1"></option>
+		</datalist>
 
-			<label for="swell">Swell:</label>
-			<input
-				id="swell"
-				type="range"
-				bind:value={swell}
-				min="0"
-				max="2"
-				step="0.01"
-				list="swell-ticks"
-			/>
-			<datalist id="swell-ticks">
-				<option value="0"></option>
-				<option value="1"></option>
-				<option value="2"></option>
-			</datalist>
-		</form>
-	</div>
+		<label for="swell">Swell:</label>
+		<input
+			id="swell"
+			type="range"
+			bind:value={swell}
+			min="0"
+			max="2"
+			step="0.01"
+			list="swell-ticks"
+		/>
+		<datalist id="swell-ticks">
+			<option value="0"></option>
+			<option value="1"></option>
+			<option value="2"></option>
+		</datalist>
+	</form>
 
-	<div class="preview-pane">
+	{#snippet preview()}
 		<div class="preview" style={cssPropertiesToCss(cssProperties)}></div>
-	</div>
+	{/snippet}
 
-	<div class="output-pane">
+	{#snippet output()}
 		<CssOutput {cssProperties} />
-	</div>
-</main>
+	{/snippet}
+</GeneratorLayout>
 
 <style>
-	main {
-		display: grid;
-		grid-template-areas:
-			'input preview'
-			'output output';
-		grid-template-columns: min(50ch, 50%) 1fr;
-		min-block-size: 100vh;
-		padding: 1rem;
-		gap: 1rem;
-	}
-
-	.input-pane {
-		grid-area: input;
-		display: grid;
-		align-content: start;
-		gap: 1rem;
-	}
-
 	form {
 		display: grid;
 		grid-template-columns: auto 1fr;
@@ -115,25 +96,9 @@
 		text-align: right;
 	}
 
-	.preview-pane {
-		grid-area: preview;
-		display: grid;
-		place-items: center;
-		place-content: center;
-		padding: 2rem;
-
-		background: var(--pistachio);
-		border-radius: 0.5rem;
-		box-shadow: inset 1px 2px 4px rgb(0 0 0 / 0.05);
-	}
-
 	.preview {
 		background-color: var(--jade);
 		width: 300px;
 		height: 300px;
-	}
-
-	.output-pane {
-		grid-area: output;
 	}
 </style>
