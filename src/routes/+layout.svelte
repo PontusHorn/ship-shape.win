@@ -3,6 +3,8 @@
 	import './core.css';
 	import { page } from '$app/state';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
+
+	let { children } = $props();
 </script>
 
 <svelte:head>
@@ -26,7 +28,7 @@
 	</nav>
 </header>
 
-<slot />
+{@render children()}
 
 <footer>
 	Made by <a href="https://pontushorn.me">Pontus Horn</a>. Use the output however you like!
