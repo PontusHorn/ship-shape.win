@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import { CoordinatePair } from '$lib/CoordinatePair';
+	import { cssPropertiesToCss } from '$lib/css';
+	import CssOutput from '$lib/CssOutput.svelte';
 	import { percent, raw } from '$lib/LengthPercentage';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
 
@@ -10,7 +12,7 @@
 	let swell = $state(1);
 	const center = new CoordinatePair(percent(50), percent(50));
 	const polygon = $derived(new RegularPolygon(sides, raw(radius), center, rotation, swell));
-	const cssString = $derived(polygon.toCSS('clip-path'));
+	const cssProperties = $derived(polygon.toCssProperties('clip-path'));
 </script>
 
 <svelte:head>
@@ -38,7 +40,22 @@
 			<input id="radius" type="text" bind:value={radius} />
 
 			<label for="rotation">Rotation:</label>
-			<input id="rotation" type="range" bind:value={rotation} min="0" max="1" step="0.01" />
+			<input
+				id="rotation"
+				type="range"
+				bind:value={rotation}
+				min="0"
+				max="1"
+				step="0.01"
+				list="rotation-ticks"
+			/>
+			<datalist id="rotation-ticks">
+				<option value="0"></option>
+				<option value="0.25"></option>
+				<option value="0.5"></option>
+				<option value="0.75"></option>
+				<option value="1"></option>
+			</datalist>
 
 			<label for="swell">Swell:</label>
 			<input
@@ -59,12 +76,11 @@
 	</div>
 
 	<div class="preview-pane">
-		<div class="preview" style={cssString}></div>
+		<div class="preview" style={cssPropertiesToCss(cssProperties)}></div>
 	</div>
 
 	<div class="output-pane">
-		<pre id="css-output">{cssString}</pre>
-		<copy-button target="css-output"></copy-button>
+		<CssOutput {cssProperties} />
 	</div>
 </main>
 
@@ -119,34 +135,5 @@
 
 	.output-pane {
 		grid-area: output;
-	}
-
-	pre {
-		background-color: var(--fjord);
-		color: var(--linen);
-		padding: 1rem;
-		border-radius: 0.5rem;
-		overflow: auto;
-		tab-size: 2;
-		anchor-name: --css-output;
-	}
-
-	copy-button::part(button) {
-		position: absolute;
-		position-anchor: --css-output;
-		inset-block-start: anchor(start);
-		inset-inline-end: anchor(end);
-		margin: 0.5rem;
-
-		/* Flash a green inset box-shadow covering the button as confirmation */
-		transition: box-shadow 1s 3s ease-in;
-		box-shadow: inset 0 0 0 3em transparent;
-	}
-
-	copy-button::part(button):active {
-		box-shadow: inset 0 0 0 3em rgb(0 255 0 / 0.25);
-		/* Make the transition instant as you click, so that it only fades out
-		slowly afterwards */
-		transition: none;
 	}
 </style>

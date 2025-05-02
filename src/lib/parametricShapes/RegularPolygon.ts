@@ -94,12 +94,10 @@ export class RegularPolygon implements ParametricShape {
 		return new Shape(from, commands);
 	}
 
-	toCSS(propertyName: string): string {
+	toCssProperties(propertyName: string) {
 		const properties = this.#customProperties;
 		properties[propertyName] = this.toShape().toString();
 
-		return Object.entries(properties)
-			.map(([key, value]) => `${key}: ${value};`)
-			.join('\n');
+		return properties;
 	}
 }
