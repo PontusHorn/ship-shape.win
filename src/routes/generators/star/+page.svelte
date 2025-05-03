@@ -21,7 +21,6 @@
 <svelte:head>
 	<title>Star shape() generator - {SITE_TITLE}</title>
 	<meta name="description" content={`Generates that most pointy of shapes. ${SITE_DESCRIPTION}`} />
-	<script type="module" src="/elements/copy-button.js"></script>
 </svelte:head>
 
 <GeneratorLayout>

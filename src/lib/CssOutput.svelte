@@ -2,6 +2,10 @@
 	const { cssProperties }: { cssProperties: Record<string, string> } = $props();
 </script>
 
+<svelte:head>
+	<script type="module" src="/elements/copy-button.js"></script>
+</svelte:head>
+
 <code id="css-output"
 	>{#each Object.entries(cssProperties) as [key, value]}<span class="property">{key}</span>:
 		<span class="key">{value}</span>;{'\n'}{/each}</code

@@ -22,7 +22,6 @@
 		name="description"
 		content={`Generates anything from a triangle to an icosagon. ${SITE_DESCRIPTION}`}
 	/>
-	<script type="module" src="/elements/copy-button.js"></script>
 </svelte:head>
 
 <GeneratorLayout>
