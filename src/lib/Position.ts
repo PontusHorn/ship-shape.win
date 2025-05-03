@@ -14,5 +14,5 @@ export class Position {
 	}
 }
 
-export type XDimension = LengthPercentage;
-export type YDimension = LengthPercentage;
+export type XDimension = LengthPercentage | 'left' | 'center' | 'right';
+export type YDimension = LengthPercentage | 'top' | 'center' | 'bottom';

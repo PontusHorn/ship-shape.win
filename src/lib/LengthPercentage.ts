@@ -1,14 +1,12 @@
-export interface LengthPercentage {
-	toString(): string;
-}
+export class LengthPercentage<Value = unknown> {
+	value: Value;
 
-export class Px {
-	value: number;
-
-	constructor(value = 0) {
+	constructor(value: Value) {
 		this.value = value;
 	}
+}
 
+export class Px extends LengthPercentage<number> {
 	toString() {
 		return `${this.value}px`;
 	}
@@ -18,13 +16,7 @@ export function px(value: number) {
 	return new Px(value);
 }
 
-export class Percent {
-	value: number;
-
-	constructor(value = 0) {
-		this.value = value;
-	}
-
+export class Percent extends LengthPercentage<number> {
 	toString() {
 		return `${this.value}%`;
 	}
@@ -34,13 +26,7 @@ export function percent(value: number) {
 	return new Percent(value);
 }
 
-export class Raw {
-	value: string;
-
-	constructor(value: string) {
-		this.value = value;
-	}
-
+export class Raw extends LengthPercentage<string> {
 	toString() {
 		return this.value;
 	}
