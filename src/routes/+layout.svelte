@@ -1,10 +1,23 @@
 <script lang="ts">
 	import './reset.css';
 	import './core.css';
+	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 
 	let { children } = $props();
+
+	// Enable view transitions on client-side navigations
+	onNavigate((navigation) => {
+		if (!document.startViewTransition) return;
+
+		return new Promise((resolve) => {
+			document.startViewTransition(async () => {
+				resolve();
+				await navigation.complete;
+			});
+		});
+	});
 </script>
 
 <svelte:head>

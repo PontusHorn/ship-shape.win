@@ -19,6 +19,16 @@
 		accent-color: var(--jade);
 	}
 
+	@media (prefers-reduced-motion: no-preference) {
+		:root {
+			scroll-behavior: smooth;
+		}
+
+		@view-transition {
+			navigation: auto;
+		}
+	}
+
 	h1 {
 		font-size: 2rem;
 		font-weight: 600;
