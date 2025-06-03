@@ -13,6 +13,9 @@
 	<article>
 		<h2><a href="/generators/star">Star</a></h2>
 	</article>
+	<article>
+		<h2><a href="/generators/squircle">Squircle</a></h2>
+	</article>
 </main>
 
 <style>

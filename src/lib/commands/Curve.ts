@@ -8,10 +8,12 @@ export class Curve implements Command {
 	method: MoveMethod;
 	coords: CoordinatePair | Position;
 	withCoords: CoordinatePair | Position;
+	withCoords2?: CoordinatePair | Position;
 
 	constructor(
 		coords: CoordinatePair | Position,
 		withCoords: CoordinatePair | Position,
+		withCoords2?: CoordinatePair | Position,
 		method: MoveMethod = 'to'
 	) {
 		if (method === 'by' && !(coords instanceof CoordinatePair)) {
@@ -20,30 +22,41 @@ export class Curve implements Command {
 
 		this.coords = coords;
 		this.withCoords = withCoords;
+		this.withCoords2 = withCoords2;
 		this.method = method;
 	}
 
 	toString() {
 		return [
-			`curve ${this.method}`,
-			`${this.coords.x}`,
-			`${this.coords.y}`,
-			`with`,
-			`${this.withCoords.x}`,
-			`${this.withCoords.y}`
+			`curve ${this.method} ${this.coords.x} ${this.coords.y}`,
+			`\twith ${this.withCoords.x} ${this.withCoords.y}`,
+			this.withCoords2 ? `\t/ ${this.withCoords2.x} ${this.withCoords2.y}` : ''
 		].join('\n\t\t');
 	}
 }
 
 export function curveBy(
-	x: LengthPercentage,
-	y: LengthPercentage,
-	withX: XDimension,
-	withY: YDimension
+	coords: [LengthPercentage, LengthPercentage],
+	controlPoint1: [XDimension, YDimension],
+	controlPoint2?: [XDimension, YDimension]
 ) {
-	return new Curve(new CoordinatePair(x, y), new Position(withX, withY), 'by');
+	return new Curve(
+		new CoordinatePair(...coords),
+		new Position(...controlPoint1),
+		controlPoint2 ? new Position(...controlPoint2) : undefined,
+		'by'
+	);
 }
 
-export function curveTo(x: XDimension, y: YDimension, withX: XDimension, withY: YDimension) {
-	return new Curve(new Position(x, y), new Position(withX, withY), 'to');
+export function curveTo(
+	coords: [XDimension, YDimension],
+	controlPoint1: [XDimension, YDimension],
+	controlPoint2?: [XDimension, YDimension]
+) {
+	return new Curve(
+		new Position(...coords),
+		new Position(...controlPoint1),
+		controlPoint2 ? new Position(...controlPoint2) : undefined,
+		'to'
+	);
 }

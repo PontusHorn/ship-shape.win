@@ -30,6 +30,9 @@
 			Regular polygon
 		</a>
 		<a href="/generators/star" aria-current={page.url.pathname === '/generators/star'}> Star </a>
+		<a href="/generators/squircle" aria-current={page.url.pathname === '/generators/squircle'}>
+			Squircle
+		</a>
 	</nav>
 </header>
 
