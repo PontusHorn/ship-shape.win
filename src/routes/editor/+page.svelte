@@ -4,16 +4,14 @@
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { Drawing } from '$lib/Drawing';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
-	import { percent } from '$lib/LengthPercentage';
-	import { Position } from '$lib/Position';
+	import { vertexFromPercent } from '$lib/Vertex';
 	import VertexHandle from '$lib/VertexHandle.svelte';
 
+	const previewWidth = 300;
+	const previewHeight = 300;
+
 	let drawing = $state(
-		new Drawing([
-			{ position: new Position(percent(50), percent(0)) },
-			{ position: new Position(percent(100), percent(100)) },
-			{ position: new Position(percent(0), percent(100)) }
-		])
+		new Drawing([vertexFromPercent(50, 0), vertexFromPercent(100, 100), vertexFromPercent(0, 100)])
 	);
 	const cssProperties = $derived({ 'clip-path': drawing.toShape().toString() });
 </script>
@@ -27,10 +25,10 @@
 	<form></form>
 
 	{#snippet preview()}
-		<div class="preview">
+		<div class="preview" style:width={previewWidth + 'px'} style:height={previewHeight + 'px'}>
 			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
-			{#each drawing.vertices as vertex (vertex)}
-				<VertexHandle {vertex} />
+			{#each drawing.vertices as vertex (vertex.id)}
+				<VertexHandle {vertex} {previewWidth} {previewHeight} />
 			{/each}
 		</div>
 	{/snippet}
@@ -51,8 +49,6 @@
 
 	.preview {
 		position: relative;
-		width: 300px;
-		height: 300px;
 	}
 
 	.shape {

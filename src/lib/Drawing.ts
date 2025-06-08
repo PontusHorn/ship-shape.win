@@ -13,8 +13,8 @@ export class Drawing {
 	toShape(): Shape {
 		const [from, ...rest] = this.vertices;
 		return new Shape(
-			new From(from.position),
-			rest.map((vertex) => new Line(vertex.position))
+			new From(from.position.toPosition()),
+			rest.map((vertex) => new Line(vertex.position.toPosition()))
 		);
 	}
 }

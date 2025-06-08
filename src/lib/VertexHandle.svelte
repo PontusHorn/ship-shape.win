@@ -1,28 +1,45 @@
 <script lang="ts">
-	import type { XDimension, YDimension } from './Position';
-	import type { Vertex } from './Vertex';
+	import { draggable, type DragOptions } from '@neodrag/svelte';
+	import { type Vertex } from './Vertex';
+	import { VertexDimension } from './VertexDimension';
 
-	const { vertex }: { vertex: Vertex } = $props();
+	const {
+		vertex,
+		previewWidth,
+		previewHeight
+	}: {
+		vertex: Vertex;
+		previewWidth: number;
+		previewHeight: number;
+	} = $props();
 
-	const { left, right } = $derived(getXStyle(vertex.position.x));
-	const { top, bottom } = $derived(getYStyle(vertex.position.y));
-
-	function getXStyle(x: XDimension): { left?: string; right?: string } {
-		if (x === 'left') return { left: '0' };
-		if (x === 'right') return { right: '0' };
-		if (x === 'center') return { left: '50%' };
-		return { left: x.toString() };
-	}
-
-	function getYStyle(y: YDimension): { top?: string; bottom?: string } {
-		if (y === 'top') return { top: '0' };
-		if (y === 'bottom') return { bottom: '0' };
-		if (y === 'center') return { top: '50%' };
-		return { top: y.toString() };
-	}
+	const dragOptions: DragOptions = $derived({
+		handle: 'button',
+		position: {
+			x: vertex.position.x.toPixels(previewWidth),
+			y: vertex.position.y.toPixels(previewHeight)
+		},
+		legacyTranslate: false,
+		onDrag({ offsetX, offsetY }) {
+			vertex.position.x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
+			vertex.position.y = VertexDimension.fromPixels(
+				vertex.position.y.type,
+				previewHeight,
+				offsetY
+			);
+		},
+		onDragEnd({ offsetX, offsetY }) {
+			vertex.position.x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
+			vertex.position.y = VertexDimension.fromPixels(
+				vertex.position.y.type,
+				previewHeight,
+				offsetY
+			);
+		}
+	});
 </script>
 
-<div class="vertex" style:left style:right style:top style:bottom>
+<div class="vertex" use:draggable={dragOptions}>
 	<button>
 		<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 	</button>
@@ -31,6 +48,8 @@
 <style>
 	.vertex {
 		position: absolute;
+		left: 0;
+		top: 0;
 	}
 
 	button {
