@@ -1,3 +1,4 @@
+import { randomId } from './randomId';
 import { VertexDimension } from './VertexDimension';
 import { VertexPosition } from './VertexPosition.svelte';
 
@@ -10,11 +11,14 @@ export type Vertex = {
 };
 
 export function vertexFromPercent(xPercent: number, yPercent: number): Vertex {
-	return {
-		id: Math.random().toString(36).substring(2, 9),
+	return makeVertex({
 		position: new VertexPosition(
 			new VertexDimension('percent', xPercent),
 			new VertexDimension('percent', yPercent)
 		)
-	};
+	});
+}
+
+export function makeVertex(vertex: Omit<Vertex, 'id'>): Vertex {
+	return { id: randomId(), ...vertex };
 }

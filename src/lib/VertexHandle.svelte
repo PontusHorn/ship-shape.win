@@ -2,16 +2,15 @@
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { type Vertex } from './Vertex';
 	import { VertexDimension } from './VertexDimension';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	const {
-		vertex,
-		previewWidth,
-		previewHeight
-	}: {
+	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		previewWidth: number;
 		previewHeight: number;
-	} = $props();
+	};
+
+	const { vertex, previewWidth, previewHeight, ...props }: Props = $props();
 
 	const dragOptions: DragOptions = $derived({
 		handle: 'button',
@@ -40,7 +39,7 @@
 </script>
 
 <div class="vertex" use:draggable={dragOptions}>
-	<button>
+	<button {...props}>
 		<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 	</button>
 </div>
@@ -62,7 +61,6 @@
 		border: 2px solid var(--fjord);
 		transition:
 			filter 0.1s ease-in-out,
-			outline-color 0.1s ease-in-out,
 			box-shadow 0.1s ease-in-out,
 			scale 0.1s ease-in-out;
 		translate: -50% -50%;
@@ -76,7 +74,6 @@
 				0 0 0 2px var(--pistachio),
 				0 0 0 4px var(--fjord),
 				0 0 0 6px var(--pistachio);
-			outline-color: var(--abyss);
 			outline: none;
 		}
 
