@@ -7,8 +7,8 @@
 </svelte:head>
 
 <code id="css-output"
-	>{#each Object.entries(cssProperties) as [key, value]}<span class="property">{key}</span>:
-		<span class="key">{value}</span>;{'\n'}{/each}</code
+	>{#each Object.entries(cssProperties) as [key, value] (key)}<span class="property">{key}</span>:
+		<span class="key">{value}</span>;&#13;&#10;{/each}</code
 >
 <copy-button target="css-output"></copy-button>
 
