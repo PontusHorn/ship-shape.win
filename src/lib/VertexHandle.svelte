@@ -20,6 +20,7 @@
 		},
 		legacyTranslate: false,
 		onDrag({ offsetX, offsetY }) {
+			console.log(offsetX, offsetY);
 			vertex.position.x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
 			vertex.position.y = VertexDimension.fromPixels(
 				vertex.position.y.type,

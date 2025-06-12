@@ -1,0 +1,100 @@
+<script module lang="ts">
+	import { defineMeta } from '@storybook/addon-svelte-csf';
+	import { expect, fireEvent, within } from 'storybook/test';
+	import VertexHandle from './VertexHandle.svelte';
+	import { VertexDimension } from './VertexDimension';
+	import { VertexPosition } from './VertexPosition.svelte';
+	import { makeVertex } from './Vertex';
+
+	const { Story } = defineMeta({
+		title: 'VertexHandle',
+		component: VertexHandle,
+		parameters: {
+			layout: 'centered'
+		}
+	});
+
+	function getElementCenter(element: HTMLElement) {
+		const { left, top, width, height } = element.getBoundingClientRect();
+		return { x: left + width / 2, y: top + height / 2 };
+	}
+</script>
+
+<Story
+	name="Centered"
+	args={{
+		vertex: makeVertex({
+			position: new VertexPosition(
+				new VertexDimension('percent', 50),
+				new VertexDimension('percent', 50)
+			)
+		}),
+		previewWidth: 200,
+		previewHeight: 200
+	}}
+	play={async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+
+		// Test that there's an accessible button with a helpful name
+		const button = canvas.getByRole('button');
+		await expect(button).toBeInTheDocument();
+		await expect(button).toHaveAccessibleName('Vertex at 50%, 50%');
+
+		// Drag the button 50px down and to the right
+		const start = getElementCenter(button);
+		const end = { x: start.x + 50, y: start.y + 50 };
+		fireEvent.pointerDown(button, { clientX: start.x, clientY: start.y });
+		fireEvent.pointerMove(button, { clientX: end.x, clientY: end.y });
+
+		// Verify that the button follows along
+		const position = getElementCenter(button);
+		expect(position).toEqual({ x: start.x + 50, y: start.y + 50 });
+
+		// Verify that the input vertex is updated (moved 50px/200px = 25% in each direction)
+		expect(args.vertex.position.x).toMatchObject({ type: 'percent', value: 75 });
+		expect(args.vertex.position.y).toMatchObject({ type: 'percent', value: 75 });
+
+		// Move pointer back and release to "reset" the story state
+		fireEvent.pointerMove(button, { clientX: start.x, clientY: start.y });
+		fireEvent.pointerUp(button, {});
+	}}
+/>
+
+<Story
+	name="Different dimension types"
+	args={{
+		vertex: makeVertex({
+			position: new VertexPosition(
+				new VertexDimension('px_from_start', 50),
+				new VertexDimension('px_from_end', 30)
+			)
+		}),
+		previewWidth: 200,
+		previewHeight: 200
+	}}
+	play={async ({ canvasElement, args }) => {
+		const canvas = within(canvasElement);
+		const button = canvas.getByRole('button');
+
+		// Test that different dimension types are reflected in accessible name
+		await expect(button).toHaveAccessibleName('Vertex at 50px, calc(100% - 30px)');
+
+		// Drag the button 50px down and to the right
+		const start = getElementCenter(button);
+		const end = { x: start.x + 50, y: start.y + 50 };
+		fireEvent.pointerDown(button, { clientX: start.x, clientY: start.y });
+		fireEvent.pointerMove(button, { clientX: end.x, clientY: end.y });
+
+		// Verify that the button follows along
+		const position = getElementCenter(button);
+		expect(position).toEqual({ x: start.x + 50, y: start.y + 50 });
+
+		// Verify that the input vertex is updated and that the dimension type is preserved
+		expect(args.vertex.position.x).toMatchObject({ type: 'px_from_start', value: 100 });
+		expect(args.vertex.position.y).toMatchObject({ type: 'px_from_end', value: -20 });
+
+		// Move pointer back and release to "reset" the story state
+		fireEvent.pointerMove(button, { clientX: start.x, clientY: start.y });
+		fireEvent.pointerUp(button, {});
+	}}
+/>
