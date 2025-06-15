@@ -6,10 +6,6 @@
 	let codeElement: HTMLElement;
 </script>
 
-<svelte:head>
-	<script type="module" src="/elements/copy-button.js"></script>
-</svelte:head>
-
 <code bind:this={codeElement}
 	>{#each Object.entries(cssProperties) as [key, value] (key)}<span class="property">{key}</span>:
 		<span class="key">{value}</span>;&#13;&#10;{/each}</code
