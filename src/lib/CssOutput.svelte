@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { Check, Copy } from '@lucide/svelte';
+	import Button from './Button.svelte';
 	import { copyTextToClipboard } from './copyTextToClipboard';
 
 	const { cssProperties }: { cssProperties: Record<string, string> } = $props();
@@ -10,7 +12,18 @@
 	>{#each Object.entries(cssProperties) as [key, value] (key)}<span class="property">{key}</span>:
 		<span class="key">{value}</span>;&#13;&#10;{/each}</code
 >
-<button onclick={() => copyTextToClipboard(codeElement)}>Copy to clipboard</button>
+<div class="copy">
+	<Button size="small" onclick={() => copyTextToClipboard(codeElement)} popovertarget="copied">
+		{#snippet icon()}
+			<Copy size={16} />
+		{/snippet}
+		Copy to clipboard
+	</Button>
+</div>
+<div id="copied" popover onanimationend={(e) => e.currentTarget.hidePopover()}>
+	<Check />
+	Copied!
+</div>
 
 <style>
 	code {
@@ -35,22 +48,47 @@
 		color: oklch(0.92 0.07 344.04);
 	}
 
-	button {
+	.copy {
 		position: absolute;
 		position-anchor: --css-output;
 		inset-block-start: anchor(start);
 		inset-inline-end: anchor(end);
 		margin: 0.5rem;
-
-		/* Flash a green inset box-shadow covering the button as confirmation */
-		transition: box-shadow 1s 3s ease-in;
-		box-shadow: inset 0 0 0 3em transparent;
+		anchor-name: --copy;
 	}
 
-	button:active {
-		box-shadow: inset 0 0 0 3em rgb(0 255 0 / 0.25);
-		/* Make the transition instant as you click, so that it only fades out
-		slowly afterwards */
-		transition: none;
+	#copied:popover-open {
+		position: absolute;
+		position-anchor: --copy;
+		position-area: block-start;
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		margin: 1em;
+		padding: 0.5em;
+
+		background-color: var(--jade);
+		border: 2px solid transparent;
+		border-radius: 0.5rem;
+		color: var(--linen);
+
+		animation: fade-in-out 3s forwards;
+	}
+
+	@keyframes fade-in-out {
+		0% {
+			opacity: 0;
+			translate: 0 1rem;
+		}
+
+		5%,
+		75% {
+			opacity: 1;
+			translate: none;
+		}
+
+		100% {
+			opacity: 0;
+		}
 	}
 </style>

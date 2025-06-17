@@ -2,10 +2,15 @@
 	import type { Snippet } from 'svelte';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-	const { children, icon, ...restProps }: HTMLButtonAttributes & { icon?: Snippet } = $props();
+	const {
+		children,
+		icon,
+		size = 'normal',
+		...restProps
+	}: HTMLButtonAttributes & { size?: 'small' | 'normal'; icon?: Snippet } = $props();
 </script>
 
-<button {...restProps}>
+<button {...restProps} class={size}>
 	{#if icon}
 		<span class="icon">{@render icon()}</span>
 	{/if}
@@ -52,6 +57,7 @@
 		border-start-end-radius: max(3px, var(--_radius-end));
 		border-end-end-radius: max(4px, var(--_radius-end));
 
+		--_depth: 1;
 		--_pressedness: 0em;
 		transform: translate(0em, var(--_pressedness));
 
@@ -93,7 +99,7 @@
 				0 0 0 2px color-mix(in srgb, var(--_border-color), black 10%),
 				0.5px 1px 1px 3px color-mix(in srgb, var(--abyss), transparent 90%),
 				1px 2px 3px 3px color-mix(in srgb, var(--abyss), transparent 95%);
-			transform: translate3d(0, calc(0.75em - var(--_pressedness)), -1em);
+			transform: translate3d(0, calc((0.75em - var(--_pressedness)) * var(--_depth)), -1em);
 			transition:
 				transform var(--_duration) var(--_easing),
 				box-shadow var(--_duration) var(--_easing);
@@ -131,6 +137,13 @@
 
 		&:disabled:active:not([aria-checked='true'], [aria-pressed='true']) {
 			--_pressedness: 0.1em;
+		}
+
+		&.small {
+			--_depth: 0.75;
+			padding-block: 0.3em;
+			padding-inline: 0.5em;
+			font-size: 0.875em;
 		}
 	}
 </style>
