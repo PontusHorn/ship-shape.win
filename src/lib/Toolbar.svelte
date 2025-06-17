@@ -35,30 +35,7 @@
 
 <style>
 	.toolbar {
-		position: relative;
-		inline-size: fit-content;
 		display: flex;
-		flex-direction: row;
 		align-items: stretch;
-		padding-inline: 1rem;
-		padding-block: 0.5rem;
-		filter: drop-shadow(1px 2px 4px rgba(0 0 0 / 0.1));
-
-		&::before {
-			position: absolute;
-			inset: 0;
-			background-color: var(--linen);
-			border-radius: 0.25rem;
-			clip-path: shape(
-				from 1rem top,
-				line to calc(100% - 1rem) top,
-				curve to right center with calc(100% - 0.2rem) top / right 0.2rem,
-				curve to calc(100% - 1rem) bottom with right calc(100% - 0.2rem) / calc(100% - 0.2rem)
-					bottom,
-				line to 1rem bottom,
-				curve to left center with 0.2rem bottom / left calc(100% - 0.2rem),
-				curve to 1rem top with left 0.2rem / 0.2rem top
-			);
-		}
 	}
 </style>
