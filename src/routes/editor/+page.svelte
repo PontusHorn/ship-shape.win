@@ -8,6 +8,8 @@
 	import { vertexFromPercent } from '$lib/Vertex';
 	import VertexHandle from '$lib/VertexHandle.svelte';
 	import type { Attachment } from 'svelte/attachments';
+	import Toolbar from '$lib/Toolbar.svelte';
+	import { editor } from '$lib/editor.svelte';
 
 	const previewWidth = 300;
 	const previewHeight = 300;
@@ -21,7 +23,6 @@
 	function focusWhenAdded(vertexId: string): Attachment {
 		return (element: Element) => {
 			if (element instanceof HTMLElement && vertexId === lastAddedVertexId) {
-				console.log('Focused on vertex:', vertexId);
 				element.focus();
 			}
 		};
@@ -34,6 +35,8 @@
 </svelte:head>
 
 <GeneratorLayout>
+	<Toolbar />
+
 	<form></form>
 
 	{#snippet preview()}
@@ -41,7 +44,13 @@
 			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
 
 			{#each drawing.vertices as vertex (vertex.id)}
-				<VertexHandle {vertex} {previewWidth} {previewHeight} {@attach focusWhenAdded(vertex.id)} />
+				<VertexHandle
+					{vertex}
+					{previewWidth}
+					{previewHeight}
+					draggingEnabled={editor.tool === 'select'}
+					{@attach focusWhenAdded(vertex.id)}
+				/>
 			{/each}
 
 			{#each drawing.curves() as curve, index (curve.map((v) => v.id).join())}

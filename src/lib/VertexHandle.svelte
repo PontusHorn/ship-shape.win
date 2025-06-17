@@ -8,11 +8,13 @@
 		vertex: Vertex;
 		previewWidth: number;
 		previewHeight: number;
+		draggingEnabled?: boolean;
 	};
 
-	const { vertex, previewWidth, previewHeight, ...props }: Props = $props();
+	const { vertex, previewWidth, previewHeight, draggingEnabled = true, ...props }: Props = $props();
 
 	const dragOptions: DragOptions = $derived({
+		disabled: !draggingEnabled,
 		handle: 'button',
 		position: {
 			x: vertex.position.x.toPixels(previewWidth),
@@ -20,7 +22,6 @@
 		},
 		legacyTranslate: false,
 		onDrag({ offsetX, offsetY }) {
-			console.log(offsetX, offsetY);
 			vertex.position.x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
 			vertex.position.y = VertexDimension.fromPixels(
 				vertex.position.y.type,
