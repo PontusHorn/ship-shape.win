@@ -1,14 +1,15 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import { expect, fireEvent, within } from 'storybook/test';
-	import VertexHandle from './VertexHandle.svelte';
+	import VertexHandleSelect from './VertexHandleSelect.svelte';
 	import { VertexDimension } from './VertexDimension';
-	import { VertexPosition } from './VertexPosition.svelte';
+	import { VertexPosition } from './VertexPosition';
 	import { makeVertex } from './Vertex';
+	import { flushSync } from 'svelte';
 
 	const { Story } = defineMeta({
-		title: 'VertexHandle',
-		component: VertexHandle,
+		title: 'VertexHandleSelect',
+		component: VertexHandleSelect,
 		parameters: {
 			layout: 'centered'
 		}
@@ -18,21 +19,34 @@
 		const { left, top, width, height } = element.getBoundingClientRect();
 		return { x: left + width / 2, y: top + height / 2 };
 	}
-</script>
 
-<Story
-	name="Centered"
-	args={{
-		vertex: makeVertex({
+	let vertices = $state({
+		centered: makeVertex({
 			position: new VertexPosition(
 				new VertexDimension('percent', 50),
 				new VertexDimension('percent', 50)
 			)
 		}),
+		differentDimensionTypes: makeVertex({
+			position: new VertexPosition(
+				new VertexDimension('px_from_start', 50),
+				new VertexDimension('px_from_end', 30)
+			)
+		})
+	});
+</script>
+
+<Story
+	name="Centered"
+	args={{
+		vertex: vertices.centered,
+		onChangeVertex: (vertex) => {
+			vertices.centered = vertex;
+		},
 		previewWidth: 200,
 		previewHeight: 200
 	}}
-	play={async ({ canvasElement, args }) => {
+	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 
 		// Test that there's an accessible button with a helpful name
@@ -50,9 +64,11 @@
 		const position = getElementCenter(button);
 		expect(position).toEqual({ x: start.x + 50, y: start.y + 50 });
 
+		flushSync();
+
 		// Verify that the input vertex is updated (moved 50px/200px = 25% in each direction)
-		expect(args.vertex.position.x).toMatchObject({ type: 'percent', value: 75 });
-		expect(args.vertex.position.y).toMatchObject({ type: 'percent', value: 75 });
+		expect(vertices.centered.position.x).toMatchObject({ type: 'percent', value: 75 });
+		expect(vertices.centered.position.y).toMatchObject({ type: 'percent', value: 75 });
 
 		// Move pointer back and release to "reset" the story state
 		fireEvent.pointerMove(button, { clientX: start.x, clientY: start.y });
@@ -63,16 +79,14 @@
 <Story
 	name="Different dimension types"
 	args={{
-		vertex: makeVertex({
-			position: new VertexPosition(
-				new VertexDimension('px_from_start', 50),
-				new VertexDimension('px_from_end', 30)
-			)
-		}),
+		vertex: vertices.differentDimensionTypes,
+		onChangeVertex: (vertex) => {
+			vertices.differentDimensionTypes = vertex;
+		},
 		previewWidth: 200,
 		previewHeight: 200
 	}}
-	play={async ({ canvasElement, args }) => {
+	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
 		const button = canvas.getByRole('button');
 
@@ -90,8 +104,14 @@
 		expect(position).toEqual({ x: start.x + 50, y: start.y + 50 });
 
 		// Verify that the input vertex is updated and that the dimension type is preserved
-		expect(args.vertex.position.x).toMatchObject({ type: 'px_from_start', value: 100 });
-		expect(args.vertex.position.y).toMatchObject({ type: 'px_from_end', value: -20 });
+		expect(vertices.differentDimensionTypes.position.x).toMatchObject({
+			type: 'px_from_start',
+			value: 100
+		});
+		expect(vertices.differentDimensionTypes.position.y).toMatchObject({
+			type: 'px_from_end',
+			value: -20
+		});
 
 		// Move pointer back and release to "reset" the story state
 		fireEvent.pointerMove(button, { clientX: start.x, clientY: start.y });

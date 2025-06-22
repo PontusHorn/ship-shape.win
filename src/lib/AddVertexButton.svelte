@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { VertexPosition } from './VertexPosition.svelte';
+	import type { VertexPosition } from './VertexPosition';
 
 	type Props = {
 		position: VertexPosition;

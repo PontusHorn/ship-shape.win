@@ -5,8 +5,9 @@
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { Drawing } from '$lib/Drawing.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
-	import { vertexFromPercent } from '$lib/Vertex';
-	import VertexHandle from '$lib/VertexHandle.svelte';
+	import { vertexFromPercent, type Vertex } from '$lib/Vertex';
+	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
+	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
 	import type { Attachment } from 'svelte/attachments';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import { editor } from '$lib/editor.svelte';
@@ -27,6 +28,14 @@
 			}
 		};
 	}
+
+	function onChangeVertex(vertex: Vertex) {
+		const index = drawing.vertices.findIndex(({ id }) => id === vertex.id);
+		if (index === -1) {
+			throw new Error('Vertex not found');
+		}
+		drawing.vertices[index] = vertex;
+	}
 </script>
 
 <svelte:head>
@@ -43,14 +52,29 @@
 		<div class="preview" style:width={previewWidth + 'px'} style:height={previewHeight + 'px'}>
 			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
 
-			{#each drawing.vertices as vertex (vertex.id)}
-				<VertexHandle
-					{vertex}
-					{previewWidth}
-					{previewHeight}
-					draggingEnabled={editor.tool === 'select'}
-					{@attach focusWhenAdded(vertex.id)}
-				/>
+			{#each drawing.vertices as vertex, index (vertex.id)}
+				{#if editor.tool === 'select'}
+					<VertexHandleSelect
+						{vertex}
+						{onChangeVertex}
+						{previewWidth}
+						{previewHeight}
+						{@attach focusWhenAdded(vertex.id)}
+					/>
+				{:else if editor.tool === 'curve'}
+					<VertexHandleCurve
+						{vertex}
+						{onChangeVertex}
+						defaultControlPointPosition={drawing.getTangentialPositionAt(
+							previewWidth,
+							previewHeight,
+							30,
+							index
+						)}
+						{previewWidth}
+						{previewHeight}
+					/>
+				{/if}
 			{/each}
 
 			{#each drawing.curves() as curve, index (curve.map((v) => v.id).join())}

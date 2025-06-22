@@ -1,6 +1,6 @@
 import { randomId } from './randomId';
 import { VertexDimension } from './VertexDimension';
-import { VertexPosition } from './VertexPosition.svelte';
+import { VertexPosition } from './VertexPosition';
 
 export type Vertex = {
 	id: string;

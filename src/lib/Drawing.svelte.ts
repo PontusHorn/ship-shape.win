@@ -3,7 +3,7 @@ import { Line } from './commands/Line';
 import { Shape } from './Shape';
 import { makeVertex, type Vertex } from './Vertex';
 import { VertexDimension } from './VertexDimension';
-import { VertexPosition } from './VertexPosition.svelte';
+import { VertexPosition } from './VertexPosition';
 
 export class Drawing {
 	vertices: Vertex[];
@@ -45,6 +45,36 @@ export class Drawing {
 		const yPx = (from.position.y.toPixels(maxHeight) + to.position.y.toPixels(maxHeight)) / 2;
 		const x = VertexDimension.fromPixels(from.position.x.type, maxWidth, xPx);
 		const y = VertexDimension.fromPixels(from.position.y.type, maxHeight, yPx);
+		return new VertexPosition(x, y);
+	}
+
+	getTangentialPositionAt(
+		maxWidth: number,
+		maxHeight: number,
+		distance: number,
+		i: number
+	): VertexPosition {
+		const previous = this.vertices.at(i - 1);
+		const current = this.vertices.at(i);
+		const next = this.vertices.at((i + 1) % this.vertices.length);
+		if (!previous || !current || !next) {
+			throw new Error('Invalid vertex index');
+		}
+
+		const dx = next.position.x.toPixels(maxWidth) - previous.position.x.toPixels(maxWidth);
+		const dy = next.position.y.toPixels(maxHeight) - previous.position.y.toPixels(maxHeight);
+		const angle = Math.atan2(dy, dx);
+		const x = VertexDimension.fromPixels(
+			current.position.x.type,
+			maxWidth,
+			current.position.x.toPixels(maxWidth) + Math.cos(angle) * distance
+		);
+		const y = VertexDimension.fromPixels(
+			current.position.y.type,
+			maxHeight,
+			current.position.y.toPixels(maxHeight) + Math.sin(angle) * distance
+		);
+
 		return new VertexPosition(x, y);
 	}
 }

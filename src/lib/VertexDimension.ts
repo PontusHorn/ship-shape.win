@@ -16,12 +16,20 @@ export class VertexDimension {
 	toPixels(maxPx: number): number {
 		switch (this.type) {
 			case 'percent':
-				return (this.roundedValue / 100) * maxPx;
+				return Math.round((this.value / 100) * maxPx);
 			case 'px_from_start':
 				return this.value;
 			case 'px_from_end':
 				return maxPx - this.value;
 		}
+	}
+
+	toMirrored(origin: VertexDimension, maxPx: number): VertexDimension {
+		const thisPx = this.toPixels(maxPx);
+		const originPx = origin.toPixels(maxPx);
+		const delta = thisPx - originPx;
+		const mirroredPx = originPx - delta;
+		return VertexDimension.fromPixels(origin.type, maxPx, mirroredPx);
 	}
 
 	static fromPixels(

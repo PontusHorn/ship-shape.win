@@ -6,8 +6,12 @@ export class VertexPosition {
 	y: VertexDimension;
 
 	constructor(x: VertexDimension, y: VertexDimension) {
-		this.x = $state(x);
-		this.y = $state(y);
+		this.x = x;
+		this.y = y;
+	}
+
+	toMirrored(origin: VertexPosition, maxX: number, maxY: number): VertexPosition {
+		return new VertexPosition(this.x.toMirrored(origin.x, maxX), this.y.toMirrored(origin.y, maxY));
 	}
 
 	toPosition(): Position {

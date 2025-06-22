@@ -1,43 +1,36 @@
 <script lang="ts">
-	import { draggable, type DragOptions } from '@neodrag/svelte';
+	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
 	import { type Vertex } from './Vertex';
 	import { VertexDimension } from './VertexDimension';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import { VertexPosition } from './VertexPosition';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
+		onChangeVertex: (vertex: Vertex) => void;
 		previewWidth: number;
 		previewHeight: number;
-		draggingEnabled?: boolean;
 	};
 
-	const { vertex, previewWidth, previewHeight, draggingEnabled = true, ...props }: Props = $props();
+	const { vertex, onChangeVertex, previewWidth, previewHeight, ...props }: Props = $props();
 
 	const dragOptions: DragOptions = $derived({
-		disabled: !draggingEnabled,
 		handle: 'button',
 		position: {
 			x: vertex.position.x.toPixels(previewWidth),
 			y: vertex.position.y.toPixels(previewHeight)
 		},
 		legacyTranslate: false,
-		onDrag({ offsetX, offsetY }) {
-			vertex.position.x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
-			vertex.position.y = VertexDimension.fromPixels(
-				vertex.position.y.type,
-				previewHeight,
-				offsetY
-			);
-		},
-		onDragEnd({ offsetX, offsetY }) {
-			vertex.position.x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
-			vertex.position.y = VertexDimension.fromPixels(
-				vertex.position.y.type,
-				previewHeight,
-				offsetY
-			);
-		}
+		onDrag: handleDrag,
+		onDragEnd: handleDrag
 	});
+
+	function handleDrag({ offsetX, offsetY }: DragEventData) {
+		const x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
+		const y = VertexDimension.fromPixels(vertex.position.y.type, previewHeight, offsetY);
+
+		onChangeVertex({ ...vertex, position: new VertexPosition(x, y) });
+	}
 </script>
 
 <div class="vertex" use:draggable={dragOptions}>

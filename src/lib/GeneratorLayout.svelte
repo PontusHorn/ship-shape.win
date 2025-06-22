@@ -40,6 +40,7 @@
 
 	.preview-pane {
 		grid-area: preview;
+		position: relative;
 		display: grid;
 		place-items: center;
 		place-content: center;
