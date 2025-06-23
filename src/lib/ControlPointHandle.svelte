@@ -53,7 +53,7 @@
 	function handleKeydown(event: KeyboardEvent) {
 		let step = 10;
 		if (event.shiftKey) step = 30;
-		if (event.altKey) step = 1;
+		if (event.ctrlKey) step = 1;
 
 		let deltaX = 0;
 		let deltaY = 0;
@@ -84,14 +84,14 @@
 		const newX = currentX + deltaX;
 		const newY = currentY + deltaY;
 
-		moveControlPoint(newX, newY);
+		moveControlPoint(newX, newY, { breakMirroring: event.altKey });
 	}
 
-	function handleDrag({ offsetX, offsetY }: DragEventData) {
-		moveControlPoint(offsetX, offsetY);
+	function handleDrag({ offsetX, offsetY, event }: DragEventData) {
+		moveControlPoint(offsetX, offsetY, { breakMirroring: event.altKey });
 	}
 
-	function moveControlPoint(x: number, y: number) {
+	function moveControlPoint(x: number, y: number, { breakMirroring = false } = {}) {
 		const newControlPoint = new VertexPosition(
 			VertexDimension.fromPixels(controlPoint.x.type, previewWidth, x),
 			VertexDimension.fromPixels(controlPoint.y.type, previewHeight, y)
@@ -106,8 +106,10 @@
 			controlPointBackward = newControlPoint;
 		}
 
-		// Handle mirroring if enabled
-		if (vertex.isMirrored) {
+		// Break mirroring if Alt key is held
+		const isMirrored = vertex.isMirrored && !breakMirroring;
+
+		if (isMirrored) {
 			const mirroredPosition = newControlPoint.toMirrored(
 				vertex.position,
 				previewWidth,
@@ -122,7 +124,7 @@
 			}
 		}
 
-		onChangeVertex({ ...vertex, controlPointForward, controlPointBackward });
+		onChangeVertex({ ...vertex, controlPointForward, controlPointBackward, isMirrored });
 	}
 
 	const accessibleName = $derived(
