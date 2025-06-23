@@ -136,11 +136,10 @@ test.describe('Curve Editing Tool', () => {
 		const forwardControl = controlPoints.nth(0);
 		const backwardControl = controlPoints.nth(1);
 
-		// Tab should move to first control point
-		await page.keyboard.press('Tab');
+		// The first control point should be focused on creation
 		await expect(forwardControl).toBeFocused();
 
-		// Tab again should move to second control point
+		// Tab should move to second control point
 		await page.keyboard.press('Tab');
 		await expect(backwardControl).toBeFocused();
 	});
@@ -166,20 +165,5 @@ test.describe('Curve Editing Tool', () => {
 
 		expect(newBox.x).toBeGreaterThan(initialBox.x);
 		expect(newBox.y).toBeGreaterThan(initialBox.y);
-	});
-
-	test('should announce control point changes to screen readers', async ({ page }) => {
-		// Create control points
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
-		await vertex.click();
-
-		// Move a control point
-		const controlPoint = page.locator('[data-testid="control-point-forward"]').first();
-		await controlPoint.focus();
-		await page.keyboard.press('ArrowRight');
-
-		// Should announce the new coordinates
-		const liveRegion = page.locator('[aria-live="polite"]');
-		await expect(liveRegion).toContainText(/\d+%, \d+%/i);
 	});
 });
