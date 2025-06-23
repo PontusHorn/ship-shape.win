@@ -24,6 +24,11 @@ export class VertexDimension {
 		}
 	}
 
+	toTranslated(deltaPx: number, maxPx: number): VertexDimension {
+		const newPx = this.toPixels(maxPx) + deltaPx;
+		return VertexDimension.fromPixels(this.type, maxPx, newPx);
+	}
+
 	toMirrored(origin: VertexDimension, maxPx: number): VertexDimension {
 		const thisPx = this.toPixels(maxPx);
 		const originPx = origin.toPixels(maxPx);

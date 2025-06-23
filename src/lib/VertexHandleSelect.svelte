@@ -5,6 +5,7 @@
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { VertexPosition } from './VertexPosition';
 	import { editor, selectVertex } from './editor.svelte';
+	import type { Vector } from './types';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -38,10 +39,66 @@
 	});
 
 	function handleDrag({ offsetX, offsetY }: DragEventData) {
-		const x = VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX);
-		const y = VertexDimension.fromPixels(vertex.position.y.type, previewHeight, offsetY);
+		moveVertex(offsetX, offsetY);
+	}
 
-		onChangeVertex({ ...vertex, position: new VertexPosition(x, y) });
+	function handleKeydown(event: KeyboardEvent) {
+		let step = 10;
+		if (event.shiftKey) step = 30;
+		if (event.ctrlKey) step = 1;
+
+		let deltaX = 0;
+		let deltaY = 0;
+
+		switch (event.key) {
+			case 'ArrowLeft':
+				deltaX = -step;
+				break;
+			case 'ArrowRight':
+				deltaX = step;
+				break;
+			case 'ArrowUp':
+				deltaY = -step;
+				break;
+			case 'ArrowDown':
+				deltaY = step;
+				break;
+			default:
+				return;
+		}
+
+		event.preventDefault();
+		selectVertex(vertex.id);
+
+		const currentX = vertex.position.x.toPixels(previewWidth);
+		const currentY = vertex.position.y.toPixels(previewHeight);
+		const newX = currentX + deltaX;
+		const newY = currentY + deltaY;
+
+		moveVertex(newX, newY);
+	}
+
+	function moveVertex(x: number, y: number) {
+		const currentX = vertex.position.x.toPixels(previewWidth);
+		const currentY = vertex.position.y.toPixels(previewHeight);
+		const delta: Vector = [x - currentX, y - currentY];
+
+		const newPosition = new VertexPosition(
+			VertexDimension.fromPixels(vertex.position.x.type, previewWidth, x),
+			VertexDimension.fromPixels(vertex.position.y.type, previewHeight, y)
+		);
+
+		// Move control points along with the vertex
+		const previewSize: Vector = [previewWidth, previewHeight];
+		const controlPointForward = vertex.controlPointForward?.toTranslated(delta, previewSize);
+		const controlPointBackward = vertex.controlPointBackward?.toTranslated(delta, previewSize);
+
+		onChangeVertex({
+			...vertex,
+			position: newPosition,
+			controlPointForward,
+			controlPointBackward
+		});
 	}
 </script>
 

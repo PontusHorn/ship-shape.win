@@ -1,5 +1,6 @@
 import { Position } from './Position';
 import type { VertexDimension } from './VertexDimension';
+import type { Vector } from './types';
 
 export class VertexPosition {
 	x: VertexDimension;
@@ -8,6 +9,10 @@ export class VertexPosition {
 	constructor(x: VertexDimension, y: VertexDimension) {
 		this.x = x;
 		this.y = y;
+	}
+
+	toTranslated([deltaX, deltaY]: Vector, [maxX, maxY]: Vector): VertexPosition {
+		return new VertexPosition(this.x.toTranslated(deltaX, maxX), this.y.toTranslated(deltaY, maxY));
 	}
 
 	toMirrored(origin: VertexPosition, maxX: number, maxY: number): VertexPosition {
