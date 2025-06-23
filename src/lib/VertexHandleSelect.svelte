@@ -4,6 +4,7 @@
 	import { VertexDimension } from './VertexDimension';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { VertexPosition } from './VertexPosition';
+	import { editor, selectVertex } from './editor.svelte';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -13,6 +14,17 @@
 	};
 
 	const { vertex, onChangeVertex, previewWidth, previewHeight, ...props }: Props = $props();
+
+	const isSelected = $derived(editor.selectedVertexId === vertex.id);
+
+	function handleClick() {
+		selectVertex(vertex.id);
+	}
+
+	function handlePointerDown() {
+		// Select on pointer down to feel more responsive on drag
+		selectVertex(vertex.id);
+	}
 
 	const dragOptions: DragOptions = $derived({
 		handle: 'button',
@@ -33,8 +45,14 @@
 	}
 </script>
 
-<div class="vertex" use:draggable={dragOptions}>
-	<button {...props}>
+<div class="vertex" class:isSelected use:draggable={dragOptions}>
+	<button
+		{...props}
+		onpointerdown={handlePointerDown}
+		onclick={handleClick}
+		onkeydown={handleKeydown}
+		aria-pressed={isSelected}
+	>
 		<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 	</button>
 </div>
@@ -44,6 +62,12 @@
 		position: absolute;
 		left: 0;
 		top: 0;
+		transition: opacity 0.2s ease;
+
+		/* Dim when any other vertex is selected */
+		:global(.hasSelection) &:not(.isSelected, :has(button:hover, :focus-visible)) {
+			opacity: 0.5;
+		}
 	}
 
 	button {

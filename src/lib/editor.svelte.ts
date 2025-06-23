@@ -14,10 +14,6 @@ export function selectTool(tool: ToolType) {
 	// but `ToggleGroup` does not support this behaviour natively.
 	if (!tool) return;
 	editor.tool = tool;
-	// Clear selected vertex when switching tools
-	if (tool !== 'curve') {
-		editor.selectedVertexId = undefined;
-	}
 }
 
 export function selectVertex(vertexId: string) {

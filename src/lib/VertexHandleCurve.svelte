@@ -26,7 +26,6 @@
 	}: Props = $props();
 
 	const isSelected = $derived(editor.selectedVertexId === vertex.id);
-	const isOtherVertexSelected = $derived(editor.selectedVertexId !== undefined && !isSelected);
 
 	// Make the button draggable for creating control points
 	const dragOptions: DragOptions = $derived({
@@ -108,10 +107,15 @@
 	}
 </script>
 
-<div class:isOtherVertexSelected>
+<div class="wrapper" class:isSelected>
 	<div class="vertex" use:draggable={dragOptions}>
 		<!-- Draggable vertex button for clicking and creating control points -->
-		<button {...props} onpointerdown={handlePointerDown} onclick={handleVertexClick}>
+		<button
+			{...props}
+			onpointerdown={handlePointerDown}
+			onclick={handleVertexClick}
+			aria-pressed="true"
+		>
 			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 		</button>
 	</div>
@@ -170,8 +174,13 @@
 </div>
 
 <style>
-	.isOtherVertexSelected {
-		opacity: 0.5;
+	.wrapper {
+		transition: opacity 0.2s ease;
+
+		/* Dim when any other vertex is selected */
+		:global(.hasSelection) &:not(.isSelected, :has(button:hover, :focus-visible)) {
+			opacity: 0.5;
+		}
 	}
 
 	.vertex {

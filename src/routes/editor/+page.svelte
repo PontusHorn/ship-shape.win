@@ -68,7 +68,12 @@
 			<span class="visually-hidden">Clear selection</span>
 		</button>
 
-		<div class="preview" style:width={previewWidth + 'px'} style:height={previewHeight + 'px'}>
+		<div
+			class="preview"
+			class:hasSelection={!!editor.selectedVertexId}
+			style:width={previewWidth + 'px'}
+			style:height={previewHeight + 'px'}
+		>
 			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
 
 			{#each drawing.vertices as vertex, index (vertex.id)}
