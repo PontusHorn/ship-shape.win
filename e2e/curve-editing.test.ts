@@ -110,10 +110,21 @@ test.describe('Curve Editing Tool', () => {
 		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
 		await vertex.click();
 
-		// Check that CSS output contains curve command
+		// Check that CSS output contains curve commands
 		const output = page.locator('code');
-		const cssText = await output.textContent();
-		expect(cssText).toContain('curve');
+		const cssText = (await output.textContent()) ?? '';
+		const commands = cssText
+			.replace('clip-path: shape(', '')
+			.replace(');', '')
+			.split(',')
+			.map((s) => s.trim().replace(/\s+/g, ' '));
+
+		expect(commands).toEqual([
+			'from 50% 0%',
+			'curve to 100% 100% with 60% 0%',
+			'line to 0% 100%',
+			'curve to 50% 0% with 40% 0%'
+		]);
 	});
 
 	test('should support keyboard navigation for control points', async ({ page }) => {
