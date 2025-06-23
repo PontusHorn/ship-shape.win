@@ -10,7 +10,7 @@
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
 	import type { Attachment } from 'svelte/attachments';
 	import Toolbar from '$lib/Toolbar.svelte';
-	import { editor } from '$lib/editor.svelte';
+	import { clearVertexSelection, editor } from '$lib/editor.svelte';
 
 	const previewWidth = 300;
 	const previewHeight = 300;
@@ -36,7 +36,22 @@
 		}
 		drawing.vertices[index] = vertex;
 	}
+
+	function handleBackgroundClick(event: MouseEvent) {
+		if (event.target === event.currentTarget) {
+			clearVertexSelection();
+		}
+	}
+
+	function handleKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Escape' && editor.selectedVertexId) {
+			clearVertexSelection();
+			event.preventDefault();
+		}
+	}
 </script>
+
+<svelte:window onkeydown={handleKeyDown} />
 
 <svelte:head>
 	<title>Visual shape() editor - {SITE_TITLE}</title>
@@ -49,6 +64,10 @@
 	<form></form>
 
 	{#snippet preview()}
+		<button class="background" onclick={handleBackgroundClick}>
+			<span class="visually-hidden">Clear selection</span>
+		</button>
+
 		<div class="preview" style:width={previewWidth + 'px'} style:height={previewHeight + 'px'}>
 			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
 
@@ -101,6 +120,12 @@
 		align-items: baseline;
 		align-content: start;
 		gap: 0.5rem 0.25rem;
+	}
+
+	.background {
+		all: unset;
+		position: absolute;
+		inset: 0;
 	}
 
 	.preview {
