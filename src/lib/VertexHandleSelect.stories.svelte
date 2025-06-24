@@ -5,7 +5,6 @@
 	import { VertexDimension } from './VertexDimension';
 	import { VertexPosition } from './VertexPosition';
 	import { makeVertex } from './Vertex';
-	import { flushSync } from 'svelte';
 
 	const { Story } = defineMeta({
 		title: 'VertexHandleSelect',
@@ -63,8 +62,6 @@
 		// Verify that the button follows along
 		const position = getElementCenter(button);
 		expect(position).toEqual({ x: start.x + 50, y: start.y + 50 });
-
-		flushSync();
 
 		// Verify that the input vertex is updated (moved 50px/200px = 25% in each direction)
 		expect(vertices.centered.position.x).toMatchObject({ type: 'percent', value: 75 });
