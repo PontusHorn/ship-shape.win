@@ -5,6 +5,7 @@
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { selectVertex } from './editor.svelte';
+	import { getArrowKeyDelta } from './keyboardNavigation';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -49,36 +50,14 @@
 		onDrag: handleDrag
 	});
 
-	// Keyboard navigation support
 	function handleKeydown(event: KeyboardEvent) {
-		let step = 10;
-		if (event.shiftKey) step = 30;
-		if (event.ctrlKey) step = 1;
-
-		let deltaX = 0;
-		let deltaY = 0;
-
-		switch (event.key) {
-			case 'ArrowLeft':
-				deltaX = -step;
-				break;
-			case 'ArrowRight':
-				deltaX = step;
-				break;
-			case 'ArrowUp':
-				deltaY = -step;
-				break;
-			case 'ArrowDown':
-				deltaY = step;
-				break;
-			default:
-				return;
-		}
+		const delta = getArrowKeyDelta(event);
+		if (!delta) return;
 
 		event.preventDefault();
 		selectVertex(vertex.id);
 
-		// Apply keyboard movement
+		const [deltaX, deltaY] = delta;
 		const currentX = controlPoint.x.toPixels(previewWidth);
 		const currentY = controlPoint.y.toPixels(previewHeight);
 		const newX = currentX + deltaX;
