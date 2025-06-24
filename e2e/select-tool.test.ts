@@ -7,14 +7,15 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should select vertex when clicked', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
-		await vertex.click();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
 
+		await vertex.click();
 		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
 	});
 
 	test('should move vertex when dragged', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		const initialBox = await vertex.boundingBox();
 		if (!initialBox) throw new Error('Could not get vertex bounding box');
 
@@ -50,7 +51,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should move vertex with arrow keys', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.focus();
 
 		const initialBox = await vertex.boundingBox();
@@ -79,7 +80,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should support fine movement with Ctrl+arrow keys', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.focus();
 
 		const initialBox = await vertex.boundingBox();
@@ -97,7 +98,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should support large movement with Shift+arrow keys', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.focus();
 
 		const initialBox = await vertex.boundingBox();
@@ -117,12 +118,12 @@ test.describe('Select Tool', () => {
 	test('should move control points along with vertex', async ({ page }) => {
 		// Create a vertex with control points using the curve tool
 		await page.getByRole('radio', { name: /curve/i }).click();
-		let vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		let vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		// Switch back to select tool and focus the vertex
 		await page.getByRole('radio', { name: /select/i }).click();
-		vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.focus();
 
 		// Move the vertex with the arrow keys
@@ -140,7 +141,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should clear selection when clicking background', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 
 		// Select a vertex
 		await vertex.click();
@@ -154,11 +155,11 @@ test.describe('Select Tool', () => {
 		});
 
 		// Vertex should no longer be selected
-		await expect(vertex).not.toHaveAttribute('aria-pressed', 'true');
+		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
 	});
 
 	test('should clear selection when pressing Escape', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 
 		// Select a vertex
 		await vertex.click();
@@ -166,11 +167,11 @@ test.describe('Select Tool', () => {
 
 		// Press Escape to clear selection
 		await page.keyboard.press('Escape');
-		await expect(vertex).not.toHaveAttribute('aria-pressed', 'true');
+		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
 	});
 
 	test('should switch selection when clicking different vertex', async ({ page }) => {
-		const vertices = page.getByRole('button', { name: /vertex at/i });
+		const vertices = page.getByRole('button', { name: /^vertex at/i });
 		const firstVertex = vertices.nth(0);
 		const secondVertex = vertices.nth(1);
 

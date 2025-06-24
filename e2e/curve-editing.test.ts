@@ -11,7 +11,7 @@ test.describe('Curve Editing Tool', () => {
 
 	test('should show control points when vertex is clicked in curve mode', async ({ page }) => {
 		// Click on a vertex handle
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		// Should show control point handles
@@ -26,7 +26,7 @@ test.describe('Curve Editing Tool', () => {
 
 	test('should create control points by dragging from vertex in curve mode', async ({ page }) => {
 		// Get vertex button position
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		const vertexBox = await vertex.boundingBox();
 		const { x, y, width, height } = vertexBox!;
 		const centerX = x + width / 2;
@@ -44,7 +44,7 @@ test.describe('Curve Editing Tool', () => {
 	});
 
 	test('should mirror control points by default', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		// Get control point positions
@@ -75,7 +75,7 @@ test.describe('Curve Editing Tool', () => {
 
 	test('should break mirroring when alt key is held', async ({ page }) => {
 		// Create control points
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		// Get control point positions
@@ -108,7 +108,7 @@ test.describe('Curve Editing Tool', () => {
 
 	test('should generate curve commands in CSS output', async ({ page }) => {
 		// Create a curve
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		// Check that CSS output contains curve commands
@@ -124,7 +124,7 @@ test.describe('Curve Editing Tool', () => {
 
 	test('should support keyboard navigation for control points', async ({ page }) => {
 		// Create control points
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		const controlPoints = page.getByRole('button', { name: /control point/i });
@@ -141,7 +141,7 @@ test.describe('Curve Editing Tool', () => {
 
 	test('should move control points with arrow keys', async ({ page }) => {
 		// Create control points
-		const vertex = page.getByRole('button', { name: /vertex at/i }).first();
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
 		await vertex.click();
 
 		const controlPoint = page.getByRole('button', { name: /control point/i }).first();
@@ -160,5 +160,59 @@ test.describe('Curve Editing Tool', () => {
 
 		expect(newBox.x).toBeGreaterThan(initialBox.x);
 		expect(newBox.y).toBeGreaterThan(initialBox.y);
+	});
+
+	test('should select vertex when clicked', async ({ page }) => {
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
+
+		await vertex.click();
+		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
+	});
+
+	test('should clear selection when clicking background', async ({ page }) => {
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+
+		// Select a vertex
+		await vertex.click();
+		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
+
+		// Click background (which should have an accessible name/role)
+		const background = page.getByRole('button', { name: /clear selection/i });
+		await background.click({
+			// Ensure the clicked position is not covered by the foreground elements
+			position: { x: 30, y: 30 }
+		});
+
+		// Vertex should no longer be selected
+		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
+	});
+
+	test('should clear selection when pressing Escape', async ({ page }) => {
+		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+
+		// Select a vertex
+		await vertex.click();
+		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
+
+		// Press Escape to clear selection
+		await page.keyboard.press('Escape');
+		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
+	});
+
+	test('should switch selection when clicking different vertex', async ({ page }) => {
+		const vertices = page.getByRole('button', { name: /^vertex at/i });
+		const firstVertex = vertices.nth(0);
+		const secondVertex = vertices.nth(1);
+
+		// Select first vertex
+		await firstVertex.click();
+		await expect(firstVertex).toHaveAttribute('aria-pressed', 'true');
+		await expect(secondVertex).toHaveAttribute('aria-pressed', 'false');
+
+		// Select second vertex
+		await secondVertex.click();
+		await expect(firstVertex).toHaveAttribute('aria-pressed', 'false');
+		await expect(secondVertex).toHaveAttribute('aria-pressed', 'true');
 	});
 });

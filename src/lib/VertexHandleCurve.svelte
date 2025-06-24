@@ -114,7 +114,7 @@
 			{...props}
 			onpointerdown={handlePointerDown}
 			onclick={handleVertexClick}
-			aria-pressed="true"
+			aria-pressed={isSelected}
 		>
 			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 		</button>
