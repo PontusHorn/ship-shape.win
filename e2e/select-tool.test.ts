@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import {
 	drag,
+	getControlPoints,
 	getElementCenter,
 	getOutputShapeCommands,
 	getTools,
@@ -119,6 +120,25 @@ test.describe('Editor: Select tool', () => {
 			'line to 0% 100%',
 			'curve to 60% 10% with 50% 10%' // Control point moved from 40% 0%
 		]);
+	});
+
+	test('should show control points', async ({ page }) => {
+		const tools = getTools(page);
+
+		// First create a vertex with control points using the curve tool
+		await tools.curve.click();
+		const vertex = getVertices(page).first();
+		await vertex.click();
+
+		// Switch back to select tool
+		await tools.select.click();
+
+		// Should show control point handles
+		const controlPoints = getControlPoints(page);
+		await expect(controlPoints).toHaveCount(2);
+		for (const controlPoint of await controlPoints.all()) {
+			await expect(controlPoint).toBeVisible();
+		}
 	});
 
 	test('should clear selection when clicking background', async ({ page }) => {

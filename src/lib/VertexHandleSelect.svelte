@@ -7,6 +7,7 @@
 	import { editor, selectVertex } from './editor.svelte';
 	import type { Vector } from './types';
 	import { getArrowKeyDelta } from './keyboardNavigation';
+	import ControlPointHandle from './ControlPointHandle.svelte';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -83,30 +84,60 @@
 	}
 </script>
 
-<div class="vertex" class:isSelected use:draggable={dragOptions}>
-	<button
-		{...props}
-		onpointerdown={handlePointerDown}
-		onfocus={() => selectVertex(vertex.id)}
-		onclick={handleClick}
-		onkeydown={handleKeydown}
-		aria-pressed={isSelected}
-	>
-		<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
-	</button>
+<div class="wrapper" class:isSelected>
+	<div class="vertex" use:draggable={dragOptions}>
+		<button
+			{...props}
+			onpointerdown={handlePointerDown}
+			onfocus={() => selectVertex(vertex.id)}
+			onclick={handleClick}
+			onkeydown={handleKeydown}
+			aria-pressed={isSelected}
+		>
+			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
+		</button>
+	</div>
+
+	<div class="control-points">
+		{#if vertex.controlPointForward}
+			<ControlPointHandle
+				{vertex}
+				{onChangeVertex}
+				controlPoint={vertex.controlPointForward}
+				isVertexSelected={isSelected}
+				{previewWidth}
+				{previewHeight}
+			/>
+		{/if}
+		{#if vertex.controlPointBackward}
+			<ControlPointHandle
+				{vertex}
+				{onChangeVertex}
+				controlPoint={vertex.controlPointBackward}
+				isVertexSelected={isSelected}
+				{previewWidth}
+				{previewHeight}
+			/>
+		{/if}
+	</div>
 </div>
 
 <style>
-	.vertex {
-		position: absolute;
-		left: 0;
-		top: 0;
+	.wrapper {
 		transition: opacity 0.2s ease;
 
 		/* Dim when any other vertex is selected */
 		:global(.hasSelection) &:not(.isSelected, :has(button:hover, :focus-visible)) {
 			opacity: 0.5;
 		}
+	}
+
+	.vertex {
+		position: absolute;
+		left: 0;
+		top: 0;
+		/* Show above the connection lines to the control points */
+		z-index: 1;
 	}
 
 	button {
