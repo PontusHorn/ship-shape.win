@@ -185,4 +185,28 @@ test.describe('Select Tool', () => {
 		await expect(firstVertex).toHaveAttribute('aria-pressed', 'false');
 		await expect(secondVertex).toHaveAttribute('aria-pressed', 'true');
 	});
+
+	test('should add vertex to shape when clicking trigger', async ({ page }) => {
+		const vertices = page.getByRole('button', { name: /^vertex at/i });
+		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at/i }).first();
+
+		const vertexCount = await vertices.count();
+		const existingVertexLabels = await vertices.allTextContents();
+
+		// Add vertex
+		await addVertexHandle.click();
+
+		await expect(vertices).toHaveCount(vertexCount + 1);
+
+		// The new vertex should be automatically focused, so we use that to find it
+		const newVertex = page.locator(':focus');
+		expect(newVertex).toBeVisible();
+		expect(newVertex).toHaveAttribute('aria-pressed', 'true');
+		expect(newVertex).toHaveText(/vertex at/i);
+
+		// As a sanity check, make sure the vertex is actually a new one
+		for (const label of existingVertexLabels) {
+			await expect(newVertex).not.toHaveText(label);
+		}
+	});
 });

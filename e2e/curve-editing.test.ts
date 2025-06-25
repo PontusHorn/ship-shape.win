@@ -89,19 +89,32 @@ test.describe('Curve Editing Tool', () => {
 
 		const centerX = forwardBox.x + forwardBox.width / 2;
 		const centerY = forwardBox.y + forwardBox.height / 2;
+		const targetX = centerX + 30;
+		const targetY = centerY + 20;
 
 		// Drag forward control point with Alt key
 		await page.keyboard.down('Alt');
 		await page.mouse.move(centerX, centerY);
 		await page.mouse.down();
-		await page.mouse.move(centerX + 30, centerY + 20);
+		await page.mouse.move(targetX, targetY);
 		await page.mouse.up();
 		await page.keyboard.up('Alt');
 
 		// Backward control point should not have moved
-		const newBackwardBox = await backwardControl.boundingBox();
+		let newBackwardBox = await backwardControl.boundingBox();
 		if (!newBackwardBox) throw new Error('Failed to get bounding box');
+		expect(newBackwardBox.x).toBe(backwardBox.x);
+		expect(newBackwardBox.y).toBe(backwardBox.y);
 
+		// Drag again without Alt now that mirroring is disabled
+		await page.mouse.move(targetX, targetY);
+		await page.mouse.down();
+		await page.mouse.move(targetX + 100, targetY);
+		await page.mouse.up();
+
+		// Backward control point should still not have moved
+		newBackwardBox = await backwardControl.boundingBox();
+		if (!newBackwardBox) throw new Error('Failed to get bounding box');
 		expect(newBackwardBox.x).toBe(backwardBox.x);
 		expect(newBackwardBox.y).toBe(backwardBox.y);
 	});
