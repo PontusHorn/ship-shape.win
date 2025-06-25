@@ -143,34 +143,6 @@
 				{previewHeight}
 			/>
 		{/if}
-
-		<!-- Connecting lines between vertex and control points -->
-		{#if vertex.controlPointForward || vertex.controlPointBackward}
-			<svg class="control-line" aria-hidden="true">
-				{#if vertex.controlPointForward}
-					<line
-						x1={vertex.position.x.toPixels(previewWidth)}
-						y1={vertex.position.y.toPixels(previewHeight)}
-						x2={vertex.controlPointForward.x.toPixels(previewWidth)}
-						y2={vertex.controlPointForward.y.toPixels(previewHeight)}
-						stroke="var(--fjord)"
-						stroke-width="1"
-						stroke-dasharray="2,2"
-					/>
-				{/if}
-				{#if vertex.controlPointBackward}
-					<line
-						x1={vertex.position.x.toPixels(previewWidth)}
-						y1={vertex.position.y.toPixels(previewHeight)}
-						x2={vertex.controlPointBackward.x.toPixels(previewWidth)}
-						y2={vertex.controlPointBackward.y.toPixels(previewHeight)}
-						stroke="var(--fjord)"
-						stroke-width="1"
-						stroke-dasharray="2,2"
-					/>
-				{/if}
-			</svg>
-		{/if}
 	</div>
 </div>
 
@@ -222,15 +194,5 @@
 		&:focus {
 			filter: brightness(1.2) saturate(1.5);
 		}
-	}
-
-	.control-line {
-		position: absolute;
-		overflow: visible;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		pointer-events: none;
 	}
 </style>

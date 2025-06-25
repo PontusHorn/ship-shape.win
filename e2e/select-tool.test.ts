@@ -1,13 +1,20 @@
 import { expect, test } from '@playwright/test';
-import { extractShapeCommands } from './helpers';
+import {
+	drag,
+	getElementCenter,
+	getOutputShapeCommands,
+	getTools,
+	getVertices,
+	translate
+} from './helpers';
 
-test.describe('Select Tool', () => {
+test.describe('Editor: Select tool', () => {
 	test.beforeEach(async ({ page }) => {
 		await page.goto('/editor');
 	});
 
 	test('should select vertex when clicked', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		const vertex = getVertices(page).first();
 		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
 
 		await vertex.click();
@@ -15,33 +22,19 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should move vertex when dragged', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
-		const initialBox = await vertex.boundingBox();
-		if (!initialBox) throw new Error('Could not get vertex bounding box');
-
-		const centerX = initialBox.x + initialBox.width / 2;
-		const centerY = initialBox.y + initialBox.height / 2;
+		const vertex = getVertices(page).first();
+		const vertexPos = await getElementCenter(vertex);
 
 		// Drag the vertex
-		await page.mouse.move(centerX, centerY);
-		await page.mouse.down();
-		await page.mouse.move(centerX + 60, centerY + 30);
-		await page.mouse.up();
+		const targetPos = translate(vertexPos, [60, 30]);
+		await drag(page, vertexPos, targetPos);
 
 		// Vertex should have moved
-		const newBox = await vertex.boundingBox();
-		if (!newBox) throw new Error('Could not get new vertex bounding box');
-
-		const deltaX = newBox.x - initialBox.x;
-		const deltaY = newBox.y - initialBox.y;
-		expect(deltaX).toBeGreaterThan(59);
-		expect(deltaX).toBeLessThan(61);
-		expect(deltaY).toBeGreaterThan(29);
-		expect(deltaY).toBeLessThan(31);
+		const newVertexPos = await getElementCenter(vertex);
+		expect(newVertexPos).toEqual(targetPos);
 
 		// Output code should reflect the new position
-		const output = page.locator('code');
-		const commands = extractShapeCommands((await output.textContent()) ?? '');
+		const commands = await getOutputShapeCommands(page);
 		expect(commands).toEqual([
 			'from 70% 10%', // Moved from 50% 0% (30px = 10% of 300px)
 			'line to 100% 100%',
@@ -51,26 +44,21 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should move vertex with arrow keys', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		const vertex = getVertices(page).first();
 		await vertex.focus();
 
-		const initialBox = await vertex.boundingBox();
-		if (!initialBox) throw new Error('Could not get initial bounding box');
+		const initialPos = await getElementCenter(vertex);
 
 		// Use arrow keys to move the vertex
 		await page.keyboard.press('ArrowLeft');
 		await page.keyboard.press('ArrowDown');
 
 		// Vertex should have moved
-		const newBox = await vertex.boundingBox();
-		if (!newBox) throw new Error('Could not get new bounding box');
-
-		expect(newBox.x).toBe(initialBox.x - 10);
-		expect(newBox.y).toBe(initialBox.y + 10);
+		const newPos = await getElementCenter(vertex);
+		expect(newPos).toEqual(translate(initialPos, [-10, 10]));
 
 		// Output code should reflect the new position
-		const output = page.locator('code');
-		const commands = extractShapeCommands((await output.textContent()) ?? '');
+		const commands = await getOutputShapeCommands(page);
 		expect(commands).toEqual([
 			'from 47% 3%', // Moved from 50% 0% (10px = 3% of 300px)
 			'line to 100% 100%',
@@ -80,58 +68,51 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should support fine movement with Ctrl+arrow keys', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		const vertex = getVertices(page).first();
 		await vertex.focus();
 
-		const initialBox = await vertex.boundingBox();
-		if (!initialBox) throw new Error('Could not get initial bounding box');
+		const initialPos = await getElementCenter(vertex);
 
 		// Use Ctrl+arrow for fine movement
 		await page.keyboard.press('Control+ArrowRight');
 
-		const newBox = await vertex.boundingBox();
-		if (!newBox) throw new Error('Could not get new bounding box');
-
 		// Should move only a small amount (1px step)
-		const deltaX = newBox.x - initialBox.x;
-		expect(deltaX).toBe(1);
+		const newPos = await getElementCenter(vertex);
+		expect(newPos).toEqual(translate(initialPos, [1, 0]));
 	});
 
 	test('should support large movement with Shift+arrow keys', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		const vertex = getVertices(page).first();
 		await vertex.focus();
 
-		const initialBox = await vertex.boundingBox();
-		if (!initialBox) throw new Error('Could not get initial bounding box');
+		const initialPos = await getElementCenter(vertex);
 
 		// Use Shift+arrow for large movement
 		await page.keyboard.press('Shift+ArrowRight');
 
-		const newBox = await vertex.boundingBox();
-		if (!newBox) throw new Error('Could not get new bounding box');
-
 		// Should move a larger amount (30px step)
-		const deltaX = newBox.x - initialBox.x;
-		expect(deltaX).toBe(30);
+		const newPos = await getElementCenter(vertex);
+		expect(newPos).toEqual(translate(initialPos, [30, 0]));
 	});
 
 	test('should move control points along with vertex', async ({ page }) => {
+		const tools = getTools(page);
+
 		// Create a vertex with control points using the curve tool
-		await page.getByRole('radio', { name: /curve/i }).click();
-		let vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		await tools.curve.click();
+		let vertex = getVertices(page).first();
 		await vertex.click();
 
 		// Switch back to select tool and focus the vertex
-		await page.getByRole('radio', { name: /select/i }).click();
-		vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		await tools.select.click();
+		vertex = getVertices(page).first();
 		await vertex.focus();
 
 		// Move the vertex with the arrow keys
 		await page.keyboard.press('Shift+ArrowRight');
 		await page.keyboard.press('Shift+ArrowDown');
 
-		const output = page.locator('code');
-		const commands = extractShapeCommands((await output.textContent()) ?? '');
+		const commands = await getOutputShapeCommands(page);
 		expect(commands).toEqual([
 			'from 60% 10%', // Moved from 50% 0%
 			'curve to 100% 100% with 70% 10%', // Control point moved from 60% 0%
@@ -141,7 +122,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should clear selection when clicking background', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		const vertex = getVertices(page).first();
 
 		// Select a vertex
 		await vertex.click();
@@ -159,7 +140,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should clear selection when pressing Escape', async ({ page }) => {
-		const vertex = page.getByRole('button', { name: /^vertex at/i }).first();
+		const vertex = getVertices(page).first();
 
 		// Select a vertex
 		await vertex.click();
@@ -171,7 +152,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should switch selection when clicking different vertex', async ({ page }) => {
-		const vertices = page.getByRole('button', { name: /^vertex at/i });
+		const vertices = getVertices(page);
 		const firstVertex = vertices.nth(0);
 		const secondVertex = vertices.nth(1);
 
@@ -187,7 +168,7 @@ test.describe('Select Tool', () => {
 	});
 
 	test('should add vertex to shape when clicking trigger', async ({ page }) => {
-		const vertices = page.getByRole('button', { name: /^vertex at/i });
+		const vertices = getVertices(page);
 		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at/i }).first();
 
 		const vertexCount = await vertices.count();

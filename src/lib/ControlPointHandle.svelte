@@ -123,6 +123,19 @@
 	</button>
 </div>
 
+<!-- Connecting line between vertex and control point -->
+<svg class="control-line" aria-hidden="true">
+	<line
+		x1={vertex.position.x.toPixels(previewWidth)}
+		y1={vertex.position.y.toPixels(previewHeight)}
+		x2={controlPoint.x.toPixels(previewWidth)}
+		y2={controlPoint.y.toPixels(previewHeight)}
+		stroke="var(--fjord)"
+		stroke-width="1"
+		stroke-dasharray="2,2"
+	/>
+</svg>
+
 <style>
 	.control-point {
 		position: absolute;
@@ -162,5 +175,15 @@
 		&:focus {
 			filter: brightness(1.2) saturate(1.5);
 		}
+	}
+
+	.control-line {
+		position: absolute;
+		overflow: visible;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
 	}
 </style>
