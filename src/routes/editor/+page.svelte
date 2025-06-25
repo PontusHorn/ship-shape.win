@@ -141,5 +141,8 @@
 		background-color: var(--jade);
 		width: 100%;
 		height: 100%;
+		/* Add a faint outline that shows when the clip-path extends outside the
+		element bounds, so it's easier to see the path */
+		outline: 9999px solid color-mix(in srgb, var(--jade), transparent 90%);
 	}
 </style>
