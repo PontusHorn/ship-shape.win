@@ -116,6 +116,7 @@
 		{...props}
 		onpointerdown={handlePointerDown}
 		onclick={handleClick}
+		onfocus={() => selectVertex(vertex.id)}
 		onkeydown={handleKeydown}
 	>
 		<span class="visually-hidden">{accessibleName}</span>

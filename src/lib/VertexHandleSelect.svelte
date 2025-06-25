@@ -87,6 +87,7 @@
 	<button
 		{...props}
 		onpointerdown={handlePointerDown}
+		onfocus={() => selectVertex(vertex.id)}
 		onclick={handleClick}
 		onkeydown={handleKeydown}
 		aria-pressed={isSelected}
