@@ -62,11 +62,11 @@ test.describe('Editor: Control points', () => {
 			expect(newBackwardPos).toBeCloseVector(translate(backwardPos, [-30, -20]));
 
 			// Drag backward control point
-			await drag(page, newBackwardPos, translate(newBackwardPos, [-20, -60]));
+			await drag(page, newBackwardPos, translate(newBackwardPos, [30, 20]));
 
 			// Forward control point should have moved in opposite direction
 			const newForwardPos = await getElementCenter(forward);
-			expect(newForwardPos).toBeCloseVector(translate(targetForwardPos, [20, 60]));
+			expect(newForwardPos).toBeCloseVector(translate(targetForwardPos, [-30, -20]));
 		}
 	});
 
