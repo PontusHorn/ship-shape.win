@@ -1,6 +1,6 @@
 import { Locator, Page } from '@playwright/test';
 
-type Vector = [x: number, y: number];
+export type Vector = [x: number, y: number];
 
 export async function getElementCenter(locator: Locator): Promise<Vector> {
 	const boundingBox = await locator.boundingBox();

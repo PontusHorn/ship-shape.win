@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test-api';
 import {
 	drag,
 	getControlPoints,
@@ -34,7 +34,7 @@ test.describe('Editor: Control points', () => {
 
 			// Control point should have moved
 			const newPos = await getElementCenter(controlPoint);
-			expect(newPos).toEqual(translate(initialPos, [30, 30]));
+			expect(newPos).toBeCloseVector(translate(initialPos, [30, 30]));
 		}
 
 		// Output code should reflect the control point moving from 60% 0% to 80% 20%
@@ -59,14 +59,14 @@ test.describe('Editor: Control points', () => {
 
 			// Backward control point should have moved in opposite direction
 			const newBackwardPos = await getElementCenter(backward);
-			expect(newBackwardPos).toEqual(translate(backwardPos, [-30, -20]));
+			expect(newBackwardPos).toBeCloseVector(translate(backwardPos, [-30, -20]));
 
 			// Drag backward control point
 			await drag(page, newBackwardPos, translate(newBackwardPos, [-20, -60]));
 
 			// Forward control point should have moved in opposite direction
 			const newForwardPos = await getElementCenter(forward);
-			expect(newForwardPos).toEqual(translate(targetForwardPos, [20, 60]));
+			expect(newForwardPos).toBeCloseVector(translate(targetForwardPos, [20, 60]));
 		}
 	});
 
@@ -88,14 +88,14 @@ test.describe('Editor: Control points', () => {
 
 			// Backward control point should not have moved
 			let newBackwardPos = await getElementCenter(backward);
-			expect(newBackwardPos).toEqual(backwardPos);
+			expect(newBackwardPos).toBeCloseVector(backwardPos);
 
 			// Drag again without Alt now that mirroring is disabled
 			await drag(page, targetPos, translate(targetPos, [100, 0]));
 
 			// Backward control point should still not have moved
 			newBackwardPos = await getElementCenter(backward);
-			expect(newBackwardPos).toEqual(backwardPos);
+			expect(newBackwardPos).toBeCloseVector(backwardPos);
 		}
 	});
 

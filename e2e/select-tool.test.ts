@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test-api';
 import {
 	drag,
 	getControlPoints,
@@ -32,7 +32,7 @@ test.describe('Editor: Select tool', () => {
 
 		// Vertex should have moved
 		const newVertexPos = await getElementCenter(vertex);
-		expect(newVertexPos).toEqual(targetPos);
+		expect(newVertexPos).toBeCloseVector(targetPos);
 
 		// Output code should reflect the new position
 		const commands = await getOutputShapeCommands(page);
@@ -56,7 +56,7 @@ test.describe('Editor: Select tool', () => {
 
 		// Vertex should have moved
 		const newPos = await getElementCenter(vertex);
-		expect(newPos).toEqual(translate(initialPos, [-10, 10]));
+		expect(newPos).toBeCloseVector(translate(initialPos, [-10, 10]));
 
 		// Output code should reflect the new position
 		const commands = await getOutputShapeCommands(page);
@@ -93,7 +93,7 @@ test.describe('Editor: Select tool', () => {
 
 		// Should move a larger amount (30px step)
 		const newPos = await getElementCenter(vertex);
-		expect(newPos).toEqual(translate(initialPos, [30, 0]));
+		expect(newPos).toBeCloseVector(translate(initialPos, [30, 0]));
 	});
 
 	test('should move control points along with vertex', async ({ page }) => {

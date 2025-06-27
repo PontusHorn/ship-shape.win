@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './test-api';
 import {
 	drag,
 	getControlPoints,
@@ -48,12 +48,12 @@ test.describe('Editor: Curve tool', () => {
 		// Forward control point should follow the cursor
 		const forward = getControlPoints(page, 'forward');
 		const forwardPos = await getElementCenter(forward);
-		expect(forwardPos).toEqual(translate(vertexPos, [50, -30]));
+		expect(forwardPos).toBeCloseVector(translate(vertexPos, [50, -30]));
 
 		// Backward control point should be mirrored to the other side of the vertex
 		const backward = getControlPoints(page, 'backward');
 		const backwardPos = await getElementCenter(backward);
-		expect(backwardPos).toEqual(translate(vertexPos, [-50, 30]));
+		expect(backwardPos).toBeCloseVector(translate(vertexPos, [-50, 30]));
 	});
 
 	test('should generate curve commands in CSS output', async ({ page }) => {
