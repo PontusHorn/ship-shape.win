@@ -13,10 +13,41 @@
 		--midnight: oklch(25.68% 39.21% 242.99);
 		--abyss: oklch(22.1% 39.5% 268.7);
 		--link: oklch(47% 75% 263.67);
+		--linkVisited: oklch(47% 75% 310.74);
+
+		/* @link https://utopia.fyi/type/calculator?c=320,16,1.2,1240,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+		--fontSize--1: clamp(0.8333rem, 0.7754rem + 0.2899vw, 1rem);
+		--fontSize-0: clamp(1rem, 0.913rem + 0.4348vw, 1.25rem);
+		--fontSize-1: clamp(1.2rem, 1.0739rem + 0.6304vw, 1.5625rem);
+		--fontSize-2: clamp(1.44rem, 1.2615rem + 0.8924vw, 1.9531rem);
+
+		--softSpring: linear(
+			0,
+			0.009 0.8%,
+			0.034 1.6%,
+			0.144 3.5%,
+			0.736 10.2%,
+			0.953 13.2%,
+			1.093 16.2%,
+			1.136 17.8%,
+			1.161 19.4%,
+			1.169 21.3%,
+			1.158 23.4%,
+			1.014 33.8%,
+			0.986 37%,
+			0.973 40.3%,
+			0.973 44.5%,
+			1.004 60.8%,
+			1
+		);
 
 		background-color: var(--buttercream);
 		color: var(--midnight);
 		accent-color: var(--jade);
+	}
+
+	body {
+		font-size: var(--fontSize-0);
 	}
 
 	@media (prefers-reduced-motion: no-preference) {
@@ -30,23 +61,28 @@
 	}
 
 	h1 {
-		font-size: 2rem;
+		font-size: var(--fontSize-2);
 		font-weight: 600;
 	}
 
 	h2 {
-		font-size: 1.4rem;
+		font-size: var(--fontSize-1);
 		font-weight: 500;
 	}
 
 	a {
 		color: var(--link);
-		border-radius: 0.2em;
 
-		&:focus-visible {
-			outline: 3px solid var(--jade);
-			outline-offset: 0.2em;
+		&:visited {
+			color: var(--linkVisited);
 		}
+	}
+
+	a:focus-visible,
+	button:focus-visible {
+		border-radius: 0.2em;
+		outline: 3px solid var(--jade);
+		outline-offset: 0.2em;
 	}
 
 	input:where(
@@ -84,16 +120,16 @@
 			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
 			monospace;
 	}
+
 	button {
 		position: relative;
 		display: inline-block;
-		cursor: pointer;
 		outline: none;
 		border: 0;
 		vertical-align: middle;
 		text-decoration: none;
 		font-family: inherit;
-		font-size: 15px;
+		font-size: var(--fontSize-0);
 	}
 
 	.visually-hidden {

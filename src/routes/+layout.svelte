@@ -36,16 +36,19 @@
 	</div>
 
 	<nav>
-		<a
-			href="/generators/regular-polygon"
-			aria-current={page.url.pathname === '/generators/regular-polygon'}
-		>
-			Regular polygon
-		</a>
-		<a href="/generators/star" aria-current={page.url.pathname === '/generators/star'}> Star </a>
-		<a href="/generators/squircle" aria-current={page.url.pathname === '/generators/squircle'}>
-			Squircle
-		</a>
+		<button popovertarget="shapes">Shapes ▾</button>
+		<div id="shapes" popover>
+			<a
+				href="/generators/regular-polygon"
+				aria-current={page.url.pathname === '/generators/regular-polygon'}
+			>
+				Regular polygon
+			</a>
+			<a href="/generators/star" aria-current={page.url.pathname === '/generators/star'}> Star </a>
+			<a href="/generators/squircle" aria-current={page.url.pathname === '/generators/squircle'}>
+				Squircle
+			</a>
+		</div>
 	</nav>
 </header>
 
@@ -63,10 +66,15 @@
 		background: var(--midnight);
 		color: var(--linen);
 		padding: 1rem;
+		gap: 1rem;
+
+		@media (max-width: 400px) {
+			flex-direction: column;
+		}
 	}
 
 	.site-title {
-		font-size: 2rem;
+		font-size: var(--fontSize-2);
 
 		a {
 			color: inherit;
@@ -85,7 +93,11 @@
 		}
 
 		.win {
-			font-size: 0.5em;
+			font-size: var(--fontSize-0);
+		}
+
+		@media (max-width: 600px) {
+			font-size: var(--fontSize-1);
 		}
 	}
 
@@ -94,12 +106,13 @@
 		flex-wrap: wrap;
 		gap: 1rem;
 
-		a {
+		> a,
+		> button {
+			background: transparent;
 			padding-block: 0.2em;
 			padding-inline: 0.25em;
 			color: inherit;
-			font-size: 1.2rem;
-			font-weight: 600;
+			font-weight: 500;
 			text-underline-offset: 0.2em;
 			text-decoration-color: color-mix(in srgb, currentColor 80%, transparent);
 
@@ -114,11 +127,69 @@
 				color: var(--midnight);
 				text-decoration: none;
 			}
+
+			@media (max-width: 600px) {
+				font-size: var(--fontSize-0);
+			}
+		}
+
+		[popovertarget] {
+			anchor-name: --dropdown;
+		}
+
+		[popover] {
+			position: fixed;
+			position-anchor: --dropdown;
+			position-area: end span-start;
+			margin: 0;
+			padding: 1rem;
+
+			background: var(--linen);
+			border: 4px solid var(--midnight);
+			border-radius: 0.5rem;
+			--duration: 0.75s;
+			transition:
+				display var(--duration) allow-discrete,
+				overlay var(--duration) allow-discrete,
+				opacity var(--duration) var(--softSpring),
+				transform var(--duration) var(--softSpring);
+			opacity: 0;
+			transform: translate(0, -0.5rem) scaleY(0.95);
+			transform-origin: top center;
+
+			&:popover-open {
+				opacity: 1;
+				transform: none;
+
+				@starting-style {
+					opacity: 0;
+					transform: translate(0, -0.5rem) scaleY(0.8);
+				}
+			}
+
+			@media (prefers-reduced-motion: reduce) {
+				&,
+				&:popover-open {
+					transform: none;
+				}
+			}
+
+			a {
+				display: block;
+				padding-block: 0.2em;
+				color: var(--link);
+				font-weight: 500;
+
+				&:visited {
+					color: var(--linkVisited);
+				}
+			}
 		}
 	}
 
 	footer {
 		padding-block: 4rem 2rem;
+		padding-inline: 1rem;
 		text-align: center;
 	}
 </style>

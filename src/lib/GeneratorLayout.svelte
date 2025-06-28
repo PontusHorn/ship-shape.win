@@ -29,6 +29,15 @@
 		min-block-size: 100vh;
 		padding: 1rem;
 		gap: 1rem;
+
+		@media (width < 800px) {
+			grid-template-areas:
+				'input'
+				'preview'
+				'output';
+			grid-template-columns: 1fr;
+			grid-template-rows: auto auto 1fr;
+		}
 	}
 
 	.input-pane {
@@ -45,6 +54,7 @@
 		place-items: center;
 		place-content: center;
 		padding: 2rem;
+		min-inline-size: 0;
 
 		background: var(--pistachio);
 		border-radius: 0.5rem;
@@ -53,5 +63,6 @@
 
 	.output-pane {
 		grid-area: output;
+		min-inline-size: 0;
 	}
 </style>

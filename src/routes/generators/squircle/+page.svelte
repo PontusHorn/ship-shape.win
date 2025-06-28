@@ -82,7 +82,8 @@
 
 	.preview {
 		background-color: var(--jade);
-		width: 600px;
+		width: 300px;
 		height: 300px;
+		max-width: 100%;
 	}
 </style>

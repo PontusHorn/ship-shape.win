@@ -143,7 +143,7 @@
 			--_depth: 0.75;
 			padding-block: 0.3em;
 			padding-inline: 0.5em;
-			font-size: 0.875em;
+			font-size: var(--fontSize--1);
 		}
 	}
 </style>
