@@ -1,6 +1,7 @@
 import { defineConfig, devices, ViewportSize } from '@playwright/test';
 
 const LARGE_DESKTOP_VIEWPORT: ViewportSize = { width: 1920, height: 1080 };
+const SMALL_MOBILE_VIEWPORT: ViewportSize = { width: 320, height: 600 };
 
 export default defineConfig({
 	webServer: {
@@ -28,6 +29,20 @@ export default defineConfig({
 		{
 			name: 'chromium (large)',
 			use: { ...devices['Desktop Chrome'], viewport: LARGE_DESKTOP_VIEWPORT }
+		},
+
+		// Mobile
+		{
+			name: 'chromium (mobile)',
+			use: { ...devices['Mobile Chrome'], viewport: SMALL_MOBILE_VIEWPORT }
+		},
+		{
+			name: 'firefox (mobile)',
+			use: { ...devices['Mobile Firefox'], viewport: SMALL_MOBILE_VIEWPORT }
+		},
+		{
+			name: 'webkit (mobile)',
+			use: { ...devices['Mobile Safari'], viewport: SMALL_MOBILE_VIEWPORT }
 		}
 	]
 });
