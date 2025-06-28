@@ -16,6 +16,12 @@
 	<article>
 		<h2><a href="/generators/squircle">Squircle</a></h2>
 	</article>
+
+	<p>There's also an editor if you prefer to freestyle it:</p>
+
+	<article>
+		<h2><a href="/editor">Editor</a></h2>
+	</article>
 </main>
 
 <style>

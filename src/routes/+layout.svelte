@@ -49,6 +49,8 @@
 				Squircle
 			</a>
 		</div>
+
+		<a href="/editor" aria-current={page.url.pathname === '/editor'}>Editor</a>
 	</nav>
 </header>
 
