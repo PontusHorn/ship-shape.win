@@ -113,6 +113,7 @@
 			background: transparent;
 			padding-block: 0.2em;
 			padding-inline: 0.25em;
+			border-radius: 0.15rem;
 			color: inherit;
 			font-weight: 500;
 			text-underline-offset: 0.2em;
@@ -144,7 +145,7 @@
 			position-anchor: --dropdown;
 			position-area: end span-start;
 			margin: 0;
-			padding: 1rem;
+			padding: 0.5rem;
 
 			background: var(--linen);
 			border: 4px solid var(--midnight);
@@ -179,11 +180,26 @@
 			a {
 				display: block;
 				padding-block: 0.2em;
+				padding-inline: 0.4em;
+				border-radius: 0.15rem;
 				color: var(--link);
 				font-weight: 500;
+				outline-offset: 0;
+
+				&:hover,
+				&:focus-visible {
+					text-decoration-color: currentColor;
+					text-decoration-thickness: 0.15em;
+				}
 
 				&:visited {
 					color: var(--linkVisited);
+				}
+
+				&[aria-current='true'] {
+					background-color: var(--midnight);
+					color: var(--linen);
+					text-decoration: none;
 				}
 			}
 		}
