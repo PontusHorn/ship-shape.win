@@ -22,6 +22,7 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
+		margin-block-end: 0.75em;
 		padding-block: 0.5em;
 		padding-inline: 0.7em;
 

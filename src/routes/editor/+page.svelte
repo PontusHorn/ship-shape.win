@@ -20,6 +20,12 @@
 	);
 	const cssProperties = $derived({ 'clip-path': drawing.toShape().toString() });
 
+	const selectedVertex = $derived(
+		editor.selectedVertexId
+			? drawing.vertices.find((v) => v.id === editor.selectedVertexId)
+			: undefined
+	);
+
 	let lastAddedVertexId = $state<string>();
 	function focusWhenAdded(vertexId: string): Attachment {
 		return (element: Element) => {
@@ -61,7 +67,39 @@
 <GeneratorLayout>
 	<Toolbar />
 
-	<form></form>
+	<form>
+		{#if selectedVertex}
+			<label for="vertex-x">X:</label>
+			<input
+				id="vertex-x"
+				type="text"
+				value={selectedVertex.position.x.value.toString()}
+				readonly
+			/>
+
+			<label for="vertex-x-type" class="visually-hidden">X type</label>
+			<select id="vertex-x-type" value={selectedVertex.position.x.type}>
+				<option value="percent">%</option>
+				<option value="px_from_start">px</option>
+				<option value="px_from_end">px (from right)</option>
+			</select>
+
+			<label for="vertex-y">Y:</label>
+			<input
+				id="vertex-y"
+				type="text"
+				value={selectedVertex.position.y.value.toString()}
+				readonly
+			/>
+
+			<label for="vertex-y-type" class="visually-hidden">Y type</label>
+			<select id="vertex-y-type" value={selectedVertex.position.y.type}>
+				<option value="percent">%</option>
+				<option value="px_from_start">px</option>
+				<option value="px_from_end">px (from bottom)</option>
+			</select>
+		{/if}
+	</form>
 
 	{#snippet preview()}
 		<button class="background" onclick={handleBackgroundClick}>
@@ -121,10 +159,19 @@
 <style>
 	form {
 		display: grid;
-		grid-template-columns: auto 1fr;
-		align-items: baseline;
+		grid-template-columns: auto 1fr auto;
+		align-items: center;
 		align-content: start;
 		gap: 0.5rem 0.25rem;
+
+		label {
+			margin-inline-end: 0.25rem;
+		}
+
+		input,
+		select {
+			align-self: stretch;
+		}
 	}
 
 	.background {

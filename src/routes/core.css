@@ -94,7 +94,8 @@
 			[type='tel'],
 			[type='number'],
 			[type='password']
-		) {
+		),
+	select {
 		background-color: var(--linen);
 		border: 2px solid var(--midnight);
 		border-radius: 0.25rem;
