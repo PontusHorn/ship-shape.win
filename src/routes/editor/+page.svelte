@@ -7,7 +7,6 @@
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
 	import { vertexFromPercent, type Vertex } from '$lib/Vertex';
 	import { VertexDimension } from '$lib/VertexDimension';
-	import { VertexPosition } from '$lib/VertexPosition';
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
 	import type { Attachment } from 'svelte/attachments';
@@ -61,6 +60,30 @@
 		});
 	}
 
+	function handleVertexTypeChange(coordinate: 'x' | 'y', newType: string) {
+		if (!selectedVertex) throw new Error('No vertex selected');
+		if (newType !== 'percent' && newType !== 'px_from_start' && newType !== 'px_from_end') {
+			return;
+		}
+
+		const currentDimension =
+			coordinate === 'x' ? selectedVertex.position.x : selectedVertex.position.y;
+		const maxPx = coordinate === 'x' ? previewWidth : previewHeight;
+
+		// Convert current value to pixels, then to new type
+		const currentPixels = currentDimension.toPixels(maxPx);
+		const newDimension = VertexDimension.fromPixels(newType, maxPx, currentPixels);
+
+		const position = selectedVertex.position;
+		const newPosition =
+			coordinate === 'x' ? position.withX(newDimension) : position.withY(newDimension);
+
+		onChangeVertex({
+			...selectedVertex,
+			position: newPosition
+		});
+	}
+
 	function handleBackgroundClick(event: MouseEvent) {
 		if (event.target === event.currentTarget) {
 			clearVertexSelection();
@@ -96,7 +119,11 @@
 			/>
 
 			<label for="vertex-x-type" class="visually-hidden">X type</label>
-			<select id="vertex-x-type" value={selectedVertex.position.x.type}>
+			<select
+				id="vertex-x-type"
+				value={selectedVertex.position.x.type}
+				onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
+			>
 				<option value="percent">%</option>
 				<option value="px_from_start">px</option>
 				<option value="px_from_end">px (from right)</option>
@@ -111,7 +138,11 @@
 			/>
 
 			<label for="vertex-y-type" class="visually-hidden">Y type</label>
-			<select id="vertex-y-type" value={selectedVertex.position.y.type}>
+			<select
+				id="vertex-y-type"
+				value={selectedVertex.position.y.type}
+				onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
+			>
 				<option value="percent">%</option>
 				<option value="px_from_start">px</option>
 				<option value="px_from_end">px (from bottom)</option>

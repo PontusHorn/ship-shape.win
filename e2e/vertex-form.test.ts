@@ -71,8 +71,8 @@ test.describe('Editor: Vertex form', () => {
 		expect(newVertexPos[1]).toBeGreaterThan(vertexPos[1]);
 	});
 
-	test.only('should convert coordinates when changing type', async ({ page }) => {
-		const vertex = getVertices(page).last();
+	test('should convert coordinates when changing type', async ({ page }) => {
+		const vertex = getVertices(page).first();
 		await vertex.click();
 
 		const xInput = page.getByLabel(/x:/i);
@@ -90,7 +90,7 @@ test.describe('Editor: Vertex form', () => {
 		await expect(xInput).toHaveValue('75');
 		expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
 		let commands = await getOutputShapeCommands(page);
-		expect(commands[2]).toBe('line to 75px 0%');
+		expect(commands[0]).toBe('from 75px 0%');
 
 		// Change to px_from_end
 		await xTypeSelect.selectOption('px_from_end');
@@ -99,7 +99,7 @@ test.describe('Editor: Vertex form', () => {
 		await expect(xInput).toHaveValue('225');
 		expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
 		commands = await getOutputShapeCommands(page);
-		expect(commands[2]).toContain('line to calc(100% - 225px) 0%');
+		expect(commands[0]).toBe('from calc(100% - 225px) 0%');
 
 		// Back to percent
 		await xTypeSelect.selectOption('percent');
@@ -108,7 +108,7 @@ test.describe('Editor: Vertex form', () => {
 		await expect(xInput).toHaveValue('25');
 		expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
 		commands = await getOutputShapeCommands(page);
-		expect(commands[2]).toContain('line to 25% 0%');
+		expect(commands[0]).toBe('from 25% 0%');
 	});
 
 	test('should update form when different vertex is selected', async ({ page }) => {
