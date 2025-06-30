@@ -9,7 +9,14 @@ export class From implements Command {
 	}
 
 	toString() {
-		return `from\n\t\t${this.coords.x}\n\t\t${this.coords.y}`;
+		const parts = ['from', this.coords.x, this.coords.y];
+
+		const oneLiner = parts.join(' ');
+		if (oneLiner.length <= 80) {
+			return oneLiner;
+		}
+
+		return parts.join('\n\t\t');
 	}
 }
 

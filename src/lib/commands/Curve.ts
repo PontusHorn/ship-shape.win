@@ -27,11 +27,21 @@ export class Curve implements Command {
 	}
 
 	toString() {
-		return [
+		const parts = [
 			`curve ${this.method} ${this.coords.x} ${this.coords.y}`,
-			`\twith ${this.withCoords.x} ${this.withCoords.y}`,
-			this.withCoords2 ? `\t/ ${this.withCoords2.x} ${this.withCoords2.y}` : ''
-		].join('\n\t\t');
+			`with ${this.withCoords.x} ${this.withCoords.y}`
+		];
+
+		if (this.withCoords2) {
+			parts.push(`/ ${this.withCoords2.x} ${this.withCoords2.y}`);
+		}
+
+		const oneLiner = parts.join(' ');
+		if (oneLiner.length <= 80) {
+			return oneLiner;
+		}
+
+		return parts.join('\n\t\t');
 	}
 }
 
