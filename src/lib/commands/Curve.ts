@@ -28,20 +28,30 @@ export class Curve implements Command {
 
 	toString() {
 		const parts = [
-			`curve ${this.method} ${this.coords.x} ${this.coords.y}`,
-			`with ${this.withCoords.x} ${this.withCoords.y}`
+			[`curve ${this.method}`],
+			[this.coords.x.toString(), this.coords.y.toString()],
+			['with', this.withCoords.x.toString(), this.withCoords.y.toString()]
 		];
 
 		if (this.withCoords2) {
-			parts.push(`/ ${this.withCoords2.x} ${this.withCoords2.y}`);
+			parts.push(['/', this.withCoords2.x.toString(), this.withCoords2.y.toString()]);
 		}
 
-		const oneLiner = parts.join(' ');
+		const oneLiner = parts.flat().join(' ');
 		if (oneLiner.length <= 80) {
 			return oneLiner;
 		}
 
-		return parts.join('\n\t\t');
+		const wrappedParts = parts.map((chunk) => {
+			const oneLineChunk = chunk.join(' ');
+			if (oneLineChunk.length <= 80) {
+				return oneLineChunk;
+			}
+
+			return chunk.length >= 3 ? chunk.join('\n\t\t\t') : chunk.join('\n\t\t');
+		});
+
+		return wrappedParts.join('\n\t\t');
 	}
 }
 

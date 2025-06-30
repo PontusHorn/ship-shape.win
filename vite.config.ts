@@ -29,6 +29,14 @@ export default defineConfig({
 					},
 					setupFiles: ['.storybook/vitest.setup.ts']
 				}
+			},
+			{
+				extends: 'vite.config.ts',
+				test: {
+					name: 'unit',
+					include: ['src/**/*.{test,spec}.{js,ts}'],
+					exclude: ['src/**/*.stories.{js,ts,svelte}']
+				}
 			}
 		]
 	}
