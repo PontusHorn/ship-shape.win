@@ -1,16 +1,22 @@
 import { type LengthPercentage, percent, px, raw } from './LengthPercentage';
 
+type DimensionType = 'percent' | 'px_from_start' | 'px_from_end';
+
 export class VertexDimension {
-	type: 'percent' | 'px_from_start' | 'px_from_end';
+	type: DimensionType;
 	value: number;
 
-	constructor(type: 'percent' | 'px_from_start' | 'px_from_end', value: number) {
+	constructor(type: DimensionType, value: number) {
 		this.type = type;
 		this.value = value;
 	}
 
 	get roundedValue() {
 		return Math.round(this.value);
+	}
+
+	withValue(value: number): VertexDimension {
+		return new VertexDimension(this.type, value);
 	}
 
 	toPixels(maxPx: number): number {
@@ -37,11 +43,7 @@ export class VertexDimension {
 		return VertexDimension.fromPixels(origin.type, maxPx, mirroredPx);
 	}
 
-	static fromPixels(
-		type: 'percent' | 'px_from_start' | 'px_from_end',
-		maxPx: number,
-		px: number
-	): VertexDimension {
+	static fromPixels(type: DimensionType, maxPx: number, px: number): VertexDimension {
 		switch (type) {
 			case 'percent':
 				return new VertexDimension(type, (px / maxPx) * 100);

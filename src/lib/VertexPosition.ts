@@ -11,6 +11,14 @@ export class VertexPosition {
 		this.y = y;
 	}
 
+	withX(x: VertexDimension): VertexPosition {
+		return new VertexPosition(x, this.y);
+	}
+
+	withY(y: VertexDimension): VertexPosition {
+		return new VertexPosition(this.x, y);
+	}
+
 	toTranslated([deltaX, deltaY]: Vector, [maxX, maxY]: Vector): VertexPosition {
 		return new VertexPosition(this.x.toTranslated(deltaX, maxX), this.y.toTranslated(deltaY, maxY));
 	}

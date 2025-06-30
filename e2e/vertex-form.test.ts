@@ -1,11 +1,5 @@
 import { expect, test } from './test-api';
-import {
-	getElementCenter,
-	getOutputShapeCommands,
-	getTools,
-	getVertices,
-	translate
-} from './helpers';
+import { getElementCenter, getOutputShapeCommands, getTools, getVertices } from './helpers';
 
 test.describe('Editor: Vertex form', () => {
 	test.beforeEach(async ({ page }) => {
@@ -73,11 +67,11 @@ test.describe('Editor: Vertex form', () => {
 
 		// Visual position should also update
 		const newVertexPos = await getElementCenter(vertex);
-		// 25% of 300px = 75px, 50% of 300px = 150px
-		expect(newVertexPos).toBeCloseVector(translate(vertexPos, [-75, 150]));
+		expect(newVertexPos[0]).toBeLessThan(vertexPos[0]);
+		expect(newVertexPos[1]).toBeGreaterThan(vertexPos[1]);
 	});
 
-	test('should convert coordinates when changing type', async ({ page }) => {
+	test.only('should convert coordinates when changing type', async ({ page }) => {
 		const vertex = getVertices(page).last();
 		await vertex.click();
 

@@ -6,6 +6,8 @@
 	import { Drawing } from '$lib/Drawing.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
 	import { vertexFromPercent, type Vertex } from '$lib/Vertex';
+	import { VertexDimension } from '$lib/VertexDimension';
+	import { VertexPosition } from '$lib/VertexPosition';
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
 	import type { Attachment } from 'svelte/attachments';
@@ -43,6 +45,22 @@
 		drawing.vertices[index] = vertex;
 	}
 
+	function handleVertexInputChange(coordinate: 'x' | 'y', value: number) {
+		if (!selectedVertex) throw new Error('No vertex selected');
+		if (Number.isNaN(value)) return;
+
+		const position = selectedVertex.position;
+		const newPosition =
+			coordinate === 'x'
+				? position.withX(position.x.withValue(value))
+				: position.withY(position.y.withValue(value));
+
+		onChangeVertex({
+			...selectedVertex,
+			position: newPosition
+		});
+	}
+
 	function handleBackgroundClick(event: MouseEvent) {
 		if (event.target === event.currentTarget) {
 			clearVertexSelection();
@@ -72,9 +90,9 @@
 			<label for="vertex-x">X:</label>
 			<input
 				id="vertex-x"
-				type="text"
+				type="number"
 				value={selectedVertex.position.x.value.toString()}
-				readonly
+				oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
 			/>
 
 			<label for="vertex-x-type" class="visually-hidden">X type</label>
@@ -87,9 +105,9 @@
 			<label for="vertex-y">Y:</label>
 			<input
 				id="vertex-y"
-				type="text"
+				type="number"
 				value={selectedVertex.position.y.value.toString()}
-				readonly
+				oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
 			/>
 
 			<label for="vertex-y-type" class="visually-hidden">Y type</label>
