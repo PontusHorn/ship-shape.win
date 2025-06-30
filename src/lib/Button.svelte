@@ -109,6 +109,8 @@
 		&:focus-visible {
 			background-color: color-mix(in srgb, var(--_color), var(--linen) 25%);
 			--_pressedness: 0.05em;
+			/* Bring the focus outline to the front */
+			z-index: 1;
 		}
 
 		&:is([aria-checked='true'], [aria-pressed='true']) {
