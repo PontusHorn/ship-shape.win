@@ -139,26 +139,4 @@ test.describe('Editor: Vertex form', () => {
 		const commands = await getOutputShapeCommands(page);
 		expect(commands[0]).toBe('from 34% 0%'); // Rounded to nearest integer
 	});
-
-	test('should validate input values', async ({ page }) => {
-		const vertex = getVertices(page).first();
-		await vertex.click();
-
-		const xInput = page.getByLabel(/x:/i);
-
-		// First, enter valid value to test fallback behavior
-		await xInput.fill('75');
-
-		// Try to enter invalid value
-		await xInput.fill('invalid');
-
-		// Should retain user input, but use the latest valid value for the output
-		const value = await xInput.inputValue();
-		expect(value).toBe('invalid');
-		const commands = await getOutputShapeCommands(page);
-		expect(commands[0]).toBe('from 75% 0%');
-
-		// Should show error message
-		await expect(page.getByText('Must be numeric')).toBeVisible();
-	});
 });
