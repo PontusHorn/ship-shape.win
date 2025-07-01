@@ -31,6 +31,9 @@ export default ts.config(
 				parser: ts.parser,
 				svelteConfig
 			}
+		},
+		rules: {
+			'svelte/no-useless-mustaches': ['error', { ignoreStringEscape: true }]
 		}
 	}
 );

@@ -13,7 +13,7 @@
 	name="Single rule"
 	args={{ cssProperties: { foo: 'bar' } }}
 	play={async ({ canvasElement }) => {
-		const expectedCode = 'foo: bar;\r\n';
+		const expectedCode = 'foo: bar;\n';
 
 		const canvas = within(canvasElement);
 		const code = canvas.getByRole('code');
@@ -31,7 +31,7 @@
 	name="Multiple rules"
 	args={{ cssProperties: { foo: 'bar', baz: 'quux' } }}
 	play={async ({ canvasElement }) => {
-		const expectedCode = 'foo: bar;\r\nbaz: quux;\r\n';
+		const expectedCode = 'foo: bar;\nbaz: quux;\n';
 
 		const canvas = within(canvasElement);
 		const code = canvas.getByRole('code');

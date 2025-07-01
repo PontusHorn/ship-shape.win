@@ -10,7 +10,7 @@
 
 <code bind:this={codeElement}
 	>{#each Object.entries(cssProperties) as [key, value] (key)}<span class="property">{key}</span>:
-		<span class="key">{value}</span>;&#13;&#10;{/each}</code
+		<span class="key">{value}</span>;{'\n'}{/each}</code
 >
 <div class="copy">
 	<Button size="small" onclick={() => copyTextToClipboard(codeElement)} popovertarget="copied">
