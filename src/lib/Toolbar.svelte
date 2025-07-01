@@ -37,5 +37,6 @@
 	.toolbar {
 		display: flex;
 		align-items: stretch;
+		justify-content: center;
 	}
 </style>

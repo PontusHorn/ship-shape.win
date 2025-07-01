@@ -4,7 +4,6 @@
 	import AddVertexButton from '$lib/AddVertexButton.svelte';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { Drawing } from '$lib/Drawing.svelte';
-	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
 	import { vertexFromPercent, type Vertex } from '$lib/Vertex';
 	import { VertexDimension } from '$lib/VertexDimension';
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
@@ -12,6 +11,7 @@
 	import type { Attachment } from 'svelte/attachments';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import { clearVertexSelection, editor } from '$lib/editor.svelte';
+	import EditorLayout from '$lib/EditorLayout.svelte';
 
 	const previewWidth = 300;
 	const previewHeight = 300;
@@ -105,51 +105,7 @@
 	<meta name="description" content={`TODO ${SITE_DESCRIPTION}`} />
 </svelte:head>
 
-<GeneratorLayout>
-	<Toolbar />
-
-	<form>
-		{#if selectedVertex}
-			<label for="vertex-x">X:</label>
-			<input
-				id="vertex-x"
-				type="number"
-				value={selectedVertex.position.x.value.toString()}
-				oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
-			/>
-
-			<label for="vertex-x-type" class="visually-hidden">X type</label>
-			<select
-				id="vertex-x-type"
-				value={selectedVertex.position.x.type}
-				onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
-			>
-				<option value="percent">%</option>
-				<option value="px_from_start">px</option>
-				<option value="px_from_end">px (from right)</option>
-			</select>
-
-			<label for="vertex-y">Y:</label>
-			<input
-				id="vertex-y"
-				type="number"
-				value={selectedVertex.position.y.value.toString()}
-				oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
-			/>
-
-			<label for="vertex-y-type" class="visually-hidden">Y type</label>
-			<select
-				id="vertex-y-type"
-				value={selectedVertex.position.y.type}
-				onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
-			>
-				<option value="percent">%</option>
-				<option value="px_from_start">px</option>
-				<option value="px_from_end">px (from bottom)</option>
-			</select>
-		{/if}
-	</form>
-
+<EditorLayout>
 	{#snippet preview()}
 		<button class="background" onclick={handleBackgroundClick}>
 			<span class="visually-hidden">Clear selection</span>
@@ -200,10 +156,54 @@
 		</div>
 	{/snippet}
 
+	<Toolbar />
+
+	<form>
+		{#if selectedVertex}
+			<label for="vertex-x">X:</label>
+			<input
+				id="vertex-x"
+				type="number"
+				value={selectedVertex.position.x.value.toString()}
+				oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
+			/>
+
+			<label for="vertex-x-type" class="visually-hidden">X type</label>
+			<select
+				id="vertex-x-type"
+				value={selectedVertex.position.x.type}
+				onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
+			>
+				<option value="percent">%</option>
+				<option value="px_from_start">px</option>
+				<option value="px_from_end">px (from right)</option>
+			</select>
+
+			<label for="vertex-y">Y:</label>
+			<input
+				id="vertex-y"
+				type="number"
+				value={selectedVertex.position.y.value.toString()}
+				oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
+			/>
+
+			<label for="vertex-y-type" class="visually-hidden">Y type</label>
+			<select
+				id="vertex-y-type"
+				value={selectedVertex.position.y.type}
+				onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
+			>
+				<option value="percent">%</option>
+				<option value="px_from_start">px</option>
+				<option value="px_from_end">px (from bottom)</option>
+			</select>
+		{/if}
+	</form>
+
 	{#snippet output()}
 		<CssOutput {cssProperties} />
 	{/snippet}
-</GeneratorLayout>
+</EditorLayout>
 
 <style>
 	form {
@@ -220,6 +220,7 @@
 		input,
 		select {
 			align-self: stretch;
+			min-width: 0;
 		}
 	}
 
