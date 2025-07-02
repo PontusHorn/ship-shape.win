@@ -1,5 +1,5 @@
 import { expect as baseExpect } from '@playwright/test';
-import { Vector } from './helpers';
+import type { Vector } from '../src/lib/vector';
 
 export { test } from '@playwright/test';
 

@@ -1,3 +1,4 @@
+import { translate } from '../src/lib/vector';
 import { expect, test } from './test-api';
 import {
 	drag,
@@ -5,8 +6,7 @@ import {
 	getElementCenter,
 	getOutputShapeCommands,
 	getTools,
-	getVertices,
-	translate
+	getVertices
 } from './helpers';
 
 test.describe('Editor: Curve tool', () => {
@@ -71,20 +71,21 @@ test.describe('Editor: Curve tool', () => {
 		]);
 	});
 
-	test('should select vertex when clicked', async ({ page }) => {
+	test('should select forward control point when clicked', async ({ page }) => {
 		const vertex = getVertices(page).first();
-		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
-
 		await vertex.click();
-		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
+
+		const forward = getControlPoints(page, 'forward');
+		await expect(forward).toHaveAttribute('aria-pressed', 'true');
 	});
 
 	test('should clear selection when clicking background', async ({ page }) => {
-		const vertex = getVertices(page).first();
-
 		// Select a vertex
+		const vertex = getVertices(page).first();
 		await vertex.click();
-		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
+
+		const forward = getControlPoints(page, 'forward');
+		await expect(forward).toHaveAttribute('aria-pressed', 'true');
 
 		// Click background (which should have an accessible name/role)
 		const background = page.getByRole('button', { name: /clear selection/i });
@@ -94,34 +95,19 @@ test.describe('Editor: Curve tool', () => {
 		});
 
 		// Vertex should no longer be selected
-		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
+		await expect(forward).toHaveAttribute('aria-pressed', 'false');
 	});
 
 	test('should clear selection when pressing Escape', async ({ page }) => {
-		const vertex = getVertices(page).first();
-
 		// Select a vertex
+		const vertex = getVertices(page).first();
 		await vertex.click();
-		await expect(vertex).toHaveAttribute('aria-pressed', 'true');
+
+		const forward = getControlPoints(page, 'forward');
+		await expect(forward).toHaveAttribute('aria-pressed', 'true');
 
 		// Press Escape to clear selection
 		await page.keyboard.press('Escape');
-		await expect(vertex).toHaveAttribute('aria-pressed', 'false');
-	});
-
-	test('should switch selection when clicking different vertex', async ({ page }) => {
-		const vertices = getVertices(page);
-		const firstVertex = vertices.nth(0);
-		const secondVertex = vertices.nth(1);
-
-		// Select first vertex
-		await firstVertex.click();
-		await expect(firstVertex).toHaveAttribute('aria-pressed', 'true');
-		await expect(secondVertex).toHaveAttribute('aria-pressed', 'false');
-
-		// Select second vertex
-		await secondVertex.click();
-		await expect(firstVertex).toHaveAttribute('aria-pressed', 'false');
-		await expect(secondVertex).toHaveAttribute('aria-pressed', 'true');
+		await expect(forward).toHaveAttribute('aria-pressed', 'false');
 	});
 });

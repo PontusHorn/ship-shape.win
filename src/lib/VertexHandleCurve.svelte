@@ -1,38 +1,32 @@
 <script lang="ts">
 	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
 	import { type Vertex } from './Vertex';
-	import { VertexDimension } from './VertexDimension';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { editor, selectVertex } from './editor.svelte';
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { VertexPosition } from './VertexPosition';
 	import type { Attachment } from 'svelte/attachments';
+	import type { Vector } from './vector';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
 		defaultControlPointPosition: VertexPosition;
-		previewWidth: number;
-		previewHeight: number;
+		maxSize: Vector;
 	};
 
-	const {
-		vertex,
-		onChangeVertex,
-		defaultControlPointPosition,
-		previewWidth,
-		previewHeight,
-		...props
-	}: Props = $props();
+	const { vertex, onChangeVertex, defaultControlPointPosition, maxSize, ...props }: Props =
+		$props();
 
-	const isSelected = $derived(editor.selectedVertexId === vertex.id);
+	const isSelected = $derived(editor.selection?.id === vertex.id);
+	const isPositionSelected = $derived(isSelected && editor.selection?.part === 'position');
 
 	// Make the button draggable for creating control points
 	const dragOptions: DragOptions = $derived({
 		handle: 'button',
 		position: {
-			x: vertex.position.x.toPixels(previewWidth),
-			y: vertex.position.y.toPixels(previewHeight)
+			x: vertex.position.x.toPixels(maxSize[0]),
+			y: vertex.position.y.toPixels(maxSize[1])
 		},
 		legacyTranslate: false,
 		onDrag: handleDrag
@@ -40,24 +34,20 @@
 
 	function handlePointerDown() {
 		// Select on pointer down to feel more responsive on drag
-		selectVertex(vertex.id);
+		selectVertex(vertex.id, 'controlPointForward');
 	}
 
 	function handleVertexClick() {
 		// The vertex is already selected on pointer down, but in case the "click"
 		// is triggered via keyboard or other non-pointer means, we need to select
 		// it here too.
-		selectVertex(vertex.id);
+		selectVertex(vertex.id, 'controlPointForward');
 
 		// Initialize control points if they don't exist
 		if (vertex.controlPointForward || vertex.controlPointBackward) return;
 
 		const controlPointForward = defaultControlPointPosition;
-		const controlPointBackward = controlPointForward.toMirrored(
-			vertex.position,
-			previewWidth,
-			previewHeight
-		);
+		const controlPointBackward = controlPointForward.toMirrored(vertex.position, maxSize);
 
 		lastAddedControlPoint = controlPointForward;
 
@@ -71,17 +61,10 @@
 
 	function handleDrag({ offsetX, offsetY }: DragEventData) {
 		// Create forward control point based on drag position
-		const controlPointForward = new VertexPosition(
-			VertexDimension.fromPixels(vertex.position.x.type, previewWidth, offsetX),
-			VertexDimension.fromPixels(vertex.position.y.type, previewHeight, offsetY)
-		);
+		const controlPointForward = vertex.position.withVector([offsetX, offsetY], maxSize);
 
 		// Create a mirrored backward control point
-		const controlPointBackward = controlPointForward.toMirrored(
-			vertex.position,
-			previewWidth,
-			previewHeight
-		);
+		const controlPointBackward = controlPointForward.toMirrored(vertex.position, maxSize);
 
 		lastAddedControlPoint = controlPointForward;
 
@@ -115,7 +98,7 @@
 			onpointerdown={handlePointerDown}
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleVertexClick}
-			aria-pressed={isSelected}
+			aria-pressed={isPositionSelected}
 		>
 			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 		</button>
@@ -127,9 +110,7 @@
 				{vertex}
 				{onChangeVertex}
 				controlPoint={vertex.controlPointForward}
-				isVertexSelected={isSelected}
-				{previewWidth}
-				{previewHeight}
+				{maxSize}
 				{@attach focusWhenAdded(vertex.controlPointForward)}
 			/>
 		{/if}
@@ -138,9 +119,7 @@
 				{vertex}
 				{onChangeVertex}
 				controlPoint={vertex.controlPointBackward}
-				isVertexSelected={isSelected}
-				{previewWidth}
-				{previewHeight}
+				{maxSize}
 			/>
 		{/if}
 	</div>

@@ -1,4 +1,4 @@
-import type { Vector } from './types';
+import type { Vector } from './vector';
 
 export function getArrowKeyDelta(
 	event: KeyboardEvent,

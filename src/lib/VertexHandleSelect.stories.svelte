@@ -42,8 +42,7 @@
 		onChangeVertex: (vertex) => {
 			vertices.centered = vertex;
 		},
-		previewWidth: 200,
-		previewHeight: 200
+		maxSize: [200, 200]
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);
@@ -80,8 +79,7 @@
 		onChangeVertex: (vertex) => {
 			vertices.differentDimensionTypes = vertex;
 		},
-		previewWidth: 200,
-		previewHeight: 200
+		maxSize: [200, 200]
 	}}
 	play={async ({ canvasElement }) => {
 		const canvas = within(canvasElement);

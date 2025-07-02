@@ -1,6 +1,5 @@
 import { Locator, Page } from '@playwright/test';
-
-export type Vector = [x: number, y: number];
+import type { Vector } from '../src/lib/vector';
 
 export async function getElementCenter(locator: Locator): Promise<Vector> {
 	const boundingBox = await locator.boundingBox();
@@ -17,14 +16,6 @@ export async function drag(page: Page, from: Vector, to: Vector) {
 	await page.mouse.down();
 	await page.mouse.move(...to);
 	await page.mouse.up();
-}
-
-export function translate(subject: Vector, by: Vector): Vector {
-	return [subject[0] + by[0], subject[1] + by[1]];
-}
-
-export function subtract(subject: Vector, vector: Vector): Vector {
-	return [subject[0] - vector[0], subject[1] - vector[1]];
 }
 
 export function getTools(page: Page) {

@@ -1,3 +1,4 @@
+import { translate } from '../src/lib/vector';
 import { expect, test } from './test-api';
 import {
 	drag,
@@ -5,8 +6,7 @@ import {
 	getElementCenter,
 	getOutputShapeCommands,
 	getTools,
-	getVertices,
-	translate
+	getVertices
 } from './helpers';
 
 // These tests are mostly expected to work the same in both the Select and Curve tools,

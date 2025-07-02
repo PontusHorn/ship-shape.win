@@ -3,8 +3,7 @@
 	import { cssPropertiesToCss } from '$lib/css';
 	import AddVertexButton from '$lib/AddVertexButton.svelte';
 	import CssOutput from '$lib/CssOutput.svelte';
-	import { Drawing } from '$lib/Drawing.svelte';
-	import { vertexFromPercent, type Vertex } from '$lib/Vertex';
+	import { moveVertex, moveVertexControlPoint, type Vertex } from '$lib/Vertex';
 	import { VertexDimension } from '$lib/VertexDimension';
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
@@ -12,20 +11,31 @@
 	import Toolbar from '$lib/Toolbar.svelte';
 	import { clearVertexSelection, editor } from '$lib/editor.svelte';
 	import EditorLayout from '$lib/EditorLayout.svelte';
+	import type { Vector } from '$lib/vector';
 
-	const previewWidth = 300;
-	const previewHeight = 300;
+	const previewSize: Vector = [300, 300];
 
-	let drawing = $state(
-		new Drawing([vertexFromPercent(50, 0), vertexFromPercent(100, 100), vertexFromPercent(0, 100)])
-	);
-	const cssProperties = $derived({ 'clip-path': drawing.toShape().toString() });
+	const cssProperties = $derived({ 'clip-path': editor.drawing.toShape().toString() });
 
-	const selectedVertex = $derived(
-		editor.selectedVertexId
-			? drawing.vertices.find((v) => v.id === editor.selectedVertexId)
-			: undefined
-	);
+	const selectedVertex = $derived.by(() => {
+		const { selection, drawing } = editor;
+		if (!selection) return;
+
+		const selectedVertex = drawing.vertices.find((v) => v.id === selection.id);
+		if (!selectedVertex) throw new Error('Selected vertex not found');
+
+		return selectedVertex;
+	});
+
+	const selectedPosition = $derived.by(() => {
+		const { selection } = editor;
+		if (!selection || !selectedVertex) return;
+
+		const position = selectedVertex[selection.part];
+		if (!position) throw new Error(`Position "${selection.part}" not found in vertex`);
+
+		return position;
+	});
 
 	let lastAddedVertexId = $state<string>();
 	function focusWhenAdded(vertexId: string): Attachment {
@@ -37,50 +47,66 @@
 	}
 
 	function onChangeVertex(vertex: Vertex) {
-		const index = drawing.vertices.findIndex(({ id }) => id === vertex.id);
+		const index = editor.drawing.vertices.findIndex(({ id }) => id === vertex.id);
 		if (index === -1) {
 			throw new Error('Vertex not found');
 		}
-		drawing.vertices[index] = vertex;
+		editor.drawing.vertices[index] = vertex;
 	}
 
 	function handleVertexInputChange(coordinate: 'x' | 'y', value: number) {
-		if (!selectedVertex) throw new Error('No vertex selected');
+		if (!editor.selection || !selectedVertex || !selectedPosition) {
+			throw new Error('Invalid selection');
+		}
+
 		if (Number.isNaN(value)) return;
 
-		const position = selectedVertex.position;
+		const { x, y } = selectedPosition;
 		const newPosition =
 			coordinate === 'x'
-				? position.withX(position.x.withValue(value))
-				: position.withY(position.y.withValue(value));
+				? selectedPosition.withX(x.withValue(value))
+				: selectedPosition.withY(y.withValue(value));
 
-		onChangeVertex({
-			...selectedVertex,
-			position: newPosition
-		});
+		let newVertex: Vertex;
+		switch (editor.selection.part) {
+			case 'position':
+				newVertex = moveVertex(selectedVertex, newPosition, previewSize);
+				break;
+			case 'controlPointForward':
+				newVertex = moveVertexControlPoint(selectedVertex, 'forward', newPosition, previewSize);
+				break;
+			case 'controlPointBackward':
+				newVertex = moveVertexControlPoint(selectedVertex, 'backward', newPosition, previewSize);
+				break;
+		}
+
+		onChangeVertex(newVertex);
 	}
 
 	function handleVertexTypeChange(coordinate: 'x' | 'y', newType: string) {
-		if (!selectedVertex) throw new Error('No vertex selected');
+		if (!editor.selection || !selectedVertex || !selectedPosition) {
+			throw new Error('Invalid selection');
+		}
+
 		if (newType !== 'percent' && newType !== 'px_from_start' && newType !== 'px_from_end') {
 			return;
 		}
 
-		const currentDimension =
-			coordinate === 'x' ? selectedVertex.position.x : selectedVertex.position.y;
-		const maxPx = coordinate === 'x' ? previewWidth : previewHeight;
+		const currentDimension = coordinate === 'x' ? selectedPosition.x : selectedPosition.y;
+		const maxPx = coordinate === 'x' ? previewSize[0] : previewSize[1];
 
 		// Convert current value to pixels, then to new type
 		const currentPixels = currentDimension.toPixels(maxPx);
 		const newDimension = VertexDimension.fromPixels(newType, maxPx, currentPixels);
 
-		const position = selectedVertex.position;
 		const newPosition =
-			coordinate === 'x' ? position.withX(newDimension) : position.withY(newDimension);
+			coordinate === 'x'
+				? selectedPosition.withX(newDimension)
+				: selectedPosition.withY(newDimension);
 
 		onChangeVertex({
 			...selectedVertex,
-			position: newPosition
+			[editor.selection.part]: newPosition
 		});
 	}
 
@@ -91,7 +117,7 @@
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		if (event.key === 'Escape' && editor.selectedVertexId) {
+		if (event.key === 'Escape' && editor.selection) {
 			clearVertexSelection();
 			event.preventDefault();
 		}
@@ -113,43 +139,40 @@
 
 		<div
 			class="preview"
-			class:hasSelection={!!editor.selectedVertexId}
-			style:width={previewWidth + 'px'}
-			style:height={previewHeight + 'px'}
+			class:hasSelection={!!editor.selection}
+			style:width={previewSize[0] + 'px'}
+			style:height={previewSize[1] + 'px'}
 		>
 			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
 
-			{#each drawing.vertices as vertex, index (vertex.id)}
+			{#each editor.drawing.vertices as vertex, index (vertex.id)}
 				{#if editor.tool === 'select'}
 					<VertexHandleSelect
 						{vertex}
 						{onChangeVertex}
-						{previewWidth}
-						{previewHeight}
+						maxSize={previewSize}
 						{@attach focusWhenAdded(vertex.id)}
 					/>
 				{:else if editor.tool === 'curve'}
 					<VertexHandleCurve
 						{vertex}
 						{onChangeVertex}
-						defaultControlPointPosition={drawing.getTangentialPositionAt(
-							previewWidth,
-							previewHeight,
+						defaultControlPointPosition={editor.drawing.getTangentialPositionAt(
+							previewSize,
 							30,
 							index
 						)}
-						{previewWidth}
-						{previewHeight}
+						maxSize={previewSize}
 					/>
 				{/if}
 			{/each}
 
-			{#each drawing.curves() as curve, index (curve.map((v) => v.id).join())}
-				{@const position = drawing.getMidpointAt(previewWidth, previewHeight, index)}
+			{#each editor.drawing.curves() as curve, index (curve.map((v) => v.id).join())}
+				{@const position = editor.drawing.getMidpointAt(previewSize, index)}
 				<AddVertexButton
 					{position}
 					onAddVertex={() => {
-						lastAddedVertexId = drawing.insertVertex(index, position);
+						lastAddedVertexId = editor.drawing.insertVertex(index, position);
 					}}
 				/>
 			{/each}
@@ -159,19 +182,19 @@
 	<Toolbar />
 
 	<form>
-		{#if selectedVertex}
+		{#if selectedPosition}
 			<label for="vertex-x">X:</label>
 			<input
 				id="vertex-x"
 				type="number"
-				value={selectedVertex.position.x.value.toString()}
+				value={selectedPosition.x.value.toString()}
 				oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
 			/>
 
 			<label for="vertex-x-type" class="visually-hidden">X type</label>
 			<select
 				id="vertex-x-type"
-				value={selectedVertex.position.x.type}
+				value={selectedPosition.x.type}
 				onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
 			>
 				<option value="percent">%</option>
@@ -183,14 +206,14 @@
 			<input
 				id="vertex-y"
 				type="number"
-				value={selectedVertex.position.y.value.toString()}
+				value={selectedPosition.y.value.toString()}
 				oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
 			/>
 
 			<label for="vertex-y-type" class="visually-hidden">Y type</label>
 			<select
 				id="vertex-y-type"
-				value={selectedVertex.position.y.type}
+				value={selectedPosition.y.type}
 				onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
 			>
 				<option value="percent">%</option>

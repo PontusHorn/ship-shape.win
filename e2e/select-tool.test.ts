@@ -1,3 +1,4 @@
+import { translate } from '../src/lib/vector';
 import { expect, test } from './test-api';
 import {
 	drag,
@@ -5,8 +6,7 @@ import {
 	getElementCenter,
 	getOutputShapeCommands,
 	getTools,
-	getVertices,
-	translate
+	getVertices
 } from './helpers';
 
 test.describe('Editor: Select tool', () => {

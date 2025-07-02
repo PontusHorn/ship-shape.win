@@ -1,12 +1,29 @@
+import { Drawing } from './Drawing.svelte';
+import { vertexFromPercent } from './Vertex';
+
 export type ToolType = 'select' | 'curve';
+
 export type EditorState = {
 	tool: ToolType;
-	selectedVertexId: string | undefined;
+	drawing: Drawing;
+	selection: SelectedVertex | undefined;
 };
+
+type SelectedVertex = {
+	id: string;
+	part: VertexPart;
+};
+
+export type VertexPart = 'position' | 'controlPointForward' | 'controlPointBackward';
 
 export const editor = $state<EditorState>({
 	tool: 'select',
-	selectedVertexId: undefined
+	drawing: new Drawing([
+		vertexFromPercent(50, 0),
+		vertexFromPercent(100, 100),
+		vertexFromPercent(0, 100)
+	]),
+	selection: undefined
 });
 
 export function selectTool(tool: ToolType) {
@@ -16,10 +33,10 @@ export function selectTool(tool: ToolType) {
 	editor.tool = tool;
 }
 
-export function selectVertex(vertexId: string) {
-	editor.selectedVertexId = vertexId;
+export function selectVertex(id: string, part: VertexPart = 'position') {
+	editor.selection = { id, part };
 }
 
 export function clearVertexSelection() {
-	editor.selectedVertexId = undefined;
+	editor.selection = undefined;
 }

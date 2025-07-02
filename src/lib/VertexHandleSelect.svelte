@@ -1,24 +1,22 @@
 <script lang="ts">
 	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
-	import { type Vertex } from './Vertex';
-	import { VertexDimension } from './VertexDimension';
+	import { moveVertex, type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { VertexPosition } from './VertexPosition';
 	import { editor, selectVertex } from './editor.svelte';
-	import type { Vector } from './types';
 	import { getArrowKeyDelta } from './keyboardNavigation';
 	import ControlPointHandle from './ControlPointHandle.svelte';
+	import { translate, type Vector } from './vector';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
-		previewWidth: number;
-		previewHeight: number;
+		maxSize: Vector;
 	};
 
-	const { vertex, onChangeVertex, previewWidth, previewHeight, ...props }: Props = $props();
+	const { vertex, onChangeVertex, maxSize, ...props }: Props = $props();
 
-	const isSelected = $derived(editor.selectedVertexId === vertex.id);
+	const isSelected = $derived(editor.selection?.id === vertex.id);
+	const isPositionSelected = $derived(isSelected && editor.selection?.part === 'position');
 
 	function handleClick() {
 		selectVertex(vertex.id);
@@ -32,8 +30,8 @@
 	const dragOptions: DragOptions = $derived({
 		handle: 'button',
 		position: {
-			x: vertex.position.x.toPixels(previewWidth),
-			y: vertex.position.y.toPixels(previewHeight)
+			x: vertex.position.x.toPixels(maxSize[0]),
+			y: vertex.position.y.toPixels(maxSize[1])
 		},
 		legacyTranslate: false,
 		onDrag: handleDrag,
@@ -41,7 +39,9 @@
 	});
 
 	function handleDrag({ offsetX, offsetY }: DragEventData) {
-		moveVertex(offsetX, offsetY);
+		const newPosition = vertex.position.withVector([offsetX, offsetY], maxSize);
+		const newVertex = moveVertex(vertex, newPosition, maxSize);
+		onChangeVertex(newVertex);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -51,36 +51,11 @@
 		event.preventDefault();
 		selectVertex(vertex.id);
 
-		const [deltaX, deltaY] = delta;
-		const currentX = vertex.position.x.toPixels(previewWidth);
-		const currentY = vertex.position.y.toPixels(previewHeight);
-		const newX = currentX + deltaX;
-		const newY = currentY + deltaY;
-
-		moveVertex(newX, newY);
-	}
-
-	function moveVertex(x: number, y: number) {
-		const currentX = vertex.position.x.toPixels(previewWidth);
-		const currentY = vertex.position.y.toPixels(previewHeight);
-		const delta: Vector = [x - currentX, y - currentY];
-
-		const newPosition = new VertexPosition(
-			VertexDimension.fromPixels(vertex.position.x.type, previewWidth, x),
-			VertexDimension.fromPixels(vertex.position.y.type, previewHeight, y)
-		);
-
-		// Move control points along with the vertex
-		const previewSize: Vector = [previewWidth, previewHeight];
-		const controlPointForward = vertex.controlPointForward?.toTranslated(delta, previewSize);
-		const controlPointBackward = vertex.controlPointBackward?.toTranslated(delta, previewSize);
-
-		onChangeVertex({
-			...vertex,
-			position: newPosition,
-			controlPointForward,
-			controlPointBackward
-		});
+		const currentVector = vertex.position.toVector(maxSize);
+		const newVector = translate(currentVector, delta);
+		const newPosition = vertex.position.withVector(newVector, maxSize);
+		const newVertex = moveVertex(vertex, newPosition, maxSize);
+		onChangeVertex(newVertex);
 	}
 </script>
 
@@ -92,7 +67,7 @@
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleClick}
 			onkeydown={handleKeydown}
-			aria-pressed={isSelected}
+			aria-pressed={isPositionSelected}
 		>
 			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 		</button>
@@ -104,9 +79,7 @@
 				{vertex}
 				{onChangeVertex}
 				controlPoint={vertex.controlPointForward}
-				isVertexSelected={isSelected}
-				{previewWidth}
-				{previewHeight}
+				{maxSize}
 			/>
 		{/if}
 		{#if vertex.controlPointBackward}
@@ -114,9 +87,7 @@
 				{vertex}
 				{onChangeVertex}
 				controlPoint={vertex.controlPointBackward}
-				isVertexSelected={isSelected}
-				{previewWidth}
-				{previewHeight}
+				{maxSize}
 			/>
 		{/if}
 	</div>

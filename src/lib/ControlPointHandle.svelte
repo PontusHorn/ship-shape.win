@@ -1,50 +1,44 @@
 <script lang="ts">
 	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
-	import { type Vertex } from './Vertex';
-	import { VertexDimension } from './VertexDimension';
+	import { moveVertexControlPoint, type Vertex } from './Vertex';
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { selectVertex } from './editor.svelte';
+	import { editor, selectVertex, type VertexPart } from './editor.svelte';
 	import { getArrowKeyDelta } from './keyboardNavigation';
+	import { translate, type Vector } from './vector';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
 		controlPoint: VertexPosition;
-		isVertexSelected?: boolean;
-		previewWidth: number;
-		previewHeight: number;
+		maxSize: Vector;
 	};
 
-	const {
-		vertex,
-		onChangeVertex,
-		controlPoint,
-		isVertexSelected = false,
-		previewWidth,
-		previewHeight,
-		...props
-	}: Props = $props();
+	const { vertex, onChangeVertex, controlPoint, maxSize, ...props }: Props = $props();
 
 	const direction = $derived(controlPoint === vertex.controlPointForward ? 'forward' : 'backward');
+	const part = $derived<VertexPart>(
+		direction === 'forward' ? 'controlPointForward' : 'controlPointBackward'
+	);
+	const isSelected = $derived(editor.selection?.id === vertex.id && editor.selection.part === part);
 
 	function handlePointerDown() {
 		// Select on pointer down to feel more responsive on drag
-		selectVertex(vertex.id);
+		selectVertex(vertex.id, part);
 	}
 
 	function handleClick() {
 		// The vertex is already selected on pointer down, but in case the "click"
 		// is triggered via keyboard or other non-pointer means, we need to select
 		// it here too.
-		selectVertex(vertex.id);
+		selectVertex(vertex.id, part);
 	}
 
 	const dragOptions: DragOptions = $derived({
 		handle: 'button',
 		position: {
-			x: controlPoint.x.toPixels(previewWidth),
-			y: controlPoint.y.toPixels(previewHeight)
+			x: controlPoint.x.toPixels(maxSize[0]),
+			y: controlPoint.y.toPixels(maxSize[1])
 		},
 		legacyTranslate: false,
 		onDrag: handleDrag
@@ -55,55 +49,27 @@
 		if (!delta) return;
 
 		event.preventDefault();
-		selectVertex(vertex.id);
+		selectVertex(vertex.id, part);
 
-		const [deltaX, deltaY] = delta;
-		const currentX = controlPoint.x.toPixels(previewWidth);
-		const currentY = controlPoint.y.toPixels(previewHeight);
-		const newX = currentX + deltaX;
-		const newY = currentY + deltaY;
+		const currentVector = controlPoint.toVector(maxSize);
+		const newVector = translate(currentVector, delta);
+		const newControlPoint = controlPoint.withVector(newVector, maxSize);
 
-		moveControlPoint(newX, newY, { breakMirroring: event.altKey });
+		// Break mirroring if Alt key is held
+		let newVertex = event.altKey ? { ...vertex, isMirrored: false } : vertex;
+		newVertex = moveVertexControlPoint(newVertex, direction, newControlPoint, maxSize);
+
+		onChangeVertex(newVertex);
 	}
 
 	function handleDrag({ offsetX, offsetY, event }: DragEventData) {
-		moveControlPoint(offsetX, offsetY, { breakMirroring: event.altKey });
-	}
-
-	function moveControlPoint(x: number, y: number, { breakMirroring = false } = {}) {
-		const newControlPoint = new VertexPosition(
-			VertexDimension.fromPixels(controlPoint.x.type, previewWidth, x),
-			VertexDimension.fromPixels(controlPoint.y.type, previewHeight, y)
-		);
-
-		let { controlPointForward, controlPointBackward } = vertex;
-
-		// Update the vertex's control point
-		if (direction === 'forward') {
-			controlPointForward = newControlPoint;
-		} else {
-			controlPointBackward = newControlPoint;
-		}
+		const newControlPoint = controlPoint.withVector([offsetX, offsetY], maxSize);
 
 		// Break mirroring if Alt key is held
-		const isMirrored = vertex.isMirrored && !breakMirroring;
+		let newVertex = event.altKey ? { ...vertex, isMirrored: false } : vertex;
+		newVertex = moveVertexControlPoint(newVertex, direction, newControlPoint, maxSize);
 
-		if (isMirrored) {
-			const mirroredPosition = newControlPoint.toMirrored(
-				vertex.position,
-				previewWidth,
-				previewHeight
-			);
-
-			// Update the opposite control point
-			if (direction === 'forward') {
-				controlPointBackward = mirroredPosition;
-			} else {
-				controlPointForward = mirroredPosition;
-			}
-		}
-
-		onChangeVertex({ ...vertex, controlPointForward, controlPointBackward, isMirrored });
+		onChangeVertex(newVertex);
 	}
 
 	const accessibleName = $derived(
@@ -111,13 +77,14 @@
 	);
 </script>
 
-<div class="control-point" class:isVertexSelected use:draggable={dragOptions}>
+<div class="control-point" class:isSelected use:draggable={dragOptions}>
 	<button
 		{...props}
 		onpointerdown={handlePointerDown}
 		onclick={handleClick}
-		onfocus={() => selectVertex(vertex.id)}
+		onfocus={() => selectVertex(vertex.id, part)}
 		onkeydown={handleKeydown}
+		aria-pressed={isSelected}
 	>
 		<span class="visually-hidden">{accessibleName}</span>
 	</button>
@@ -126,10 +93,10 @@
 <!-- Connecting line between vertex and control point -->
 <svg class="control-line" aria-hidden="true">
 	<line
-		x1={vertex.position.x.toPixels(previewWidth)}
-		y1={vertex.position.y.toPixels(previewHeight)}
-		x2={controlPoint.x.toPixels(previewWidth)}
-		y2={controlPoint.y.toPixels(previewHeight)}
+		x1={vertex.position.x.toPixels(maxSize[0])}
+		y1={vertex.position.y.toPixels(maxSize[1])}
+		x2={controlPoint.x.toPixels(maxSize[0])}
+		y2={controlPoint.y.toPixels(maxSize[1])}
 		stroke="var(--fjord)"
 		stroke-width="1"
 		stroke-dasharray="2,2"
@@ -153,10 +120,15 @@
 		background-color: var(--fjord);
 		border: 1px solid var(--fjord);
 		transition:
+			background 0.1s ease-in-out,
 			filter 0.1s ease-in-out,
 			box-shadow 0.1s ease-in-out,
 			scale 0.1s ease-in-out;
 		translate: -50% -50%;
+
+		&.isSelected {
+			background-color: var(--jade);
+		}
 
 		&:hover {
 			scale: 1.2;

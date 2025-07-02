@@ -3,8 +3,8 @@ import { Line } from './commands/Line';
 import { Curve } from './commands/Curve';
 import { Shape } from './Shape';
 import { makeVertex, type Vertex } from './Vertex';
-import { VertexDimension } from './VertexDimension';
 import { VertexPosition } from './VertexPosition';
+import { lerp, subtract, type Vector } from './vector';
 
 export class Drawing {
 	vertices: Vertex[];
@@ -59,22 +59,14 @@ export class Drawing {
 		return vertex.id;
 	}
 
-	getMidpointAt(maxWidth: number, maxHeight: number, i: number): VertexPosition {
+	getMidpointAt(maxSize: Vector, i: number): VertexPosition {
 		const from = this.vertices[i];
 		const to = this.vertices[(i + 1) % this.vertices.length];
-		const xPx = (from.position.x.toPixels(maxWidth) + to.position.x.toPixels(maxWidth)) / 2;
-		const yPx = (from.position.y.toPixels(maxHeight) + to.position.y.toPixels(maxHeight)) / 2;
-		const x = VertexDimension.fromPixels(from.position.x.type, maxWidth, xPx);
-		const y = VertexDimension.fromPixels(from.position.y.type, maxHeight, yPx);
-		return new VertexPosition(x, y);
+		const midpoint = lerp(from.position.toVector(maxSize), to.position.toVector(maxSize), 0.5);
+		return from.position.withVector(midpoint, maxSize);
 	}
 
-	getTangentialPositionAt(
-		maxWidth: number,
-		maxHeight: number,
-		distance: number,
-		i: number
-	): VertexPosition {
+	getTangentialPositionAt(maxSize: Vector, distance: number, i: number): VertexPosition {
 		const previous = this.vertices.at(i - 1);
 		const current = this.vertices.at(i);
 		const next = this.vertices.at((i + 1) % this.vertices.length);
@@ -82,20 +74,11 @@ export class Drawing {
 			throw new Error('Invalid vertex index');
 		}
 
-		const dx = next.position.x.toPixels(maxWidth) - previous.position.x.toPixels(maxWidth);
-		const dy = next.position.y.toPixels(maxHeight) - previous.position.y.toPixels(maxHeight);
+		const [dx, dy] = subtract(next.position.toVector(maxSize), previous.position.toVector(maxSize));
 		const angle = Math.atan2(dy, dx);
-		const x = VertexDimension.fromPixels(
-			current.position.x.type,
-			maxWidth,
-			current.position.x.toPixels(maxWidth) + Math.cos(angle) * distance
+		return current.position.toTranslated(
+			[Math.cos(angle) * distance, Math.sin(angle) * distance],
+			maxSize
 		);
-		const y = VertexDimension.fromPixels(
-			current.position.y.type,
-			maxHeight,
-			current.position.y.toPixels(maxHeight) + Math.sin(angle) * distance
-		);
-
-		return new VertexPosition(x, y);
 	}
 }

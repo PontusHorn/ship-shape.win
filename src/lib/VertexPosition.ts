@@ -1,6 +1,6 @@
 import { Position } from './Position';
-import type { VertexDimension } from './VertexDimension';
-import type { Vector } from './types';
+import { VertexDimension } from './VertexDimension';
+import type { Vector } from './vector';
 
 export class VertexPosition {
 	x: VertexDimension;
@@ -19,15 +19,26 @@ export class VertexPosition {
 		return new VertexPosition(this.x, y);
 	}
 
+	withVector([x, y]: Vector, [maxX, maxY]: Vector): VertexPosition {
+		return new VertexPosition(
+			VertexDimension.fromPixels(this.x.type, maxX, x),
+			VertexDimension.fromPixels(this.y.type, maxY, y)
+		);
+	}
+
 	toTranslated([deltaX, deltaY]: Vector, [maxX, maxY]: Vector): VertexPosition {
 		return new VertexPosition(this.x.toTranslated(deltaX, maxX), this.y.toTranslated(deltaY, maxY));
 	}
 
-	toMirrored(origin: VertexPosition, maxX: number, maxY: number): VertexPosition {
+	toMirrored(origin: VertexPosition, [maxX, maxY]: Vector): VertexPosition {
 		return new VertexPosition(this.x.toMirrored(origin.x, maxX), this.y.toMirrored(origin.y, maxY));
 	}
 
 	toPosition(): Position {
 		return new Position(this.x.toLengthPercentage(), this.y.toLengthPercentage());
+	}
+
+	toVector([maxX, maxY]: Vector): Vector {
+		return [this.x.toPixels(maxX), this.y.toPixels(maxY)];
 	}
 }
