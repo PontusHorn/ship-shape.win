@@ -247,13 +247,13 @@
 		{/if}
 
 		{#if selectedVertex}
-			<label for="vertex-mirrored">Mirrored:</label>
 			<input
 				id="vertex-mirrored"
 				type="checkbox"
 				checked={selectedVertex.isMirrored}
 				onchange={(event) => handleVertexMirroredChange(event.currentTarget.checked)}
 			/>
+			<label for="vertex-mirrored">Mirrored control points</label>
 		{/if}
 	</form>
 
@@ -274,10 +274,14 @@
 			margin-inline-end: 0.25rem;
 		}
 
-		input,
+		input[type='number'],
 		select {
 			align-self: stretch;
 			min-width: 0;
+		}
+
+		input[type='checkbox'] {
+			justify-self: start;
 		}
 	}
 
