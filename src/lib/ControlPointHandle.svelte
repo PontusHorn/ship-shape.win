@@ -22,11 +22,6 @@
 	);
 	const isSelected = $derived(editor.selection?.id === vertex.id && editor.selection.part === part);
 
-	function handlePointerDown() {
-		// Select on pointer down to feel more responsive on drag
-		selectVertex(vertex.id, part);
-	}
-
 	function handleClick() {
 		// The vertex is already selected on pointer down, but in case the "click"
 		// is triggered via keyboard or other non-pointer means, we need to select
@@ -70,6 +65,8 @@
 		newVertex = moveVertexControlPoint(newVertex, direction, newControlPoint, maxSize);
 
 		onChangeVertex(newVertex);
+
+		selectVertex(vertex.id, part);
 	}
 
 	const accessibleName = $derived(
@@ -80,7 +77,6 @@
 <div class="control-point" class:isSelected use:draggable={dragOptions}>
 	<button
 		{...props}
-		onpointerdown={handlePointerDown}
 		onclick={handleClick}
 		onfocus={() => selectVertex(vertex.id, part)}
 		onkeydown={handleKeydown}

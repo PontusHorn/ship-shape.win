@@ -34,6 +34,9 @@ export function selectTool(tool: ToolType) {
 }
 
 export function selectVertex(id: string, part: VertexPart = 'position') {
+	if (editor.selection?.id === id && editor.selection.part === part) {
+		return;
+	}
 	editor.selection = { id, part };
 }
 

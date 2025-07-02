@@ -22,11 +22,6 @@
 		selectVertex(vertex.id);
 	}
 
-	function handlePointerDown() {
-		// Select on pointer down to feel more responsive on drag
-		selectVertex(vertex.id);
-	}
-
 	const dragOptions: DragOptions = $derived({
 		handle: 'button',
 		position: {
@@ -42,6 +37,7 @@
 		const newPosition = vertex.position.withVector([offsetX, offsetY], maxSize);
 		const newVertex = moveVertex(vertex, newPosition, maxSize);
 		onChangeVertex(newVertex);
+		selectVertex(newVertex.id);
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -63,7 +59,6 @@
 	<div class="vertex" use:draggable={dragOptions}>
 		<button
 			{...props}
-			onpointerdown={handlePointerDown}
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleClick}
 			onkeydown={handleKeydown}

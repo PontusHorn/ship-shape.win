@@ -32,11 +32,6 @@
 		onDrag: handleDrag
 	});
 
-	function handlePointerDown() {
-		// Select on pointer down to feel more responsive on drag
-		selectVertex(vertex.id, 'controlPointForward');
-	}
-
 	function handleVertexClick() {
 		// The vertex is already selected on pointer down, but in case the "click"
 		// is triggered via keyboard or other non-pointer means, we need to select
@@ -74,6 +69,8 @@
 			controlPointForward,
 			controlPointBackward
 		});
+
+		selectVertex(vertex.id, 'controlPointForward');
 	}
 
 	let lastAddedControlPoint = $state<VertexPosition>();
@@ -95,7 +92,6 @@
 		<!-- Draggable vertex button for clicking and creating control points -->
 		<button
 			{...props}
-			onpointerdown={handlePointerDown}
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleVertexClick}
 			aria-pressed={isPositionSelected}
