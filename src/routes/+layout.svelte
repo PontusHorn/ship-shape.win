@@ -4,6 +4,7 @@
 	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
+	import { GithubIcon } from '@lucide/svelte';
 
 	let { children } = $props();
 
@@ -57,7 +58,14 @@
 {@render children()}
 
 <footer>
-	Made by <a href="https://pontushorn.me">Pontus Horn</a>. Use the output however you like!
+	<p>Made by <a href="https://pontushorn.me">Pontus Horn</a>. Use the output however you like!</p>
+
+	<div class="links">
+		<a href="https://github.com/PontusHorn/ship-shape.win">
+			<GithubIcon />
+			GitHub repository
+		</a>
+	</div>
 </footer>
 
 <style>
@@ -209,5 +217,20 @@
 		padding-block: 4rem 2rem;
 		padding-inline: 1rem;
 		text-align: center;
+
+		p {
+			margin-block: 1rem;
+		}
+
+		.links a {
+			display: flex;
+			gap: 0.25rem;
+			inline-size: fit-content;
+			margin-inline: auto;
+
+			:global(svg) {
+				color: var(--midnight);
+			}
+		}
 	}
 </style>
