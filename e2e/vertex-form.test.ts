@@ -52,6 +52,11 @@ test.describe('Editor: Vertex form', () => {
 		await expect(xTypeSelect).toHaveValue('percent');
 		await expect(yInput).toHaveValue('0');
 		await expect(yTypeSelect).toHaveValue('percent');
+
+		// The isMirrored property of the vertex should be displayed as a checkbox
+		const isMirroredCheckbox = page.getByLabel(/mirrored/i);
+		await expect(isMirroredCheckbox).toBeVisible();
+		await expect(isMirroredCheckbox).not.toBeChecked();
 	});
 
 	test('should update vertex position when form values change', async ({ page }) => {
@@ -226,6 +231,11 @@ test.describe('Editor: Vertex form', () => {
 		await expect(xTypeSelect).toHaveValue('percent');
 		await expect(yInput).toHaveValue('0');
 		await expect(yTypeSelect).toHaveValue('percent');
+
+		// The isMirrored property of the vertex should be displayed as a checkbox
+		const isMirroredCheckbox = page.getByLabel(/mirrored/i);
+		await expect(isMirroredCheckbox).toBeVisible();
+		await expect(isMirroredCheckbox).toBeChecked();
 	});
 
 	test('updates control point position when form values change', async ({ page }) => {
@@ -299,5 +309,98 @@ test.describe('Editor: Vertex form', () => {
 			'line to 0% 100%',
 			'curve to 50% 0% with 30% -20%'
 		]);
+	});
+
+	test('breaks mirroring when "Mirrored" is unchecked', async ({ page }) => {
+		const tools = getTools(page);
+
+		// Create control points using the curve tool
+		await tools.curve.click();
+		const vertex = getVertices(page).first();
+		await vertex.click();
+
+		// Switch back to select tool
+		await tools.select.click();
+
+		// Select forward control point
+		const forwardControlPoint = getControlPoints(page, 'forward');
+		await forwardControlPoint.click();
+
+		// Uncheck the "Mirrored" checkbox
+		const mirrorCheckbox = page.getByLabel(/mirror/i);
+		await mirrorCheckbox.uncheck();
+
+		const xInput = page.getByLabel(/x:/i);
+		const yInput = page.getByLabel(/y:/i);
+
+		// Change forward control point coordinates
+		await xInput.fill('80');
+		await yInput.fill('30');
+
+		// Select backward control point to verify it didn't mirror
+		const backwardControlPoint = getControlPoints(page, 'backward');
+		await backwardControlPoint.click();
+
+		// Backward control point should retain its original position (40% 0%)
+		await expect(xInput).toHaveValue('40');
+		await expect(yInput).toHaveValue('0');
+
+		// Check CSS output shows independent positions
+		const commands = await getOutputShapeCommands(page);
+		expect(commands).toEqual([
+			'from 50% 0%',
+			'curve to 100% 100% with 80% 30%',
+			'line to 0% 100%',
+			'curve to 50% 0% with 40% 0%'
+		]);
+	});
+
+	test('restores mirroring when "Mirrored" is checked', async ({ page }) => {
+		const tools = getTools(page);
+
+		// Create control points using the curve tool
+		await tools.curve.click();
+		const vertex = getVertices(page).first();
+		await vertex.click();
+
+		// Switch back to select tool
+		await tools.select.click();
+
+		// Select forward control point
+		const forwardControlPoint = getControlPoints(page, 'forward');
+		await forwardControlPoint.click();
+
+		// Uncheck the "Mirrored" checkbox
+		const mirrorCheckbox = page.getByLabel(/mirror/i);
+		await mirrorCheckbox.uncheck();
+
+		const xInput = page.getByLabel(/x:/i);
+		const yInput = page.getByLabel(/y:/i);
+
+		// Change forward control point coordinates
+		await xInput.fill('80');
+		await yInput.fill('30');
+
+		// Select backward control point and verify it didn't mirror
+		const backwardControlPoint = getControlPoints(page, 'backward');
+		await backwardControlPoint.click();
+		await expect(xInput).toHaveValue('40');
+		await expect(yInput).toHaveValue('0');
+
+		// Check the "Mirrored" checkbox
+		await mirrorCheckbox.check();
+
+		// Backward control point should be mirrored based on forward control point
+		await expect(xInput).toHaveValue('20');
+		await expect(yInput).toHaveValue('-30');
+
+		// Update the backward control point coordinates
+		await xInput.fill('30');
+		await yInput.fill('10');
+
+		// Select forward control point and verify it mirrors
+		await forwardControlPoint.click();
+		await expect(xInput).toHaveValue('70');
+		await expect(yInput).toHaveValue('-10');
 	});
 });

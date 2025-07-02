@@ -110,6 +110,30 @@
 		});
 	}
 
+	function handleVertexMirroredChange(isMirrored: boolean) {
+		if (!selectedVertex) {
+			throw new Error('Invalid selection');
+		}
+
+		let newVertex = { ...selectedVertex, isMirrored };
+
+		// If we turn on mirroring, we need to update the control points to be
+		// mirrored as well
+		if (isMirrored && selectedVertex.controlPointForward) {
+			newVertex.controlPointBackward = selectedVertex.controlPointForward.toMirrored(
+				selectedVertex.position,
+				previewSize
+			);
+		} else if (isMirrored && selectedVertex.controlPointBackward) {
+			newVertex.controlPointForward = selectedVertex.controlPointBackward.toMirrored(
+				selectedVertex.position,
+				previewSize
+			);
+		}
+
+		onChangeVertex(newVertex);
+	}
+
 	function handleBackgroundClick(event: MouseEvent) {
 		if (event.target === event.currentTarget) {
 			clearVertexSelection();
@@ -220,6 +244,16 @@
 				<option value="px_from_start">px</option>
 				<option value="px_from_end">px (from bottom)</option>
 			</select>
+		{/if}
+
+		{#if selectedVertex}
+			<label for="vertex-mirrored">Mirrored:</label>
+			<input
+				id="vertex-mirrored"
+				type="checkbox"
+				checked={selectedVertex.isMirrored}
+				onchange={(event) => handleVertexMirroredChange(event.currentTarget.checked)}
+			/>
 		{/if}
 	</form>
 
