@@ -26,6 +26,10 @@ export class VertexPosition {
 		);
 	}
 
+	toRounded(): VertexPosition {
+		return new VertexPosition(this.x.toRounded(), this.y.toRounded());
+	}
+
 	toTranslated([deltaX, deltaY]: Vector, [maxX, maxY]: Vector): VertexPosition {
 		return new VertexPosition(this.x.toTranslated(deltaX, maxX), this.y.toTranslated(deltaY, maxY));
 	}

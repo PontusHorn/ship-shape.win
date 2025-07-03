@@ -30,6 +30,13 @@ export class VertexDimension {
 		}
 	}
 
+	toRounded(): VertexDimension {
+		const percentPrecision = 10;
+		return this.type === 'percent'
+			? this.withValue(Math.round(this.value * percentPrecision) / percentPrecision)
+			: this.withValue(Math.round(this.value));
+	}
+
 	toTranslated(deltaPx: number, maxPx: number): VertexDimension {
 		const newPx = this.toPixels(maxPx) + deltaPx;
 		return VertexDimension.fromPixels(this.type, maxPx, newPx);
@@ -40,7 +47,7 @@ export class VertexDimension {
 		const originPx = origin.toPixels(maxPx);
 		const delta = thisPx - originPx;
 		const mirroredPx = originPx - delta;
-		return VertexDimension.fromPixels(origin.type, maxPx, mirroredPx);
+		return VertexDimension.fromPixels(this.type, maxPx, mirroredPx);
 	}
 
 	static fromPixels(type: DimensionType, maxPx: number, px: number): VertexDimension {

@@ -120,15 +120,13 @@
 		// If we turn on mirroring, we need to update the control points to be
 		// mirrored as well
 		if (isMirrored && selectedVertex.controlPointForward) {
-			newVertex.controlPointBackward = selectedVertex.controlPointForward.toMirrored(
-				selectedVertex.position,
-				previewSize
-			);
+			newVertex.controlPointBackward = selectedVertex.controlPointForward
+				.toMirrored(selectedVertex.position, previewSize)
+				.toRounded();
 		} else if (isMirrored && selectedVertex.controlPointBackward) {
-			newVertex.controlPointForward = selectedVertex.controlPointBackward.toMirrored(
-				selectedVertex.position,
-				previewSize
-			);
+			newVertex.controlPointForward = selectedVertex.controlPointBackward
+				.toMirrored(selectedVertex.position, previewSize)
+				.toRounded();
 		}
 
 		onChangeVertex(newVertex);

@@ -30,12 +30,14 @@ export function moveVertex(vertex: Vertex, position: VertexPosition, maxSize: Ve
 	const delta = subtract(newVector, currentVector);
 
 	// Move control points along with the vertex
-	const controlPointForward = vertex.controlPointForward?.toTranslated(delta, maxSize);
-	const controlPointBackward = vertex.controlPointBackward?.toTranslated(delta, maxSize);
+	const controlPointForward = vertex.controlPointForward?.toTranslated(delta, maxSize).toRounded();
+	const controlPointBackward = vertex.controlPointBackward
+		?.toTranslated(delta, maxSize)
+		.toRounded();
 
 	return {
 		...vertex,
-		position,
+		position: position.toRounded(),
 		controlPointForward,
 		controlPointBackward
 	};
@@ -67,5 +69,9 @@ export function moveVertexControlPoint(
 		}
 	}
 
-	return { ...vertex, controlPointForward, controlPointBackward };
+	return {
+		...vertex,
+		controlPointForward: controlPointForward?.toRounded(),
+		controlPointBackward: controlPointBackward?.toRounded()
+	};
 }

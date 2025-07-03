@@ -33,16 +33,15 @@
 	});
 
 	function handleVertexClick() {
-		// The vertex is already selected on pointer down, but in case the "click"
-		// is triggered via keyboard or other non-pointer means, we need to select
-		// it here too.
 		selectVertex(vertex.id, 'controlPointForward');
 
 		// Initialize control points if they don't exist
 		if (vertex.controlPointForward || vertex.controlPointBackward) return;
 
-		const controlPointForward = defaultControlPointPosition;
-		const controlPointBackward = controlPointForward.toMirrored(vertex.position, maxSize);
+		const controlPointForward = defaultControlPointPosition.toRounded();
+		const controlPointBackward = controlPointForward
+			.toMirrored(vertex.position, maxSize)
+			.toRounded();
 
 		lastAddedControlPoint = controlPointForward;
 
@@ -56,10 +55,12 @@
 
 	function handleDrag({ offsetX, offsetY }: DragEventData) {
 		// Create forward control point based on drag position
-		const controlPointForward = vertex.position.withVector([offsetX, offsetY], maxSize);
+		const controlPointForward = vertex.position.withVector([offsetX, offsetY], maxSize).toRounded();
 
 		// Create a mirrored backward control point
-		const controlPointBackward = controlPointForward.toMirrored(vertex.position, maxSize);
+		const controlPointBackward = controlPointForward
+			.toMirrored(vertex.position, maxSize)
+			.toRounded();
 
 		lastAddedControlPoint = controlPointForward;
 
