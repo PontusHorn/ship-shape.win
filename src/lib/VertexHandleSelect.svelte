@@ -120,6 +120,12 @@
 			scale 0.1s ease-in-out;
 		translate: -50% -50%;
 
+		&[aria-pressed='true'] {
+			box-shadow:
+				0 0 0 2px var(--pistachio),
+				0 0 0 4px var(--fjord);
+		}
+
 		&:hover {
 			scale: 1.2;
 		}

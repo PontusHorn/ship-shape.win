@@ -74,7 +74,7 @@
 	);
 </script>
 
-<div class="control-point" class:isSelected use:draggable={dragOptions}>
+<div class="control-point" use:draggable={dragOptions}>
 	<button
 		{...props}
 		onclick={handleClick}
@@ -114,7 +114,7 @@
 		width: 8px;
 		height: 8px;
 		background-color: var(--fjord);
-		border: 1px solid var(--fjord);
+		border: 1px solid transparent;
 		transition:
 			background 0.1s ease-in-out,
 			filter 0.1s ease-in-out,
@@ -122,8 +122,10 @@
 			scale 0.1s ease-in-out;
 		translate: -50% -50%;
 
-		&.isSelected {
-			background-color: var(--jade);
+		&[aria-pressed='true'] {
+			box-shadow:
+				0 0 0 2px var(--pistachio),
+				0 0 0 4px var(--fjord);
 		}
 
 		&:hover {
