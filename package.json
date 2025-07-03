@@ -7,10 +7,12 @@
 	"scripts": {
 		"dev": "vite dev",
 		"build": "vite build",
-		"preview": "vite preview",
+		"preview": "npm run build && wrangler dev",
 		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"deploy": "npm run build && wrangler deploy",
+		"cf-typegen": "wrangler types ./src/worker-configuration.d.ts",
 		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
 		"check-licenses": "license-checker --onlyAllow 'MIT;Apache-2.0;ISC;BSD-2-Clause;BSD-3-Clause;0BSD;Python-2.0;CC0-1.0;CC-BY-3.0;MPL-2.0;BlueOak-1.0.0' --excludePrivatePackages --summary",
@@ -31,6 +33,7 @@
 		"@storybook/addon-vitest": "^9.0.8",
 		"@storybook/sveltekit": "^9.0.8",
 		"@sveltejs/adapter-auto": "^6.0.1",
+		"@sveltejs/adapter-cloudflare": "^7.0.4",
 		"@sveltejs/kit": "^2.21.2",
 		"@sveltejs/vite-plugin-svelte": "^5.1.0",
 		"@types/node": "^22",
@@ -50,7 +53,8 @@
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
 		"vite": "^6.2.6",
-		"vitest": "latest"
+		"vitest": "latest",
+		"wrangler": "^4.23.0"
 	},
 	"dependencies": {
 		"@lucide/svelte": "^0.515.0",

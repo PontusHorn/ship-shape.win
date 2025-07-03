@@ -5,10 +5,14 @@ const SMALL_MOBILE_VIEWPORT: ViewportSize = { width: 320, height: 600 };
 
 export default defineConfig({
 	webServer: {
-		command: 'npm run build && npm run preview',
-		port: 4173
+		command: 'npm run preview',
+		url: 'http://localhost:8787'
 	},
 	testDir: 'e2e',
+
+	use: {
+		baseURL: 'http://localhost:8787/'
+	},
 
 	projects: [
 		// Small computer screen
