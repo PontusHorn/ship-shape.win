@@ -17,7 +17,7 @@ test.describe('Editor: Control points', () => {
 		await page.goto('/editor');
 
 		// Create control points for the first vertex using the curve tool
-		await getTools(page).curve.click();
+		await getTools(page).curve.check();
 		await getVertices(page).first().click();
 	});
 

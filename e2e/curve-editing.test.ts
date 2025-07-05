@@ -14,7 +14,7 @@ test.describe('Editor: Curve tool', () => {
 		await page.goto('/editor');
 
 		// Activate curve tool
-		await getTools(page).curve.click();
+		await getTools(page).curve.check();
 	});
 
 	test('should create control points when vertex is clicked', async ({ page }) => {
