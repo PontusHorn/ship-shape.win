@@ -23,6 +23,18 @@ export default ts.config(
 		rules: { 'no-undef': 'off' }
 	},
 	{
+		files: ['src/**/*.ts', 'e2e/**/*.ts'],
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+				parser: ts.parser
+			}
+		},
+		rules: {
+			'@typescript-eslint/no-floating-promises': 'error'
+		}
+	},
+	{
 		files: ['**/*.svelte', '**/*.svelte.ts', '**/*.svelte.js'],
 		languageOptions: {
 			parserOptions: {

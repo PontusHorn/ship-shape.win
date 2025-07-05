@@ -48,12 +48,12 @@ test.describe('Editor: Curve tool', () => {
 		// Forward control point should follow the cursor
 		const forward = getControlPoints(page, 'forward');
 		const forwardPos = await getElementCenter(forward);
-		expect(forwardPos).toBeCloseVector(translate(vertexPos, [50, -30]));
+		await expect(forwardPos).toBeCloseVector(translate(vertexPos, [50, -30]));
 
 		// Backward control point should be mirrored to the other side of the vertex
 		const backward = getControlPoints(page, 'backward');
 		const backwardPos = await getElementCenter(backward);
-		expect(backwardPos).toBeCloseVector(translate(vertexPos, [-50, 30]));
+		await expect(backwardPos).toBeCloseVector(translate(vertexPos, [-50, 30]));
 	});
 
 	test('should generate curve commands in CSS output', async ({ page }) => {

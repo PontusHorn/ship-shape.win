@@ -98,7 +98,7 @@ test.describe('Editor: Vertex form', () => {
 		// Value should convert to equivalent pixels from start
 		// 25% should equal 75px in a 300px container
 		await expect(xInput).toHaveValue('75');
-		expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
+		await expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
 		let commands = await getOutputShapeCommands(page);
 		expect(commands[0]).toBe('from 75px 0%');
 
@@ -107,7 +107,7 @@ test.describe('Editor: Vertex form', () => {
 
 		// Value should convert: 300px - 75px = 225px from end
 		await expect(xInput).toHaveValue('225');
-		expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
+		await expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
 		commands = await getOutputShapeCommands(page);
 		expect(commands[0]).toBe('from calc(100% - 225px) 0%');
 
@@ -116,7 +116,7 @@ test.describe('Editor: Vertex form', () => {
 
 		// Should be back to 25%
 		await expect(xInput).toHaveValue('25');
-		expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
+		await expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
 		commands = await getOutputShapeCommands(page);
 		expect(commands[0]).toBe('from 25% 0%');
 	});

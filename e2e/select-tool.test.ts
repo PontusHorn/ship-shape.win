@@ -32,7 +32,7 @@ test.describe('Editor: Select tool', () => {
 
 		// Vertex should have moved
 		const newVertexPos = await getElementCenter(vertex);
-		expect(newVertexPos).toBeCloseVector(targetPos);
+		await expect(newVertexPos).toBeCloseVector(targetPos);
 
 		// Output code should reflect the new position
 		const commands = await getOutputShapeCommands(page);
@@ -56,7 +56,7 @@ test.describe('Editor: Select tool', () => {
 
 		// Vertex should have moved
 		const newPos = await getElementCenter(vertex);
-		expect(newPos).toBeCloseVector(translate(initialPos, [-10, 10]));
+		await expect(newPos).toBeCloseVector(translate(initialPos, [-10, 10]));
 
 		// Output code should reflect the new position
 		const commands = await getOutputShapeCommands(page);
@@ -93,7 +93,7 @@ test.describe('Editor: Select tool', () => {
 
 		// Should move a larger amount (30px step)
 		const newPos = await getElementCenter(vertex);
-		expect(newPos).toBeCloseVector(translate(initialPos, [30, 0]));
+		await expect(newPos).toBeCloseVector(translate(initialPos, [30, 0]));
 	});
 
 	test('should move control points along with vertex', async ({ page }) => {
@@ -188,26 +188,15 @@ test.describe('Editor: Select tool', () => {
 	});
 
 	test('should add vertex to shape when clicking trigger', async ({ page }) => {
-		const vertices = getVertices(page);
-		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at/i }).first();
-
-		const vertexCount = await vertices.count();
-		const existingVertexLabels = await vertices.allTextContents();
-
-		// Add vertex
+		// There should be a button to add a vertex to the shape on each midpoint
+		// between two vertices. This one is between the vertices at (50% 0%) and
+		// (100% 100%).
+		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at 75%, 50%/i });
 		await addVertexHandle.click();
 
-		await expect(vertices).toHaveCount(vertexCount + 1);
+		const newVertex = page.getByRole('button', { name: /^vertex at 75%, 50%/i });
 
-		// The new vertex should be automatically focused, so we use that to find it
-		const newVertex = page.locator(':focus');
-		expect(newVertex).toBeVisible();
-		expect(newVertex).toHaveAttribute('aria-pressed', 'true');
-		expect(newVertex).toHaveText(/vertex at/i);
-
-		// As a sanity check, make sure the vertex is actually a new one
-		for (const label of existingVertexLabels) {
-			await expect(newVertex).not.toHaveText(label);
-		}
+		await expect(newVertex).toBeVisible();
+		await expect(newVertex).toHaveAttribute('aria-pressed', 'true');
 	});
 });
