@@ -95,6 +95,7 @@
 <style>
 	.wrapper {
 		transition: opacity 0.2s ease;
+		will-change: opacity;
 
 		/* Dim when any other vertex is selected */
 		:global(.hasSelection) &:not(.isSelected, :has(button:hover, :focus-visible)) {
