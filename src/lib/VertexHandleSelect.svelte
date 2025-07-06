@@ -7,6 +7,7 @@
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { disableUntilHydrated } from './disableUntilHydrated';
 	import { translate, type Vector } from './vector';
+	import { createVertexButtonId } from './elementIds';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -59,6 +60,7 @@
 <div class="wrapper" class:isSelected>
 	<div class="vertex" use:draggable={dragOptions}>
 		<button
+			id={createVertexButtonId(vertex.id)}
 			{...props}
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleClick}

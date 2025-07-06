@@ -7,11 +7,12 @@
 	import { VertexDimension } from '$lib/VertexDimension';
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
-	import type { Attachment } from 'svelte/attachments';
 	import Toolbar from '$lib/Toolbar.svelte';
-	import { clearVertexSelection, editor } from '$lib/editor.svelte';
+	import { clearVertexSelection, editor, selectVertex } from '$lib/editor.svelte';
 	import EditorLayout from '$lib/EditorLayout.svelte';
 	import type { Vector } from '$lib/vector';
+	import { tick } from 'svelte';
+	import { getVertexButton } from '$lib/elementIds';
 
 	const previewSize: Vector = [300, 300];
 
@@ -36,15 +37,6 @@
 
 		return position;
 	});
-
-	let lastAddedVertexId = $state<string>();
-	function focusWhenAdded(vertexId: string): Attachment {
-		return (element: Element) => {
-			if (element instanceof HTMLElement && vertexId === lastAddedVertexId) {
-				element.focus();
-			}
-		};
-	}
 
 	function onChangeVertex(vertex: Vertex) {
 		const index = editor.drawing.vertices.findIndex(({ id }) => id === vertex.id);
@@ -169,12 +161,7 @@
 
 			{#each editor.drawing.vertices as vertex, index (vertex.id)}
 				{#if editor.tool === 'select'}
-					<VertexHandleSelect
-						{vertex}
-						{onChangeVertex}
-						maxSize={previewSize}
-						{@attach focusWhenAdded(vertex.id)}
-					/>
+					<VertexHandleSelect {vertex} {onChangeVertex} maxSize={previewSize} />
 				{:else if editor.tool === 'curve'}
 					<VertexHandleCurve
 						{vertex}
@@ -194,7 +181,13 @@
 				<AddVertexButton
 					{position}
 					onAddVertex={() => {
-						lastAddedVertexId = editor.drawing.insertVertex(index, position);
+						const newVertexId = editor.drawing.insertVertex(index, position);
+
+						// Select the first control point, and focus it after mount
+						selectVertex(newVertexId);
+						tick().then(() => {
+							getVertexButton(newVertexId)?.focus();
+						});
 					}}
 				/>
 			{/each}

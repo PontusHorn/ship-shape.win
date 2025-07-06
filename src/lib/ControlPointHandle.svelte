@@ -7,6 +7,7 @@
 	import { editor, selectVertex, type VertexPart } from './editor.svelte';
 	import { getArrowKeyDelta } from './keyboardNavigation';
 	import { translate, type Vector } from './vector';
+	import { createControlPointButtonId } from './elementIds';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -77,6 +78,7 @@
 
 <div class="control-point" use:draggable={dragOptions}>
 	<button
+		id={createControlPointButtonId(vertex.id, direction)}
 		{...props}
 		onclick={handleClick}
 		onfocus={() => selectVertex(vertex.id, part)}

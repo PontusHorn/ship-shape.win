@@ -6,8 +6,9 @@
 	import { editor, selectVertex } from './editor.svelte';
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { VertexPosition } from './VertexPosition';
-	import type { Attachment } from 'svelte/attachments';
 	import type { Vector } from './vector';
+	import { tick } from 'svelte';
+	import { createVertexButtonId, getControlPointButton } from './elementIds';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -44,13 +45,17 @@
 			.toMirrored(vertex.position, maxSize)
 			.toRounded();
 
-		lastAddedControlPoint = controlPointForward;
-
 		onChangeVertex({
 			...vertex,
 			isMirrored: true,
 			controlPointForward,
 			controlPointBackward
+		});
+
+		// Select the first control point, and focus it after it mounts
+		selectVertex(vertex.id, 'controlPointForward');
+		tick().then(() => {
+			getControlPointButton(vertex.id, 'forward')?.focus();
 		});
 	}
 
@@ -63,8 +68,6 @@
 			.toMirrored(vertex.position, maxSize)
 			.toRounded();
 
-		lastAddedControlPoint = controlPointForward;
-
 		onChangeVertex({
 			...vertex,
 			isMirrored: true,
@@ -72,20 +75,11 @@
 			controlPointBackward
 		});
 
+		// Select the first control point, and focus it after it mounts
 		selectVertex(vertex.id, 'controlPointForward');
-	}
-
-	let lastAddedControlPoint = $state<VertexPosition>();
-	function focusWhenAdded(controlPoint: VertexPosition): Attachment {
-		return (element: Element) => {
-			if (
-				element instanceof HTMLElement &&
-				controlPoint === lastAddedControlPoint &&
-				document.activeElement !== element
-			) {
-				element.focus();
-			}
-		};
+		tick().then(() => {
+			getControlPointButton(vertex.id, 'forward')?.focus();
+		});
 	}
 </script>
 
@@ -93,6 +87,7 @@
 	<div class="vertex" use:draggable={dragOptions}>
 		<!-- Draggable vertex button for clicking and creating control points -->
 		<button
+			id={createVertexButtonId(vertex.id)}
 			{...props}
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleVertexClick}
@@ -110,7 +105,6 @@
 				{onChangeVertex}
 				controlPoint={vertex.controlPointForward}
 				{maxSize}
-				{@attach focusWhenAdded(vertex.controlPointForward)}
 			/>
 		{/if}
 		{#if vertex.controlPointBackward}
