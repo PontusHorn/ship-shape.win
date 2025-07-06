@@ -7,6 +7,12 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	"routes": [
+		{
+			"pattern": "ship-shape.win",
+			"custom_domain": true
+		}
+	],
 	"observability": {
 		"enabled": true
 	}
