@@ -24,9 +24,10 @@ test.describe('Editor: Select tool', () => {
 
 	test('should move vertex when dragged', async ({ page }) => {
 		const vertex = getVertices(page).first();
-		const vertexPos = await getElementCenter(vertex);
+		await expect(vertex).toBeEnabled();
 
 		// Drag the vertex
+		const vertexPos = await getElementCenter(vertex);
 		const targetPos = translate(vertexPos, [60, 30]);
 		await drag(page, vertexPos, targetPos);
 
@@ -46,6 +47,7 @@ test.describe('Editor: Select tool', () => {
 
 	test('should move vertex with arrow keys', async ({ page }) => {
 		const vertex = getVertices(page).first();
+		await expect(vertex).toBeEnabled();
 		await vertex.focus();
 
 		const initialPos = await getElementCenter(vertex);
@@ -70,6 +72,7 @@ test.describe('Editor: Select tool', () => {
 
 	test('should support fine movement with Ctrl+arrow keys', async ({ page }) => {
 		const vertex = getVertices(page).first();
+		await expect(vertex).toBeEnabled();
 		await vertex.focus();
 
 		const initialPos = await getElementCenter(vertex);
@@ -84,6 +87,7 @@ test.describe('Editor: Select tool', () => {
 
 	test('should support large movement with Shift+arrow keys', async ({ page }) => {
 		const vertex = getVertices(page).first();
+		await expect(vertex).toBeEnabled();
 		await vertex.focus();
 
 		const initialPos = await getElementCenter(vertex);
@@ -101,13 +105,11 @@ test.describe('Editor: Select tool', () => {
 
 		// Create a vertex with control points using the curve tool
 		await tools.curve.click();
-		let vertex = getVertices(page).first();
-		await vertex.click();
+		await getVertices(page).first().click();
 
 		// Switch back to select tool and focus the vertex
 		await tools.select.click();
-		vertex = getVertices(page).first();
-		await vertex.focus();
+		await getVertices(page).first().focus();
 
 		// Move the vertex with the arrow keys
 		await page.keyboard.press('Shift+ArrowRight');
