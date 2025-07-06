@@ -5,6 +5,7 @@
 	import { editor, selectVertex } from './editor.svelte';
 	import { getArrowKeyDelta } from './keyboardNavigation';
 	import ControlPointHandle from './ControlPointHandle.svelte';
+	import { disableUntilHydrated } from './disableUntilHydrated';
 	import { translate, type Vector } from './vector';
 
 	type Props = HTMLButtonAttributes & {
@@ -63,6 +64,7 @@
 			onclick={handleClick}
 			onkeydown={handleKeydown}
 			aria-pressed={isPositionSelected}
+			{...disableUntilHydrated()}
 		>
 			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 		</button>

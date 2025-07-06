@@ -3,6 +3,7 @@
 	import { ToggleGroup as ToggleGroupPrimitive } from 'bits-ui';
 	import Button from './Button.svelte';
 	import { editor, selectTool } from './editor.svelte';
+	import { disableUntilHydrated } from './disableUntilHydrated';
 </script>
 
 <ToggleGroupPrimitive.Root type="single" bind:value={() => editor.tool, selectTool}>
@@ -10,7 +11,7 @@
 		<div {...props} class="toolbar">
 			<ToggleGroupPrimitive.Item value="select">
 				{#snippet child({ props })}
-					<Button {...props}>
+					<Button {...props} {...disableUntilHydrated()}>
 						{#snippet icon()}
 							<MousePointer size={20} />
 						{/snippet}
@@ -21,7 +22,7 @@
 
 			<ToggleGroupPrimitive.Item value="curve">
 				{#snippet child({ props })}
-					<Button {...props}>
+					<Button {...props} {...disableUntilHydrated()}>
 						{#snippet icon()}
 							<Tangent size={20} />
 						{/snippet}

@@ -3,6 +3,7 @@
 	import { moveVertexControlPoint, type Vertex } from './Vertex';
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import { disableUntilHydrated } from './disableUntilHydrated';
 	import { editor, selectVertex, type VertexPart } from './editor.svelte';
 	import { getArrowKeyDelta } from './keyboardNavigation';
 	import { translate, type Vector } from './vector';
@@ -81,6 +82,7 @@
 		onfocus={() => selectVertex(vertex.id, part)}
 		onkeydown={handleKeydown}
 		aria-pressed={isSelected}
+		{...disableUntilHydrated()}
 	>
 		<span class="visually-hidden">{accessibleName}</span>
 	</button>

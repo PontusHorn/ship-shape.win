@@ -2,6 +2,7 @@
 	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
 	import { type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
+	import { disableUntilHydrated } from './disableUntilHydrated';
 	import { editor, selectVertex } from './editor.svelte';
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { VertexPosition } from './VertexPosition';
@@ -96,6 +97,7 @@
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleVertexClick}
 			aria-pressed={isPositionSelected}
+			{...disableUntilHydrated()}
 		>
 			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
 		</button>
