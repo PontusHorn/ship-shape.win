@@ -1,9 +1,33 @@
-import { Locator, Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import type { Vector } from '../src/lib/vector';
 
 export async function getElementCenter(locator: Locator): Promise<Vector> {
 	const boundingBox = await locator.boundingBox();
 	if (!boundingBox) throw new Error('Failed to get bounding box');
+
+	const centerX = boundingBox.x + boundingBox.width / 2;
+	const centerY = boundingBox.y + boundingBox.height / 2;
+
+	return [centerX, centerY];
+}
+
+/**
+ * Like `getElementCenter`, but using the offset position rather than the
+ * viewport-relative position, making it stable regardless of scrolling.
+ */
+export async function getElementOffsetCenter(locator: Locator): Promise<Vector> {
+	const boundingBox = await locator.evaluate((element) => {
+		if (!(element instanceof HTMLElement)) {
+			throw new Error('Element must be an HTMLElement');
+		}
+
+		return {
+			x: element.offsetLeft,
+			y: element.offsetTop,
+			width: element.offsetWidth,
+			height: element.offsetHeight
+		};
+	});
 
 	const centerX = boundingBox.x + boundingBox.width / 2;
 	const centerY = boundingBox.y + boundingBox.height / 2;

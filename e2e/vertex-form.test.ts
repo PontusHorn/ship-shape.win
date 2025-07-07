@@ -4,7 +4,8 @@ import {
 	getOutputShapeCommands,
 	getTools,
 	getVertices,
-	getControlPoints
+	getControlPoints,
+	getElementOffsetCenter
 } from './helpers';
 
 test.describe('Editor: Vertex form', () => {
@@ -85,40 +86,40 @@ test.describe('Editor: Vertex form', () => {
 		const vertex = getVertices(page).first();
 		await vertex.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const xTypeSelect = page.getByLabel(/x type/i);
+		const yInput = page.getByLabel(/y:/i);
+		const yTypeSelect = page.getByLabel(/y type/i);
 
 		// Change to a percentage value that better verifies correct conversion
-		await xInput.fill('25');
-		const vertexPos = await getElementCenter(vertex);
+		await yInput.fill('25');
+		const vertexPos = await getElementOffsetCenter(vertex);
 
 		// Change type to px_from_start
-		await xTypeSelect.selectOption('px_from_start');
+		await yTypeSelect.selectOption('px_from_start');
 
 		// Value should convert to equivalent pixels from start
 		// 25% should equal 75px in a 300px container
-		await expect(xInput).toHaveValue('75');
-		await expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
+		await expect(yInput).toHaveValue('75');
+		await expect(await getElementOffsetCenter(vertex)).toBeCloseVector(vertexPos);
 		let commands = await getOutputShapeCommands(page);
-		expect(commands[0]).toBe('from 75px 0%');
+		expect(commands[0]).toBe('from 50% 75px');
 
 		// Change to px_from_end
-		await xTypeSelect.selectOption('px_from_end');
+		await yTypeSelect.selectOption('px_from_end');
 
 		// Value should convert: 300px - 75px = 225px from end
-		await expect(xInput).toHaveValue('225');
-		await expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
+		await expect(yInput).toHaveValue('225');
+		await expect(await getElementOffsetCenter(vertex)).toBeCloseVector(vertexPos);
 		commands = await getOutputShapeCommands(page);
-		expect(commands[0]).toBe('from calc(100% - 225px) 0%');
+		expect(commands[0]).toBe('from 50% calc(100% - 225px)');
 
 		// Back to percent
-		await xTypeSelect.selectOption('percent');
+		await yTypeSelect.selectOption('percent');
 
 		// Should be back to 25%
-		await expect(xInput).toHaveValue('25');
-		await expect(await getElementCenter(vertex)).toBeCloseVector(vertexPos);
+		await expect(yInput).toHaveValue('25');
+		await expect(await getElementOffsetCenter(vertex)).toBeCloseVector(vertexPos);
 		commands = await getOutputShapeCommands(page);
-		expect(commands[0]).toBe('from 25% 0%');
+		expect(commands[0]).toBe('from 50% 25%');
 	});
 
 	test('should update form when different vertex is selected', async ({ page }) => {
