@@ -41,7 +41,7 @@ export function getControlPoints(page: Page, direction?: 'forward' | 'backward')
 }
 
 export async function getOutputShapeCommands(page: Page): Promise<string[]> {
-	const output = page.locator('code');
+	const output = page.getByTestId('css-output');
 	return extractShapeCommands((await output.textContent()) ?? '');
 }
 

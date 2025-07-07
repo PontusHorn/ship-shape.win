@@ -3,14 +3,17 @@
 	import Button from './Button.svelte';
 	import { copyTextToClipboard } from './copyTextToClipboard';
 
-	const { cssProperties }: { cssProperties: Record<string, string> } = $props();
+	const {
+		cssProperties,
+		extraCss = ''
+	}: { cssProperties: Record<string, string>; extraCss?: string } = $props();
 
 	let codeElement: HTMLElement;
 </script>
 
-<code bind:this={codeElement}
+<code bind:this={codeElement} data-testid="css-output"
 	>{#each Object.entries(cssProperties) as [key, value] (key)}<span class="property">{key}</span>:
-		<span class="key">{value}</span>;{'\n'}{/each}</code
+		<span class="key">{value}</span>;{'\n'}{/each}{extraCss}</code
 >
 <div class="copy">
 	<Button size="small" onclick={() => copyTextToClipboard(codeElement)} popovertarget="copied">
