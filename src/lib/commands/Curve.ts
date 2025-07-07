@@ -53,6 +53,14 @@ export class Curve implements Command {
 
 		return wrappedParts.join('\n\t\t');
 	}
+
+	toSvgCommand(): string {
+		const points = this.withCoords2
+			? [this.withCoords, this.withCoords2, this.coords]
+			: [this.withCoords, this.coords];
+
+		return `C ${points.map((p) => p.toSvgPoint()).join(' ')}`;
+	}
 }
 
 export function curveBy(

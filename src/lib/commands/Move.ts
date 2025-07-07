@@ -15,6 +15,10 @@ export class Move implements Command {
 	toString() {
 		return `move ${this.method}\n\t\t${this.coords.x}\n\t\t${this.coords.y}`;
 	}
+
+	toSvgCommand(): string {
+		return `M ${this.coords.toSvgPoint()}`;
+	}
 }
 
 export function moveBy(x: LengthPercentage, y: LengthPercentage) {

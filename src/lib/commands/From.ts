@@ -1,10 +1,11 @@
+import type { CoordinatePair } from '$lib/CoordinatePair';
 import { Position, type XDimension, type YDimension } from '$lib/Position';
 import type { Command } from './Command';
 
 export class From implements Command {
-	coords: Position;
+	coords: CoordinatePair | Position;
 
-	constructor(coords: Position = new Position()) {
+	constructor(coords: CoordinatePair | Position = new Position()) {
 		this.coords = coords;
 	}
 
@@ -17,6 +18,10 @@ export class From implements Command {
 		}
 
 		return parts.join('\n\t\t');
+	}
+
+	toSvgCommand() {
+		return `M ${this.coords.toSvgPoint()}`;
 	}
 }
 

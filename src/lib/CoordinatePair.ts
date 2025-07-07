@@ -12,4 +12,8 @@ export class CoordinatePair {
 	toString() {
 		return `${this.x} ${this.y}`;
 	}
+
+	toSvgPoint() {
+		return `${this.x},${this.y}`;
+	}
 }

@@ -1,6 +1,7 @@
 import { CoordinatePair } from '$lib/CoordinatePair';
 import type { LengthPercentage } from '$lib/LengthPercentage';
-import { Position, type XDimension, type YDimension } from '$lib/Position';
+import { type XDimension, type YDimension } from '$lib/Position';
+import { Position } from '$lib/Position';
 import type { Command } from './Command';
 import type { MoveMethod } from './shared';
 
@@ -26,6 +27,10 @@ export class Line implements Command {
 		}
 
 		return parts.join('\n\t\t');
+	}
+
+	toSvgCommand() {
+		return `L ${this.coords.toSvgPoint()}`;
 	}
 }
 
