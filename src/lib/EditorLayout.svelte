@@ -57,7 +57,7 @@
 		min-inline-size: 0;
 
 		background: var(--pistachio);
-		border-radius: 0.5rem;
+		border-radius: 1.5rem;
 		box-shadow: inset 1px 2px 4px rgb(0 0 0 / 0.05);
 	}
 

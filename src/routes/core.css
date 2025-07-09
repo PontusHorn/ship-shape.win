@@ -96,17 +96,46 @@
 			[type='password']
 		),
 	select {
-		background-color: var(--linen);
-		border: 2px solid var(--midnight);
-		border-radius: 0.25rem;
+		--padding-block: 0.2rem;
+		--padding-inline: 0.4rem;
+		padding-block: var(--padding-block);
+		padding-inline: var(--padding-inline);
+		background-color: rgb(255 255 255 / 0.75);
+		border: 2px solid var(--fjord);
+		border-radius: 0.75rem;
+		box-shadow:
+			inset 0.5px 1px 1px 1px color-mix(in srgb, var(--abyss), transparent 90%),
+			inset 1px 2px 3px 1px color-mix(in srgb, var(--abyss), transparent 95%);
+		outline: 3px solid transparent;
+		outline-offset: 1px;
+		transition:
+			background-color 0.2s ease-in-out,
+			border-color 0.2s ease-in-out,
+			box-shadow 0.2s ease-in-out,
+			outline-color 0.2s ease-in-out;
 
+		&:hover,
 		&:focus {
-			outline: 3px solid var(--jade);
-			outline-offset: 1px;
 			background-color: white;
-			box-shadow: inset 2px 2px 0 0 var(--pistachio);
 			border-color: var(--abyss);
 		}
+
+		&:focus {
+			box-shadow:
+				inset 0.5px 1px 1px 1px color-mix(in srgb, var(--abyss), transparent 80%),
+				inset 1.5px 3px 4px 1px color-mix(in srgb, var(--abyss), transparent 90%);
+			outline-color: var(--jade);
+		}
+	}
+
+	select {
+		--arrow-size: 16px;
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='%23004a6e' stroke='%23004a6e' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 12L4 4H12L8 12Z' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+		background-repeat: no-repeat;
+		background-size: var(--arrow-size);
+		background-position: calc(100% - var(--padding-inline)) 50%;
+		padding-inline-end: calc(var(--padding-inline) * 2 + var(--arrow-size));
 	}
 
 	input[type='range']:focus-visible {
@@ -131,6 +160,17 @@
 		text-decoration: none;
 		font-family: inherit;
 		font-size: var(--fontSize-0);
+	}
+
+	fieldset {
+		border: 2px solid var(--limestoned);
+		border-radius: 1rem;
+		padding: 1rem;
+		padding-block-start: 0.5rem;
+	}
+
+	legend {
+		padding-inline: 0.25rem;
 	}
 
 	.visually-hidden {

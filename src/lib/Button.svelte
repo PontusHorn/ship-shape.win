@@ -26,9 +26,9 @@
 		padding-block: 0.5em;
 		padding-inline: 0.7em;
 
-		--_lightness: 0.92;
-		--_chroma: 0.07;
-		--_hue: 238.85;
+		--_lightness: var(--lightness, 0.92);
+		--_chroma: var(--chroma, 0.07);
+		--_hue: var(--hue, 238.85);
 		--_color: oklch(var(--_lightness) var(--_chroma) var(--_hue));
 		background: var(--_color) linear-gradient(155deg, rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.1));
 		background-blend-mode: luminosity;
@@ -49,7 +49,7 @@
 			transform var(--_duration) var(--_easing),
 			background var(--_duration) var(--_easing);
 
-		--_border-color: color-mix(in srgb, var(--_color), rgb(0 0 0 / 0.75) 50%);
+		--_border-color: color-mix(in srgb, var(--_color), black 50%);
 		--_radius-start: 0.75em;
 		--_radius-end: 0.75em;
 		border: 2px solid var(--_border-color);
