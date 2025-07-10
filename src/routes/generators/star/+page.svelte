@@ -1,21 +1,25 @@
 <script lang="ts">
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
-	import { CoordinatePair } from '$lib/CoordinatePair';
-	import { cssPropertiesToCss } from '$lib/css';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
-	import { percent, raw } from '$lib/LengthPercentage';
+	import type { BaseUnit } from '$lib/LengthPercentage';
+	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { StarPolygon } from '$lib/parametricShapes/StarPolygon';
+	import ShapePreview from '$lib/ShapePreview.svelte';
+	import type { Vector } from '$lib/vector';
 
 	let points = $state(6);
-	let outerRadius = $state('50%');
-	let innerRadius = $state('20%');
+	let unit = $state<BaseUnit>('percent');
+	let outerRadius = $state(50);
+	let innerRadius = $state(20);
 	let rotation = $state(0);
-	const center = new CoordinatePair(percent(50), percent(50));
+	let center = $derived<Vector>(unit === 'percent' ? [50, 50] : [150, 150]);
 	const polygon = $derived(
-		new StarPolygon(points, raw(outerRadius), raw(innerRadius), center, rotation)
+		new StarPolygon(points, unit, outerRadius, innerRadius, center, rotation)
 	);
-	const cssProperties = $derived(polygon.toCssProperties('clip-path'));
+
+	const shape = $derived(polygon.toShape());
+	let cssProperties = $derived(polygon.toCssProperties(outputConfig));
 </script>
 
 <svelte:head>
@@ -30,11 +34,17 @@
 		<label for="points">Number of points:</label>
 		<input id="points" type="number" bind:value={points} min="3" />
 
+		<label for="unit">Unit:</label>
+		<select id="unit" bind:value={unit}>
+			<option value="percent">%</option>
+			<option value="px">px</option>
+		</select>
+
 		<label for="outer-radius">Outer radius:</label>
-		<input id="outer-radius" type="text" bind:value={outerRadius} />
+		<input id="outer-radius" type="number" bind:value={outerRadius} />
 
 		<label for="inner-radius">Inner radius:</label>
-		<input id="inner-radius" type="text" bind:value={innerRadius} />
+		<input id="inner-radius" type="number" bind:value={innerRadius} />
 
 		<label for="rotation">Rotation:</label>
 		<input
@@ -56,7 +66,7 @@
 	</form>
 
 	{#snippet preview()}
-		<div class="preview" style={cssPropertiesToCss(cssProperties)}></div>
+		<ShapePreview {cssProperties} {shape} />
 	{/snippet}
 
 	{#snippet output()}
@@ -75,11 +85,5 @@
 
 	label {
 		text-align: right;
-	}
-
-	.preview {
-		background-color: var(--jade);
-		width: 300px;
-		height: 300px;
 	}
 </style>

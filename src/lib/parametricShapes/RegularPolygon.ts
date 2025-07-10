@@ -4,25 +4,32 @@ import { Curve } from '$lib/commands/Curve';
 import { From } from '$lib/commands/From';
 import { Line } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
-import { percent, raw, type LengthPercentage } from '$lib/LengthPercentage';
+import type { CssProperties } from '$lib/css';
+import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
+import { getShapeCssProperties } from '$lib/output';
+import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
+import type { Vector } from '$lib/vector';
 import type { ParametricShape } from './ParametricShape';
 
 export class RegularPolygon implements ParametricShape {
 	sides: number;
-	radius: LengthPercentage;
-	center: CoordinatePair;
+	unit: BaseUnit;
+	radius: number;
+	center: Vector;
 	rotation: number;
 	swell: number;
 
 	constructor(
 		sides: number,
-		radius: LengthPercentage = percent(50),
-		center = new CoordinatePair(percent(50), percent(50)),
+		unit: BaseUnit = 'percent',
+		radius: number = 50,
+		center: Vector = [50, 50],
 		rotation = 0,
 		swell: number = 1
 	) {
 		this.sides = sides;
+		this.unit = unit;
 		this.radius = radius;
 		this.center = center;
 		this.rotation = rotation;
@@ -37,12 +44,25 @@ export class RegularPolygon implements ParametricShape {
 		return this.swell !== 1;
 	}
 
+	get #unitFactory() {
+		return this.unit === 'percent' ? percent : px;
+	}
+
 	#getCornerCoordinates(pointIndex: number): CoordinatePair {
 		const angle = this.#isRotated
 			? `var(--rotation) + ${pointIndex}turn / var(--sides)`
 			: `${pointIndex}turn / var(--sides)`;
-		const x = raw(`calc(var(--center-x) + var(--radius) * cos(${angle}))`);
-		const y = raw(`calc(var(--center-y) + var(--radius) * sin(${angle}))`);
+		const rawAngle = this.rotation + (pointIndex * Math.PI * 2) / this.sides;
+
+		const x = raw(
+			`calc(var(--center-x) + var(--radius) * cos(${angle}))`,
+			this.#unitFactory(this.center[0] + this.radius * Math.cos(rawAngle))
+		);
+		const y = raw(
+			`calc(var(--center-y) + var(--radius) * sin(${angle}))`,
+			this.#unitFactory(this.center[1] + this.radius * Math.sin(rawAngle))
+		);
+
 		return new CoordinatePair(x, y);
 	}
 
@@ -50,20 +70,31 @@ export class RegularPolygon implements ParametricShape {
 		const angle = this.#isRotated
 			? `var(--rotation) + ${toPointIndex - 0.5}turn / var(--sides)`
 			: `${toPointIndex - 0.5}turn / var(--sides)`;
-		const x = raw(`calc(var(--center-x) + var(--swell-radius) * cos(${angle}))`);
-		const y = raw(`calc(var(--center-y) + var(--swell-radius) * sin(${angle}))`);
+		const rawAngle = this.rotation + ((toPointIndex - 0.5) * Math.PI * 2) / this.sides;
+
+		const swellRadius = this.radius * Math.cos(Math.PI / this.sides) * this.swell;
+
+		const x = raw(
+			`calc(var(--center-x) + var(--swell-radius) * cos(${angle}))`,
+			this.#unitFactory(this.center[0] + swellRadius * Math.cos(rawAngle))
+		);
+		const y = raw(
+			`calc(var(--center-y) + var(--swell-radius) * sin(${angle}))`,
+			this.#unitFactory(this.center[1] + swellRadius * Math.sin(rawAngle))
+		);
+
 		return new CoordinatePair(x, y);
 	}
 
-	get #customProperties(): Record<string, string> {
-		const properties: Record<string, string> = {
+	get #customProperties(): CssProperties {
+		const properties: CssProperties = {
 			['--sides']: this.sides.toString(),
-			['--radius']: this.radius.toString(),
+			['--radius']: this.#unitFactory(this.radius).toCss(),
 			['--swell']: this.swell.toString(),
-			['--swell-radius']: `calc(${this.radius.toString()} * cos(pi / var(--sides)) * var(--swell))`,
+			['--swell-radius']: `calc(var(--radius) * cos(pi / var(--sides)) * var(--swell))`,
 			['--rotation']: `calc(${this.rotation}turn / var(--sides))`,
-			['--center-x']: this.center.x.toString(),
-			['--center-y']: this.center.y.toString()
+			['--center-x']: this.#unitFactory(this.center[0]).toCss(),
+			['--center-y']: this.#unitFactory(this.center[1]).toCss()
 		};
 
 		if (!this.#isRotated) {
@@ -94,9 +125,11 @@ export class RegularPolygon implements ParametricShape {
 		return new Shape(from, commands);
 	}
 
-	toCssProperties(propertyName: string) {
-		const properties = this.#customProperties;
-		properties[propertyName] = this.toShape().toString();
+	toCssProperties({ shapeProperty, codeStyle }: OutputConfig) {
+		const properties = {
+			...(codeStyle === 'default' ? this.#customProperties : {}),
+			...getShapeCssProperties(this.toShape(), shapeProperty, codeStyle)
+		};
 
 		return properties;
 	}

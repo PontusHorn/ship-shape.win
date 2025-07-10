@@ -1,4 +1,4 @@
-import { type LengthPercentage, percent, px, raw } from './LengthPercentage';
+import { type CodeStyle, type LengthPercentage, percent, px, raw } from './LengthPercentage';
 
 type DimensionType = 'percent' | 'px_from_start' | 'px_from_end';
 
@@ -61,25 +61,18 @@ export class VertexDimension {
 		}
 	}
 
-	toString() {
-		switch (this.type) {
-			case 'percent':
-				return `${this.roundedValue}%`;
-			case 'px_from_start':
-				return `${this.value}px`;
-			case 'px_from_end':
-				return `calc(100% - ${this.value}px)`;
-		}
+	toCss(maxPx: number, style: CodeStyle = 'default'): string {
+		return this.toLengthPercentage(maxPx).toCss(style);
 	}
 
-	toLengthPercentage(): LengthPercentage {
+	toLengthPercentage(maxPx: number): LengthPercentage {
 		switch (this.type) {
 			case 'percent':
 				return percent(this.roundedValue);
 			case 'px_from_start':
 				return px(this.value);
 			case 'px_from_end':
-				return raw(`calc(100% - ${this.value}px)`);
+				return raw(`calc(100% - ${this.value}px)`, px(maxPx - this.value));
 		}
 	}
 }

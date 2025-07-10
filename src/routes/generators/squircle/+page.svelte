@@ -1,20 +1,23 @@
 <script lang="ts">
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
-	import { cssPropertiesToCss } from '$lib/css';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
-	import { percent, px } from '$lib/LengthPercentage';
+	import type { BaseUnit } from '$lib/LengthPercentage';
+	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { Squircle } from '$lib/parametricShapes/Squircle';
+	import ShapePreview from '$lib/ShapePreview.svelte';
 
 	let curvature = $state(0.25);
-	let proportional = $state(true);
+	let unit = $state<BaseUnit>('percent');
 
 	const squircle = $derived(
 		new Squircle(
-			proportional ? percent(Math.round(curvature * 50)) : px(Math.round(curvature * 100))
+			unit,
+			unit === 'percent' ? Math.round(curvature * 50) : Math.round(curvature * 100)
 		)
 	);
-	const cssProperties = $derived(squircle.toCssProperties('clip-path'));
+	const shape = $derived(squircle.toShape(outputConfig.previewSize));
+	const cssProperties = $derived(squircle.toCssProperties(outputConfig));
 </script>
 
 <svelte:head>
@@ -50,12 +53,15 @@
 			<option value="1"></option>
 		</datalist>
 
-		<label for="proportional">Proportional curvature:</label>
-		<input id="proportional" type="checkbox" bind:checked={proportional} />
+		<label for="unit" class="visually-hidden">Unit:</label>
+		<select id="unit" bind:value={unit}>
+			<option value="percent">%</option>
+			<option value="px">px</option>
+		</select>
 	</form>
 
 	{#snippet preview()}
-		<div class="preview" style={cssPropertiesToCss(cssProperties)}></div>
+		<ShapePreview {cssProperties} {shape} />
 	{/snippet}
 
 	{#snippet output()}
@@ -66,7 +72,7 @@
 <style>
 	form {
 		display: grid;
-		grid-template-columns: auto 1fr;
+		grid-template-columns: auto 1fr 1fr;
 		align-items: baseline;
 		align-content: start;
 		gap: 0.5rem 0.25rem;
@@ -74,16 +80,5 @@
 
 	label {
 		text-align: right;
-	}
-
-	input[type='checkbox'] {
-		justify-self: start;
-	}
-
-	.preview {
-		background-color: var(--jade);
-		width: 300px;
-		height: 300px;
-		max-width: 100%;
 	}
 </style>

@@ -68,7 +68,11 @@
 			aria-pressed={isPositionSelected}
 			{...disableUntilHydrated()}
 		>
-			<span class="visually-hidden">Vertex at {vertex.position.x}, {vertex.position.y}</span>
+			<span class="visually-hidden">
+				Vertex at
+				{vertex.position.x.toCss(maxSize[0], 'minimal')},
+				{vertex.position.y.toCss(maxSize[1], 'minimal')}
+			</span>
 		</button>
 	</div>
 

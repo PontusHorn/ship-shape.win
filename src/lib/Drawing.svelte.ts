@@ -20,32 +20,32 @@ export class Drawing {
 		}
 	}
 
-	toShape(): Shape {
+	toShape(maxSize: Vector): Shape {
 		const [from, ...rest] = this.vertices;
 
 		const commands = [...rest, from].map((vertex, index) => {
 			const previousVertex = index === 0 ? from : rest[index - 1];
 
-			const controlPoint1 = previousVertex.controlPointForward?.toPosition();
-			const controlPoint2 = vertex.controlPointBackward?.toPosition();
+			const controlPoint1 = previousVertex.controlPointForward?.toCoordinatePair(maxSize);
+			const controlPoint2 = vertex.controlPointBackward?.toCoordinatePair(maxSize);
 			const controlPoint = controlPoint1 || controlPoint2;
 
 			// If this segment has no control points, create a line command
 			if (!controlPoint) {
-				return new Line(vertex.position.toPosition());
+				return new Line(vertex.position.toCoordinatePair(maxSize));
 			}
 
 			// Otherwise, create a curve command
 			if (controlPoint1 && controlPoint2) {
 				// Both control points available - create a cubic curve
-				return new Curve(vertex.position.toPosition(), controlPoint1, controlPoint2);
+				return new Curve(vertex.position.toCoordinatePair(maxSize), controlPoint1, controlPoint2);
 			}
 
 			// Only one control point - create a quadratic curve
-			return new Curve(vertex.position.toPosition(), controlPoint);
+			return new Curve(vertex.position.toCoordinatePair(maxSize), controlPoint);
 		});
 
-		return new Shape(new From(from.position.toPosition()), commands);
+		return new Shape(new From(from.position.toCoordinatePair(maxSize)), commands);
 	}
 
 	insertVertex(afterIndex: number, position: VertexPosition): string {

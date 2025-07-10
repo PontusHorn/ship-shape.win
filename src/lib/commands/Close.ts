@@ -1,7 +1,7 @@
 import type { Command } from './Command';
 
 export class Close implements Command {
-	toString() {
+	toCss() {
 		return 'close';
 	}
 

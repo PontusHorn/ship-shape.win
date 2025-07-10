@@ -1,16 +1,16 @@
-import type { CoordinatePair } from '$lib/CoordinatePair';
-import { Position, type XDimension, type YDimension } from '$lib/Position';
+import { CoordinatePair } from '$lib/CoordinatePair';
+import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 
 export class From implements Command {
-	coords: CoordinatePair | Position;
+	coords: CoordinatePair;
 
-	constructor(coords: CoordinatePair | Position = new Position()) {
+	constructor(coords: CoordinatePair = new CoordinatePair()) {
 		this.coords = coords;
 	}
 
-	toString() {
-		const parts = ['from', this.coords.x, this.coords.y];
+	toCss(style: CodeStyle) {
+		const parts = ['from', this.coords.x.toCss(style), this.coords.y.toCss(style)];
 
 		const oneLiner = parts.join(' ');
 		if (oneLiner.length <= 80) {
@@ -25,6 +25,6 @@ export class From implements Command {
 	}
 }
 
-export function from(x: XDimension, y: YDimension) {
-	return new From(new Position(x, y));
+export function from(x: LengthPercentage, y: LengthPercentage) {
+	return new From(new CoordinatePair(x, y));
 }

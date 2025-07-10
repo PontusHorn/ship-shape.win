@@ -1,4 +1,4 @@
-import { Position } from './Position';
+import { CoordinatePair } from './CoordinatePair';
 import { VertexDimension } from './VertexDimension';
 import type { Vector } from './vector';
 
@@ -38,8 +38,8 @@ export class VertexPosition {
 		return new VertexPosition(this.x.toMirrored(origin.x, maxX), this.y.toMirrored(origin.y, maxY));
 	}
 
-	toPosition(): Position {
-		return new Position(this.x.toLengthPercentage(), this.y.toLengthPercentage());
+	toCoordinatePair([maxX, maxY]: Vector): CoordinatePair {
+		return new CoordinatePair(this.x.toLengthPercentage(maxX), this.y.toLengthPercentage(maxY));
 	}
 
 	toVector([maxX, maxY]: Vector): Vector {

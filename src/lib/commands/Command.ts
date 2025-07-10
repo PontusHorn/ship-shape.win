@@ -1,9 +1,10 @@
+import type { CodeStyle } from '$lib/LengthPercentage';
 import type { Close } from './Close';
 import type { Line } from './Line';
 import type { Move } from './Move';
 
 export interface Command {
-	toString(): string;
+	toCss(style: CodeStyle): string;
 	toSvgCommand(): string;
 }
 

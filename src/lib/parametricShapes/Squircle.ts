@@ -1,45 +1,64 @@
 import { curveTo } from '$lib/commands/Curve';
 import { from } from '$lib/commands/From';
-import { percent, raw, type LengthPercentage } from '$lib/LengthPercentage';
+import type { CssProperties } from '$lib/css';
+import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
+import { getShapeCssProperties } from '$lib/output';
+import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
+import type { Vector } from '$lib/vector';
 import type { ParametricShape } from './ParametricShape';
 
 export class Squircle implements ParametricShape {
-	curvature: LengthPercentage;
+	unit: BaseUnit;
+	curvature: number;
 
-	constructor(curvature: LengthPercentage = percent(50)) {
+	constructor(unit: BaseUnit = 'percent', curvature = 50) {
+		this.unit = unit;
 		this.curvature = curvature;
 	}
 
-	get #customProperties(): Record<string, string> {
-		console.log(this.curvature);
-		const properties: Record<string, string> = {
-			['--curvature']:
-				/* this.curvature instanceof Percent
-					?  */ this.curvature.toString(),
-			// Cap to 50% to prevent overflow
-			// : `min(${this.curvature.toString()}, 50%)`,
-			['--right']: `calc(100% - var(--curvature))`,
-			['--down']: `calc(100% - var(--curvature))`,
-			['--left']: `calc(var(--curvature))`,
-			['--up']: `calc(var(--curvature))`
+	get #unitFactory() {
+		return this.unit === 'percent' ? percent : px;
+	}
+
+	get #customProperties(): CssProperties {
+		const properties: CssProperties = {
+			['--curvature']: this.#unitFactory(this.curvature).toCss(),
+			['--start']: `var(--curvature)`,
+			['--end']: `calc(100% - var(--curvature))`
 		};
 
 		return properties;
 	}
 
-	toShape(): Shape {
-		return new Shape(from('center', 'top'), [
-			curveTo(['right', 'center'], [raw(`var(--right)`), 'top'], ['right', raw(`var(--up)`)]),
-			curveTo(['center', 'bottom'], ['right', raw(`var(--down)`)], [raw(`var(--right)`), 'bottom']),
-			curveTo(['left', 'center'], [raw(`var(--left)`), 'bottom'], ['left', raw(`var(--down)`)]),
-			curveTo(['center', 'top'], ['left', raw(`var(--up)`)], [raw(`var(--left)`), 'top'])
+	toShape([maxX, maxY]: Vector): Shape {
+		const start = percent(0);
+		const center = percent(50);
+		const end = percent(100);
+
+		const curveLeft = raw(`var(--start)`, this.#unitFactory(this.curvature));
+		const curveUp = raw(`var(--start)`, this.#unitFactory(this.curvature));
+		const curveRight = raw(
+			`var(--end)`,
+			this.unit === 'percent' ? percent(100 - this.curvature) : px(maxX - this.curvature)
+		);
+		const curveDown = raw(
+			`var(--end)`,
+			this.unit === 'percent' ? percent(100 - this.curvature) : px(maxY - this.curvature)
+		);
+		return new Shape(from(center, start), [
+			curveTo([end, center], [curveRight, start], [end, curveUp]),
+			curveTo([center, end], [end, curveDown], [curveRight, end]),
+			curveTo([start, center], [curveLeft, end], [start, curveDown]),
+			curveTo([center, start], [start, curveUp], [curveLeft, start])
 		]);
 	}
 
-	toCssProperties(propertyName: string) {
-		const properties = this.#customProperties;
-		properties[propertyName] = this.toShape().toString();
+	toCssProperties({ shapeProperty, codeStyle, previewSize }: OutputConfig) {
+		const properties = {
+			...(codeStyle === 'default' ? this.#customProperties : {}),
+			...getShapeCssProperties(this.toShape(previewSize), shapeProperty, codeStyle)
+		};
 
 		return properties;
 	}

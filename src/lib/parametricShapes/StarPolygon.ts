@@ -1,25 +1,34 @@
+import { close } from '$lib/commands/Close';
+import type { Command } from '$lib/commands/Command';
 import { From } from '$lib/commands/From';
 import { Line } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
-import { percent, raw, type LengthPercentage } from '$lib/LengthPercentage';
+import type { CssProperties } from '$lib/css';
+import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
+import { getShapeCssProperties } from '$lib/output';
+import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
+import type { Vector } from '$lib/vector';
 import type { ParametricShape } from './ParametricShape';
 
 export class StarPolygon implements ParametricShape {
 	points: number;
-	outerRadius: LengthPercentage;
-	innerRadius: LengthPercentage;
-	center: CoordinatePair;
+	unit: BaseUnit;
+	outerRadius: number;
+	innerRadius: number;
+	center: Vector;
 	rotation: number;
 
 	constructor(
 		points: number,
-		outerRadius: LengthPercentage = percent(50),
-		innerRadius: LengthPercentage = percent(20),
-		center = new CoordinatePair(percent(50), percent(50)),
+		unit: BaseUnit = 'percent',
+		outerRadius = 50,
+		innerRadius = 20,
+		center: Vector = [50, 50],
 		rotation = 0
 	) {
 		this.points = points;
+		this.unit = unit;
 		this.outerRadius = outerRadius;
 		this.innerRadius = innerRadius;
 		this.center = center;
@@ -30,34 +39,56 @@ export class StarPolygon implements ParametricShape {
 		return this.rotation % 1 !== 0;
 	}
 
+	get #unitFactory() {
+		return this.unit === 'percent' ? percent : px;
+	}
+
 	get #coordinates(): CoordinatePair[] {
 		const coordinates: CoordinatePair[] = [];
 		for (let i = 0; i < this.points; i++) {
 			const pointAngle = this.#isRotated
 				? `calc(var(--rotation) + ${i}turn / var(--points))`
 				: `calc(${i}turn / var(--points))`;
-			const pointX = raw(`calc(var(--center-x) + var(--outer-radius) * cos(${pointAngle}))`);
-			const pointY = raw(`calc(var(--center-y) + var(--outer-radius) * sin(${pointAngle}))`);
+			const rawPointAngle = this.rotation + (i * Math.PI * 2) / this.points;
+
+			const pointX = raw(
+				`calc(var(--center-x) + var(--outer-radius) * cos(${pointAngle}))`,
+				this.#unitFactory(this.center[0] + this.outerRadius * Math.cos(rawPointAngle))
+			);
+			const pointY = raw(
+				`calc(var(--center-y) + var(--outer-radius) * sin(${pointAngle}))`,
+				this.#unitFactory(this.center[1] + this.outerRadius * Math.sin(rawPointAngle))
+			);
+
 			coordinates.push(new CoordinatePair(pointX, pointY));
 
 			const innerAngle = this.#isRotated
 				? `calc(var(--rotation) + ${i + 0.5}turn / var(--points))`
 				: `calc(${i + 0.5}turn / var(--points))`;
-			const innerX = raw(`calc(var(--center-x) + var(--inner-radius) * cos(${innerAngle}))`);
-			const innerY = raw(`calc(var(--center-y) + var(--inner-radius) * sin(${innerAngle}))`);
+			const rawInnerAngle = this.rotation + ((i + 0.5) * Math.PI * 2) / this.points;
+
+			const innerX = raw(
+				`calc(var(--center-x) + var(--inner-radius) * cos(${innerAngle}))`,
+				this.#unitFactory(this.center[0] + this.innerRadius * Math.cos(rawInnerAngle))
+			);
+			const innerY = raw(
+				`calc(var(--center-y) + var(--inner-radius) * sin(${innerAngle}))`,
+				this.#unitFactory(this.center[1] + this.innerRadius * Math.sin(rawInnerAngle))
+			);
+
 			coordinates.push(new CoordinatePair(innerX, innerY));
 		}
 		return coordinates;
 	}
 
-	get #customProperties(): Record<string, string> {
-		const properties: Record<string, string> = {
+	get #customProperties(): CssProperties {
+		const properties: CssProperties = {
 			['--points']: this.points.toString(),
-			['--outer-radius']: this.outerRadius.toString(),
-			['--inner-radius']: this.innerRadius.toString(),
+			['--outer-radius']: this.#unitFactory(this.outerRadius).toCss(),
+			['--inner-radius']: this.#unitFactory(this.innerRadius).toCss(),
 			['--rotation']: `calc(${this.rotation}turn / var(--points))`,
-			['--center-x']: this.center.x.toString(),
-			['--center-y']: this.center.y.toString()
+			['--center-x']: this.#unitFactory(this.center[0]).toCss(),
+			['--center-y']: this.#unitFactory(this.center[1]).toCss()
 		};
 
 		if (!this.#isRotated) {
@@ -69,15 +100,16 @@ export class StarPolygon implements ParametricShape {
 
 	toShape(): Shape {
 		const [fromCoordinate, ...restCoordinates] = this.#coordinates;
-		return new Shape(
-			new From(fromCoordinate),
-			restCoordinates.map((coordinate) => new Line(coordinate))
-		);
+		const commands: Command[] = restCoordinates.map((coordinate) => new Line(coordinate));
+		commands.push(close());
+		return new Shape(new From(fromCoordinate), commands);
 	}
 
-	toCssProperties(propertyName: string) {
-		const properties = this.#customProperties;
-		properties[propertyName] = this.toShape().toString();
+	toCssProperties({ shapeProperty, codeStyle }: OutputConfig) {
+		const properties = {
+			...(codeStyle === 'default' ? this.#customProperties : {}),
+			...getShapeCssProperties(this.toShape(), shapeProperty, codeStyle)
+		};
 
 		return properties;
 	}

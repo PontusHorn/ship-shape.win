@@ -1,19 +1,23 @@
 <script lang="ts">
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
-	import { CoordinatePair } from '$lib/CoordinatePair';
-	import { cssPropertiesToCss } from '$lib/css';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
-	import { percent, raw } from '$lib/LengthPercentage';
+	import type { BaseUnit } from '$lib/LengthPercentage';
+	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
+	import ShapePreview from '$lib/ShapePreview.svelte';
+	import type { Vector } from '$lib/vector';
 
 	let sides = $state(6);
-	let radius = $state('50%');
+	let unit = $state<BaseUnit>('percent');
+	let radius = $state(50);
 	let rotation = $state(0);
 	let swell = $state(1);
-	const center = new CoordinatePair(percent(50), percent(50));
-	const polygon = $derived(new RegularPolygon(sides, raw(radius), center, rotation, swell));
-	const cssProperties = $derived(polygon.toCssProperties('clip-path'));
+	let center = $derived<Vector>(unit === 'percent' ? [50, 50] : [150, 150]);
+	const polygon = $derived(new RegularPolygon(sides, 'percent', radius, center, rotation, swell));
+
+	const shape = $derived(polygon.toShape());
+	const cssProperties = $derived(polygon.toCssProperties(outputConfig));
 </script>
 
 <svelte:head>
@@ -36,7 +40,12 @@
 		<input id="sides" type="number" bind:value={sides} min="3" max="20" />
 
 		<label for="radius">Radius:</label>
-		<input id="radius" type="text" bind:value={radius} />
+		<input id="radius" type="number" bind:value={radius} min="0" />
+		<label for="unit" class="visually-hidden">Unit:</label>
+		<select id="unit" bind:value={unit}>
+			<option value="percent">%</option>
+			<option value="px">px</option>
+		</select>
 
 		<label for="rotation">Rotation:</label>
 		<input
@@ -74,7 +83,7 @@
 	</form>
 
 	{#snippet preview()}
-		<div class="preview" style={cssPropertiesToCss(cssProperties)}></div>
+		<ShapePreview {cssProperties} {shape} />
 	{/snippet}
 
 	{#snippet output()}
@@ -85,7 +94,7 @@
 <style>
 	form {
 		display: grid;
-		grid-template-columns: auto 1fr;
+		grid-template-columns: auto 1fr 1fr;
 		align-items: baseline;
 		align-content: start;
 		gap: 0.5rem 0.25rem;
@@ -95,9 +104,7 @@
 		text-align: right;
 	}
 
-	.preview {
-		background-color: var(--jade);
-		width: 300px;
-		height: 300px;
+	input:not(#radius) {
+		grid-column: span 2;
 	}
 </style>

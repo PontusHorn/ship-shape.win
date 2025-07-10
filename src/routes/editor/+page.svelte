@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
-	import { cssPropertiesToCss } from '$lib/css';
 	import AddVertexButton from '$lib/AddVertexButton.svelte';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { moveVertex, moveVertexControlPoint, type Vertex } from '$lib/Vertex';
@@ -13,10 +12,17 @@
 	import type { Vector } from '$lib/vector';
 	import { tick } from 'svelte';
 	import { getVertexButton } from '$lib/elementIds';
+	import { getShapeCssProperties } from '$lib/output';
+	import ShapePreview from '$lib/ShapePreview.svelte';
+	import { outputConfig } from '$lib/outputConfig.svelte';
 
 	const previewSize: Vector = [300, 300];
 
-	const cssProperties = $derived({ 'clip-path': editor.drawing.toShape().toString() });
+	const shape = $derived(editor.drawing.toShape(previewSize));
+
+	const cssProperties = $derived(
+		getShapeCssProperties(shape, outputConfig.shapeProperty, outputConfig.codeStyle)
+	);
 
 	const selectedVertex = $derived.by(() => {
 		const { selection, drawing } = editor;
@@ -151,13 +157,8 @@
 			<span class="visually-hidden">Clear selection</span>
 		</button>
 
-		<div
-			class="preview"
-			class:hasSelection={!!editor.selection}
-			style:width={previewSize[0] + 'px'}
-			style:height={previewSize[1] + 'px'}
-		>
-			<div class="shape" style={cssPropertiesToCss(cssProperties)}></div>
+		<div class="preview" class:hasSelection={!!editor.selection}>
+			<ShapePreview {cssProperties} {shape} />
 
 			{#each editor.drawing.vertices as vertex, index (vertex.id)}
 				{#if editor.tool === 'select'}
@@ -180,6 +181,7 @@
 				{@const position = editor.drawing.getMidpointAt(previewSize, index)}
 				<AddVertexButton
 					{position}
+					maxSize={previewSize}
 					onAddVertex={() => {
 						const newVertexId = editor.drawing.insertVertex(index, position);
 
@@ -197,54 +199,60 @@
 	<Toolbar />
 
 	<form>
-		{#if selectedPosition}
-			<label for="vertex-x">X:</label>
-			<input
-				id="vertex-x"
-				type="number"
-				value={selectedPosition.x.value.toString()}
-				oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
-			/>
+		{#if selectedVertex && selectedPosition}
+			<fieldset>
+				<legend>
+					{#if editor.selection?.part === 'position'}Vertex position{:else}Control point position{/if}
+				</legend>
 
-			<label for="vertex-x-type" class="visually-hidden">X type</label>
-			<select
-				id="vertex-x-type"
-				value={selectedPosition.x.type}
-				onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
-			>
-				<option value="percent">%</option>
-				<option value="px_from_start">px</option>
-				<option value="px_from_end">px (from right)</option>
-			</select>
+				<div class="vertexPosition">
+					<label for="vertex-x">X:</label>
+					<input
+						id="vertex-x"
+						type="number"
+						value={selectedPosition.x.value.toString()}
+						oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
+					/>
 
-			<label for="vertex-y">Y:</label>
-			<input
-				id="vertex-y"
-				type="number"
-				value={selectedPosition.y.value.toString()}
-				oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
-			/>
+					<label for="vertex-x-type" class="visually-hidden">X type</label>
+					<select
+						id="vertex-x-type"
+						value={selectedPosition.x.type}
+						onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
+					>
+						<option value="percent">%</option>
+						<option value="px_from_start">px</option>
+						<option value="px_from_end">px (from right)</option>
+					</select>
 
-			<label for="vertex-y-type" class="visually-hidden">Y type</label>
-			<select
-				id="vertex-y-type"
-				value={selectedPosition.y.type}
-				onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
-			>
-				<option value="percent">%</option>
-				<option value="px_from_start">px</option>
-				<option value="px_from_end">px (from bottom)</option>
-			</select>
-		{/if}
+					<label for="vertex-y">Y:</label>
+					<input
+						id="vertex-y"
+						type="number"
+						value={selectedPosition.y.value.toString()}
+						oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
+					/>
 
-		{#if selectedVertex}
-			<input
-				id="vertex-mirrored"
-				type="checkbox"
-				checked={selectedVertex.isMirrored}
-				onchange={(event) => handleVertexMirroredChange(event.currentTarget.checked)}
-			/>
-			<label for="vertex-mirrored">Mirrored control points</label>
+					<label for="vertex-y-type" class="visually-hidden">Y type</label>
+					<select
+						id="vertex-y-type"
+						value={selectedPosition.y.type}
+						onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
+					>
+						<option value="percent">%</option>
+						<option value="px_from_start">px</option>
+						<option value="px_from_end">px (from bottom)</option>
+					</select>
+
+					<input
+						id="vertex-mirrored"
+						type="checkbox"
+						checked={selectedVertex.isMirrored}
+						onchange={(event) => handleVertexMirroredChange(event.currentTarget.checked)}
+					/>
+					<label for="vertex-mirrored">Mirrored control points</label>
+				</div>
+			</fieldset>
 		{/if}
 	</form>
 
@@ -255,6 +263,12 @@
 
 <style>
 	form {
+		display: flex;
+		flex-direction: column;
+		gap: 0.5rem;
+	}
+
+	.vertexPosition {
 		display: grid;
 		grid-template-columns: auto 1fr auto;
 		align-items: center;
@@ -284,14 +298,5 @@
 
 	.preview {
 		position: relative;
-	}
-
-	.shape {
-		background-color: var(--jade);
-		width: 100%;
-		height: 100%;
-		/* Add a faint outline that shows when the clip-path extends outside the
-		element bounds, so it's easier to see the path */
-		outline: 9999px solid color-mix(in srgb, var(--jade), transparent 90%);
 	}
 </style>

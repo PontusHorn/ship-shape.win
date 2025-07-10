@@ -85,8 +85,8 @@
 		const canvas = within(canvasElement);
 		const button = canvas.getByRole('button');
 
-		// Test that different dimension types are reflected in accessible name
-		await expect(button).toHaveAccessibleName('Vertex at 50px, calc(100% - 30px)');
+		// The accessible name should use absolute values for brevity
+		await expect(button).toHaveAccessibleName('Vertex at 50px, 170px');
 
 		// Drag the button 50px down and to the right
 		const start = getElementCenter(button);

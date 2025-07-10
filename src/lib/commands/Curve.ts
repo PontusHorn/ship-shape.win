@@ -1,40 +1,35 @@
 import { CoordinatePair } from '$lib/CoordinatePair';
-import type { LengthPercentage } from '$lib/LengthPercentage';
-import { Position, type XDimension, type YDimension } from '$lib/Position';
+import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 import type { MoveMethod } from './shared';
 
 export class Curve implements Command {
 	method: MoveMethod;
-	coords: CoordinatePair | Position;
-	withCoords: CoordinatePair | Position;
-	withCoords2?: CoordinatePair | Position;
+	coords: CoordinatePair;
+	withCoords: CoordinatePair;
+	withCoords2?: CoordinatePair;
 
 	constructor(
-		coords: CoordinatePair | Position,
-		withCoords: CoordinatePair | Position,
-		withCoords2?: CoordinatePair | Position,
+		coords: CoordinatePair,
+		withCoords: CoordinatePair,
+		withCoords2?: CoordinatePair,
 		method: MoveMethod = 'to'
 	) {
-		if (method === 'by' && !(coords instanceof CoordinatePair)) {
-			throw new Error(`Must use a CoordinatePair as coords when using the 'by' method`);
-		}
-
 		this.coords = coords;
 		this.withCoords = withCoords;
 		this.withCoords2 = withCoords2;
 		this.method = method;
 	}
 
-	toString() {
+	toCss(style: CodeStyle) {
 		const parts = [
 			[`curve ${this.method}`],
-			[this.coords.x.toString(), this.coords.y.toString()],
-			['with', this.withCoords.x.toString(), this.withCoords.y.toString()]
+			[this.coords.x.toCss(style), this.coords.y.toCss(style)],
+			['with', this.withCoords.x.toCss(style), this.withCoords.y.toCss(style)]
 		];
 
 		if (this.withCoords2) {
-			parts.push(['/', this.withCoords2.x.toString(), this.withCoords2.y.toString()]);
+			parts.push(['/', this.withCoords2.x.toCss(style), this.withCoords2.y.toCss(style)]);
 		}
 
 		const oneLiner = parts.flat().join(' ');
@@ -55,36 +50,36 @@ export class Curve implements Command {
 	}
 
 	toSvgCommand(): string {
-		const points = this.withCoords2
-			? [this.withCoords, this.withCoords2, this.coords]
-			: [this.withCoords, this.coords];
-
-		return `C ${points.map((p) => p.toSvgPoint()).join(' ')}`;
+		if (this.withCoords2) {
+			return `C ${this.withCoords.toSvgPoint()} ${this.withCoords2.toSvgPoint()} ${this.coords.toSvgPoint()}`;
+		} else {
+			return `Q ${this.withCoords.toSvgPoint()} ${this.coords.toSvgPoint()}`;
+		}
 	}
 }
 
 export function curveBy(
 	coords: [LengthPercentage, LengthPercentage],
-	controlPoint1: [XDimension, YDimension],
-	controlPoint2?: [XDimension, YDimension]
+	controlPoint1: [LengthPercentage, LengthPercentage],
+	controlPoint2?: [LengthPercentage, LengthPercentage]
 ) {
 	return new Curve(
 		new CoordinatePair(...coords),
-		new Position(...controlPoint1),
-		controlPoint2 ? new Position(...controlPoint2) : undefined,
+		new CoordinatePair(...controlPoint1),
+		controlPoint2 ? new CoordinatePair(...controlPoint2) : undefined,
 		'by'
 	);
 }
 
 export function curveTo(
-	coords: [XDimension, YDimension],
-	controlPoint1: [XDimension, YDimension],
-	controlPoint2?: [XDimension, YDimension]
+	coords: [LengthPercentage, LengthPercentage],
+	controlPoint1: [LengthPercentage, LengthPercentage],
+	controlPoint2?: [LengthPercentage, LengthPercentage]
 ) {
 	return new Curve(
-		new Position(...coords),
-		new Position(...controlPoint1),
-		controlPoint2 ? new Position(...controlPoint2) : undefined,
+		new CoordinatePair(...coords),
+		new CoordinatePair(...controlPoint1),
+		controlPoint2 ? new CoordinatePair(...controlPoint2) : undefined,
 		'to'
 	);
 }

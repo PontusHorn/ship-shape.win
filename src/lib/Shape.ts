@@ -1,5 +1,6 @@
 import type { Command } from './commands/Command';
 import { From } from './commands/From';
+import type { CodeStyle } from './LengthPercentage';
 
 export class Shape {
 	fillRule?: FillRule;
@@ -12,9 +13,10 @@ export class Shape {
 		this.fillRule = fillRule;
 	}
 
-	toString() {
-		const initialCommand = this.fillRule ? `${this.fillRule} ${this.from}` : this.from;
-		return `shape(\n\t${[initialCommand, ...this.commands].join(',\n\t')}\n)`;
+	toCss(style: CodeStyle) {
+		const from = this.from.toCss(style);
+		const firstLine = this.fillRule ? `${this.fillRule} ${from}` : from;
+		return `shape(\n\t${[firstLine, ...this.commands.map((c) => c.toCss(style))].join(',\n\t')}\n)`;
 	}
 }
 

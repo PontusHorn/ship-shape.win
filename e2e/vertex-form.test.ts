@@ -21,30 +21,30 @@ test.describe('Editor: Vertex form', () => {
 		const vertex = getVertices(page).first();
 
 		// Form should be empty initially
-		await expect(page.getByLabel(/x:/i)).not.toBeVisible();
-		await expect(page.getByLabel(/y:/i)).not.toBeVisible();
+		await expect(page.getByLabel(/^x:$/i)).not.toBeVisible();
+		await expect(page.getByLabel(/^y:$/i)).not.toBeVisible();
 
 		// Select vertex
 		await vertex.click();
 
 		// Form should now show coordinate inputs
-		await expect(page.getByLabel(/x:/i)).toBeVisible();
-		await expect(page.getByLabel(/y:/i)).toBeVisible();
+		await expect(page.getByLabel(/^x:$/i)).toBeVisible();
+		await expect(page.getByLabel(/^y:$/i)).toBeVisible();
 
 		// Deselect by pressing escape
 		await page.keyboard.press('Escape');
 
 		// Form should be hidden again
-		await expect(page.getByLabel(/x:/i)).not.toBeVisible();
-		await expect(page.getByLabel(/y:/i)).not.toBeVisible();
+		await expect(page.getByLabel(/^x:$/i)).not.toBeVisible();
+		await expect(page.getByLabel(/^y:$/i)).not.toBeVisible();
 	});
 
 	test('should display current vertex coordinates', async ({ page }) => {
 		const vertex = getVertices(page).first();
 		await vertex.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 		const xTypeSelect = page.getByLabel(/x type/i);
 		const yTypeSelect = page.getByLabel(/y type/i);
 
@@ -65,8 +65,8 @@ test.describe('Editor: Vertex form', () => {
 		const vertexPos = await getElementCenter(vertex);
 		await vertex.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 
 		// Change coordinates
 		await xInput.fill('25');
@@ -86,7 +86,7 @@ test.describe('Editor: Vertex form', () => {
 		const vertex = getVertices(page).first();
 		await vertex.click();
 
-		const yInput = page.getByLabel(/y:/i);
+		const yInput = page.getByLabel(/^y:$/i);
 		const yTypeSelect = page.getByLabel(/y type/i);
 
 		// Change to a percentage value that better verifies correct conversion
@@ -129,7 +129,7 @@ test.describe('Editor: Vertex form', () => {
 
 		// Select first vertex
 		await firstVertex.click();
-		const xInput = page.getByLabel(/x:/i);
+		const xInput = page.getByLabel(/^x:$/i);
 		await expect(xInput).toHaveValue('50'); // First vertex x coordinate
 
 		// Select second vertex
@@ -141,7 +141,7 @@ test.describe('Editor: Vertex form', () => {
 		const vertex = getVertices(page).first();
 		await vertex.click();
 
-		const xInput = page.getByLabel(/x:/i);
+		const xInput = page.getByLabel(/^x:$/i);
 
 		// Enter decimal value
 		await xInput.fill('33.5');
@@ -163,8 +163,8 @@ test.describe('Editor: Vertex form', () => {
 		await tools.select.click();
 		await vertex.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 
 		// Change vertex coordinates
 		await xInput.fill('25');
@@ -195,16 +195,16 @@ test.describe('Editor: Vertex form', () => {
 		await page.keyboard.press('Escape');
 
 		// Form should be empty initially
-		await expect(page.getByLabel(/x:/i)).not.toBeVisible();
-		await expect(page.getByLabel(/y:/i)).not.toBeVisible();
+		await expect(page.getByLabel(/^x:$/i)).not.toBeVisible();
+		await expect(page.getByLabel(/^y:$/i)).not.toBeVisible();
 
 		// Select forward control point
 		const forwardControlPoint = getControlPoints(page, 'forward');
 		await forwardControlPoint.click();
 
 		// Form should now show coordinate inputs
-		await expect(page.getByLabel(/x:/i)).toBeVisible();
-		await expect(page.getByLabel(/y:/i)).toBeVisible();
+		await expect(page.getByLabel(/^x:$/i)).toBeVisible();
+		await expect(page.getByLabel(/^y:$/i)).toBeVisible();
 	});
 
 	test('displays current control point coordinates', async ({ page }) => {
@@ -222,8 +222,8 @@ test.describe('Editor: Vertex form', () => {
 		const forwardControlPoint = getControlPoints(page, 'forward');
 		await forwardControlPoint.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 		const xTypeSelect = page.getByLabel(/x type/i);
 		const yTypeSelect = page.getByLabel(/y type/i);
 
@@ -255,8 +255,8 @@ test.describe('Editor: Vertex form', () => {
 		const controlPointPos = await getElementCenter(forwardControlPoint);
 		await forwardControlPoint.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 
 		// Change control point coordinates
 		await xInput.fill('75');
@@ -287,8 +287,8 @@ test.describe('Editor: Vertex form', () => {
 		const forwardControlPoint = getControlPoints(page, 'forward');
 		await forwardControlPoint.click();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 
 		// Change forward control point coordinates
 		await xInput.fill('70');
@@ -331,8 +331,8 @@ test.describe('Editor: Vertex form', () => {
 		const mirrorCheckbox = page.getByLabel(/mirror/i);
 		await mirrorCheckbox.uncheck();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 
 		// Change forward control point coordinates
 		await xInput.fill('80');
@@ -375,8 +375,8 @@ test.describe('Editor: Vertex form', () => {
 		const mirrorCheckbox = page.getByLabel(/mirror/i);
 		await mirrorCheckbox.uncheck();
 
-		const xInput = page.getByLabel(/x:/i);
-		const yInput = page.getByLabel(/y:/i);
+		const xInput = page.getByLabel(/^x:$/i);
+		const yInput = page.getByLabel(/^y:$/i);
 
 		// Change forward control point coordinates
 		await xInput.fill('80');

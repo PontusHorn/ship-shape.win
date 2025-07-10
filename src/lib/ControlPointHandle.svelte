@@ -70,10 +70,6 @@
 
 		selectVertex(vertex.id, part);
 	}
-
-	const accessibleName = $derived(
-		`${direction} control point for vertex at ${vertex.position.x}, ${vertex.position.y}`
-	);
 </script>
 
 <div class="control-point" use:draggable={dragOptions}>
@@ -86,7 +82,11 @@
 		aria-pressed={isSelected}
 		{...disableUntilHydrated()}
 	>
-		<span class="visually-hidden">{accessibleName}</span>
+		<span class="visually-hidden">
+			{direction} control point for vertex at
+			{vertex.position.x.toCss(maxSize[0], 'minimal')},
+			{vertex.position.y.toCss(maxSize[1], 'minimal')}
+		</span>
 	</button>
 </div>
 

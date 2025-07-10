@@ -1,4 +1,4 @@
-import { type LengthPercentage, px } from './LengthPercentage';
+import { type CodeStyle, type LengthPercentage, px } from './LengthPercentage';
 
 export class CoordinatePair {
 	x: LengthPercentage;
@@ -9,11 +9,11 @@ export class CoordinatePair {
 		this.y = y;
 	}
 
-	toString() {
-		return `${this.x} ${this.y}`;
+	toCss(style: CodeStyle) {
+		return `${this.x.toCss(style)} ${this.y.toCss(style)}`;
 	}
 
 	toSvgPoint() {
-		return `${this.x},${this.y}`;
+		return `${this.x.toSvg()},${this.y.toSvg()}`;
 	}
 }

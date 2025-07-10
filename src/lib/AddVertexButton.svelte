@@ -1,18 +1,28 @@
 <script lang="ts">
 	import { disableUntilHydrated } from './disableUntilHydrated';
+	import type { Vector } from './vector';
 	import type { VertexPosition } from './VertexPosition';
 
 	type Props = {
 		position: VertexPosition;
+		maxSize: Vector;
 		onAddVertex: () => void;
 	};
 
-	const { position, onAddVertex }: Props = $props();
+	const { position, onAddVertex, maxSize }: Props = $props();
 </script>
 
-<div class="midpoint" style:left={position.x.toString()} style:top={position.y.toString()}>
+<div
+	class="midpoint"
+	style:left={position.x.toCss(maxSize[0])}
+	style:top={position.y.toCss(maxSize[1])}
+>
 	<button onclick={onAddVertex} {...disableUntilHydrated()}>
-		<span class="visually-hidden">Insert vertex at {position.x}, {position.y}</span>
+		<span class="visually-hidden">
+			Insert vertex at
+			{position.x.toCss(maxSize[0], 'minimal')},
+			{position.y.toCss(maxSize[1], 'minimal')}
+		</span>
 		<svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
 			<path d="M6 2V10M2 6H10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
 		</svg>

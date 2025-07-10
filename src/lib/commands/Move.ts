@@ -1,5 +1,5 @@
 import { CoordinatePair } from '$lib/CoordinatePair';
-import type { LengthPercentage } from '$lib/LengthPercentage';
+import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 import type { MoveMethod } from './shared';
 
@@ -12,8 +12,8 @@ export class Move implements Command {
 		this.method = method;
 	}
 
-	toString() {
-		return `move ${this.method}\n\t\t${this.coords.x}\n\t\t${this.coords.y}`;
+	toCss(style: CodeStyle) {
+		return `move ${this.method}\n\t\t${this.coords.x.toCss(style)}\n\t\t${this.coords.y.toCss(style)}`;
 	}
 
 	toSvgCommand(): string {
