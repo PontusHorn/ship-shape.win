@@ -1,49 +1,9 @@
-@layer core {
+@layer core.theme {
 	:root {
-		/* https://github.com/system-fonts/modern-font-stacks#geometric-humanist */
-		font-family: Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
-
-		--linen: oklch(99% 12.5% 62);
-		--buttercream: oklch(94.4% 14.8% 88.7);
-		--pistachio: oklch(90.82% 15.09% 114.41);
-		--limestoned: oklch(80.79% 17.1% 140.13);
-		--verdigris: oklch(66.29% 22.58% 165.84);
-		--jade: oklch(50.2% 31.72% 191.56);
-		--fjord: oklch(35.71% 37.2% 217.27);
-		--midnight: oklch(25.68% 39.21% 242.99);
-		--abyss: oklch(22.1% 39.5% 268.7);
-		--link: oklch(47% 75% 263.67);
-		--linkVisited: oklch(47% 75% 310.74);
-
-		/* @link https://utopia.fyi/type/calculator?c=320,16,1.2,1240,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
-		--fontSize--1: clamp(0.8333rem, 0.7754rem + 0.2899vw, 1rem);
-		--fontSize-0: clamp(1rem, 0.913rem + 0.4348vw, 1.25rem);
-		--fontSize-1: clamp(1.2rem, 1.0739rem + 0.6304vw, 1.5625rem);
-		--fontSize-2: clamp(1.44rem, 1.2615rem + 0.8924vw, 1.9531rem);
-
-		--softSpring: linear(
-			0,
-			0.009 0.8%,
-			0.034 1.6%,
-			0.144 3.5%,
-			0.736 10.2%,
-			0.953 13.2%,
-			1.093 16.2%,
-			1.136 17.8%,
-			1.161 19.4%,
-			1.169 21.3%,
-			1.158 23.4%,
-			1.014 33.8%,
-			0.986 37%,
-			0.973 40.3%,
-			0.973 44.5%,
-			1.004 60.8%,
-			1
-		);
-
-		background-color: var(--buttercream);
-		color: var(--midnight);
-		accent-color: var(--jade);
+		accent-color: var(--brand-500);
+		background-color: var(--brand-100);
+		color: var(--neutral-900);
+		font-family: var(--fontFamily-body);
 	}
 
 	body {
@@ -71,17 +31,17 @@
 	}
 
 	a {
-		color: var(--link);
+		color: var(--linkColor);
 
 		&:visited {
-			color: var(--linkVisited);
+			color: var(--linkColor-visited);
 		}
 	}
 
 	a:focus-visible,
 	button:focus-visible {
 		border-radius: 0.2em;
-		outline: 3px solid var(--jade);
+		outline: 3px solid var(--focusRingColor);
 		outline-offset: 0.2em;
 	}
 
@@ -100,12 +60,12 @@
 		--padding-inline: 0.4rem;
 		padding-block: var(--padding-block);
 		padding-inline: var(--padding-inline);
-		background-color: rgb(255 255 255 / 0.75);
-		border: 2px solid var(--fjord);
+		background-color: var(--brand-050);
+		border: 2px solid var(--brand-800);
 		border-radius: 0.75rem;
 		box-shadow:
-			inset 0.5px 1px 1px 1px color-mix(in srgb, var(--abyss), transparent 90%),
-			inset 1px 2px 3px 1px color-mix(in srgb, var(--abyss), transparent 95%);
+			inset 0.5px 1px 1px 1px color-mix(in srgb, var(--neutral-950), transparent 90%),
+			inset 1px 2px 3px 1px color-mix(in srgb, var(--neutral-950), transparent 95%);
 		outline: 3px solid transparent;
 		outline-offset: 1px;
 		transition:
@@ -117,21 +77,21 @@
 		&:hover,
 		&:focus {
 			background-color: white;
-			border-color: var(--abyss);
+			border-color: var(--brand-950);
 		}
 
 		&:focus {
 			box-shadow:
-				inset 0.5px 1px 1px 1px color-mix(in srgb, var(--abyss), transparent 80%),
-				inset 1.5px 3px 4px 1px color-mix(in srgb, var(--abyss), transparent 90%);
-			outline-color: var(--jade);
+				inset 0.5px 1px 1px 1px color-mix(in srgb, var(--neutral-950), transparent 80%),
+				inset 1.5px 3px 4px 1px color-mix(in srgb, var(--neutral-950), transparent 90%);
+			outline-color: var(--focusRingColor);
 		}
 	}
 
 	select {
 		--arrow-size: 16px;
 		appearance: none;
-		background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='%23004a6e' stroke='%23004a6e' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 12L4 4H12L8 12Z' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
+		background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 16 16' fill='%23011644' stroke='%23011644' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 12L4 4H12L8 12Z' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E%0A");
 		background-repeat: no-repeat;
 		background-size: var(--arrow-size);
 		background-position: calc(100% - var(--padding-inline)) 50%;
@@ -140,7 +100,7 @@
 
 	input[type='range']:focus-visible {
 		border-radius: 0.25rem;
-		outline: 3px solid var(--jade);
+		outline: 3px solid var(--focusRingColor);
 		outline-offset: 1px;
 	}
 
@@ -163,7 +123,7 @@
 	}
 
 	fieldset {
-		border: 2px solid var(--limestoned);
+		border: 2px solid var(--brand-400);
 		border-radius: 1rem;
 		padding: 1rem;
 		padding-block-start: 0.5rem;

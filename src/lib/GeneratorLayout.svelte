@@ -56,7 +56,7 @@
 		padding: 2rem;
 		min-inline-size: 0;
 
-		background: var(--pistachio);
+		background: var(--brand-050);
 		border-radius: 1.5rem;
 		box-shadow: inset 1px 2px 4px rgb(0 0 0 / 0.05);
 	}

@@ -1,10 +1,11 @@
 <script lang="ts">
 	import './reset.css';
+	import './tokens.css';
 	import './core.css';
 	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
-	import { GithubIcon } from '@lucide/svelte';
+	import { ChevronDown, GithubIcon } from '@lucide/svelte';
 
 	let { children } = $props();
 
@@ -37,7 +38,7 @@
 	</div>
 
 	<nav>
-		<button popovertarget="shapes">Shapes ▾</button>
+		<button popovertarget="shapes">Shapes <ChevronDown /></button>
 		<div id="shapes" popover>
 			<a
 				href="/generators/regular-polygon"
@@ -73,13 +74,18 @@
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
-		background: var(--midnight);
-		color: var(--linen);
+		background: var(--brand-600);
+		box-shadow: 1px 2px 4px var(--brand-300);
+		color: var(--brand-050);
 		padding: 1rem;
 		gap: 1rem;
 
 		@media (max-width: 400px) {
 			flex-direction: column;
+		}
+
+		:focus-visible {
+			outline-color: var(--secondary-100);
 		}
 	}
 
@@ -88,18 +94,18 @@
 
 		a {
 			color: inherit;
-			--decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+			--_decorationColor: color-mix(in srgb, currentColor 50%, transparent);
 			text-underline-offset: 0.2em;
-			text-decoration-color: var(--decoration-color);
+			text-decoration-color: var(--_decorationColor);
 
 			&:hover,
 			&:focus-visible {
-				--decoration-color: currentColor;
+				--_decorationColor: currentColor;
 			}
 		}
 
 		.parenthesis {
-			color: var(--decoration-color);
+			color: var(--_decorationColor);
 		}
 
 		.win {
@@ -118,10 +124,13 @@
 
 		> a,
 		> button {
+			display: flex;
+			align-items: center;
+			gap: 0.125em;
 			background: transparent;
 			padding-block: 0.2em;
-			padding-inline: 0.25em;
-			border-radius: 0.15rem;
+			padding-inline: 0.4em;
+			border-radius: 0.5rem;
 			color: inherit;
 			font-weight: 500;
 			text-underline-offset: 0.2em;
@@ -134,8 +143,8 @@
 			}
 
 			&[aria-current='true'] {
-				background-color: var(--linen);
-				color: var(--midnight);
+				background-color: var(--brand-100);
+				color: var(--brand-700);
 				text-decoration: none;
 			}
 
@@ -144,8 +153,20 @@
 			}
 		}
 
+		> button {
+			transition: background-color 0.1s ease;
+
+			&:hover,
+			&:focus-visible {
+				background-color: var(--brand-700);
+			}
+		}
+
 		[popovertarget] {
 			anchor-name: --dropdown;
+			/* The extra white-space in the chevron icon makes the spacing look
+			unbalanced, so adjust the padding slightly on that side */
+			padding-inline-end: 0.2rem;
 		}
 
 		[popover] {
@@ -155,15 +176,15 @@
 			margin: 0;
 			padding: 0.5rem;
 
-			background: var(--linen);
-			border: 4px solid var(--midnight);
+			background: var(--brand-100);
+			border: 4px solid var(--brand-800);
 			border-radius: 0.5rem;
-			--duration: 0.75s;
+			--_duration: 0.75s;
 			transition:
-				display var(--duration) allow-discrete,
-				overlay var(--duration) allow-discrete,
-				opacity var(--duration) var(--softSpring),
-				transform var(--duration) var(--softSpring);
+				display var(--_duration) allow-discrete,
+				overlay var(--_duration) allow-discrete,
+				opacity var(--_duration) var(--softSpring),
+				transform var(--_duration) var(--softSpring);
 			opacity: 0;
 			transform: translate(0, -0.5rem) scaleY(0.95);
 			transform-origin: top center;
@@ -190,7 +211,7 @@
 				padding-block: 0.2em;
 				padding-inline: 0.4em;
 				border-radius: 0.15rem;
-				color: var(--link);
+				color: var(--linkColor-visited);
 				font-weight: 500;
 				outline-offset: 0;
 
@@ -201,12 +222,12 @@
 				}
 
 				&:visited {
-					color: var(--linkVisited);
+					color: var(--linkColor-visited);
 				}
 
 				&[aria-current='true'] {
-					background-color: var(--midnight);
-					color: var(--linen);
+					background-color: var(--brand-600);
+					color: var(--brand-050);
 					text-decoration: none;
 				}
 			}
@@ -229,7 +250,7 @@
 			margin-inline: auto;
 
 			:global(svg) {
-				color: var(--midnight);
+				stroke: currentColor;
 			}
 		}
 	}

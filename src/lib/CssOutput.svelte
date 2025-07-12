@@ -39,7 +39,8 @@
 					size="small"
 					onclick={() => copyTextToClipboard(codeElement)}
 					popovertarget="copied"
-					--hue="166"
+					--backgroundColor="var(--secondary-300)"
+					--textColor="var(--secondary-800)"
 				>
 					{#snippet icon()}
 						<Copy size={16} />
@@ -55,14 +56,21 @@
 	</header>
 
 	<code bind:this={codeElement} data-testid="css-output"
-		>{#each Object.entries(cssProperties) as [key, value] (key)}<span class="property">{key}</span>:
-			<span class="key">{value}</span>;{'\n'}{/each}{extraCss}</code
+		>{#each Object.entries(cssProperties) as [property, value] (property)}<span class="property"
+				>{property}</span
+			>:
+			<span class="value">{value}</span>;{'\n'}{/each}{extraCss}</code
 	>
 </section>
 
 <style>
 	section {
-		border-radius: 1.5rem;
+		--border-radius: 1.5rem;
+		--border-width: 4px;
+		background-color: var(--secondary-400);
+		border: var(--border-width) solid var(--secondary-400);
+		border-radius: var(--border-radius);
+		box-shadow: 1px 2px 4px var(--brand-300);
 		overflow: clip;
 	}
 
@@ -71,8 +79,11 @@
 		grid-template-columns: auto 1fr;
 		align-items: center;
 		padding: 1rem;
-		background-color: var(--verdigris);
-		color: var(--abyss);
+		color: var(--secondary-900);
+
+		:global(:focus-visible) {
+			outline-color: var(--brand-800);
+		}
 	}
 
 	.tools {
@@ -93,13 +104,13 @@
 		display: flex;
 		align-items: center;
 		gap: 0.5em;
-		margin: 1em;
+		margin: 0.25em;
 		padding: 0.5em;
 
-		background-color: var(--jade);
+		background-color: var(--secondary-600);
 		border: 2px solid transparent;
 		border-radius: 0.5rem;
-		color: var(--linen);
+		color: var(--secondary-050);
 
 		animation: fade-in-out 3s forwards;
 	}
@@ -122,9 +133,12 @@
 	}
 
 	code {
+		--inner-border-radius: calc(var(--border-radius) - var(--border-width));
 		display: block;
-		background-color: var(--fjord);
-		color: var(--linen);
+		background-color: var(--secondary-100);
+		border-start-start-radius: var(--inner-border-radius);
+		border-start-end-radius: var(--inner-border-radius);
+		color: var(--secondary-800);
 		padding: 1rem;
 		paint-order: stroke fill;
 		overflow: auto;
@@ -134,11 +148,11 @@
 	}
 
 	.property {
-		color: oklch(0.95 0.07 180.81);
+		color: #15379a;
 		font-weight: bold;
 	}
 
-	.key {
-		color: oklch(0.92 0.07 344.04);
+	.value {
+		color: #8d0560;
 	}
 </style>

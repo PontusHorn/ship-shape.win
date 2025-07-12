@@ -97,9 +97,6 @@
 		y1={vertex.position.y.toPixels(maxSize[1])}
 		x2={controlPoint.x.toPixels(maxSize[0])}
 		y2={controlPoint.y.toPixels(maxSize[1])}
-		stroke="var(--fjord)"
-		stroke-width="1"
-		stroke-dasharray="2,2"
 	/>
 </svg>
 
@@ -117,37 +114,45 @@
 		position: absolute;
 		width: 8px;
 		height: 8px;
-		background-color: var(--fjord);
+
+		--_surface: var(--editorButton-color-surface);
+		--_detail: var(--editorButton-color-detail);
+		background-color: var(--_detail);
 		border: 1px solid transparent;
 		transition:
-			background 0.1s ease-in-out,
-			filter 0.1s ease-in-out,
-			box-shadow 0.1s ease-in-out,
+			background-color 0.1s ease-in-out,
+			box-shadow 0.2s ease-in-out,
 			scale 0.1s ease-in-out;
 		translate: -50% -50%;
 
 		&[aria-pressed='true'] {
 			box-shadow:
-				0 0 0 2px var(--pistachio),
-				0 0 0 4px var(--fjord);
+				0 0 0 2px var(--_surface),
+				0 0 0 4px var(--_detail);
 		}
 
 		&:hover {
 			scale: 1.2;
-			filter: brightness(1.2);
 		}
 
-		&:focus {
+		&:focus-visible,
+		&:active {
 			box-shadow:
-				0 0 0 2px var(--pistachio),
-				0 0 0 4px var(--fjord),
-				0 0 0 6px var(--pistachio);
+				0 0 0 2px var(--_surface),
+				0 0 0 4px var(--_detail),
+				0 0 0 6px var(--_surface);
 			outline: none;
 		}
 
 		&:hover,
-		&:focus {
-			filter: brightness(1.2) saturate(1.5);
+		&:focus-visible {
+			--_surface: var(--editorButton-color-surface-interest);
+			--_detail: var(--editorButton-color-detail-interest);
+		}
+
+		&:active {
+			--_surface: var(--editorButton-color-surface-active);
+			--_detail: var(--editorButton-color-detail-active);
 		}
 	}
 
@@ -159,5 +164,11 @@
 		width: 100%;
 		height: 100%;
 		pointer-events: none;
+
+		line {
+			stroke: var(--brand-400);
+			stroke-width: 1;
+			stroke-dasharray: 2, 2;
+		}
 	}
 </style>

@@ -1,0 +1,103 @@
+@layer core.tokens {
+	:root {
+		/***
+	  **** Primitive tokens (tier 1)
+		***/
+
+		/* Colors */
+		--brand-050: #eef4ff;
+		--brand-100: #dde8ff;
+		--brand-200: #c9daff;
+		--brand-300: #b4ccff;
+		--brand-400: #709eff;
+		--brand-500: #3676ff;
+		--brand-600: #034ff2;
+		--brand-700: #0239af;
+		--brand-800: #012164;
+		--brand-900: #011644;
+		--brand-950: #010e2c;
+		--secondary-050: #ecf7e4;
+		--secondary-100: #d7eec6;
+		--secondary-200: #c0e5a5;
+		--secondary-300: #a6da80;
+		--secondary-400: #64b329;
+		--secondary-500: #4f8e21;
+		--secondary-600: #3d6d19;
+		--secondary-700: #2b4e12;
+		--secondary-800: #182c0a;
+		--secondary-900: #101d07;
+		--secondary-950: #0a1204;
+		--tertiary-050: #fff1e3;
+		--tertiary-100: #ffe3c5;
+		--tertiary-200: #ffd2a3;
+		--tertiary-300: #ffbf7c;
+		--tertiary-400: #f2830e;
+		--tertiary-500: #c0680b;
+		--tertiary-600: #945009;
+		--tertiary-700: #6a3906;
+		--tertiary-800: #3c2004;
+		--tertiary-900: #281502;
+		--tertiary-950: #190d01;
+		--neutral-050: #f4f3f2;
+		--neutral-100: #e9e7e5;
+		--neutral-200: #dcd9d6;
+		--neutral-300: #cfcbc6;
+		--neutral-400: #a69f96;
+		--neutral-500: #877d71;
+		--neutral-600: #696056;
+		--neutral-700: #4b443d;
+		--neutral-800: #2a2622;
+		--neutral-900: #1b1917;
+		--neutral-950: #110f0e;
+
+		/* Typography */
+		/* https://github.com/system-fonts/modern-font-stacks#geometric-humanist */
+		--fontFamily-geometricHumanist:
+			Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+
+		/* @link https://utopia.fyi/type/calculator?c=320,16,1.2,1240,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
+		--fontSize--1: clamp(0.8333rem, 0.7754rem + 0.2899vw, 1rem);
+		--fontSize-0: clamp(1rem, 0.913rem + 0.4348vw, 1.25rem);
+		--fontSize-1: clamp(1.2rem, 1.0739rem + 0.6304vw, 1.5625rem);
+		--fontSize-2: clamp(1.44rem, 1.2615rem + 0.8924vw, 1.9531rem);
+
+		/* Animation */
+		--softSpring: linear(
+			0,
+			0.009 0.8%,
+			0.034 1.6%,
+			0.144 3.5%,
+			0.736 10.2%,
+			0.953 13.2%,
+			1.093 16.2%,
+			1.136 17.8%,
+			1.161 19.4%,
+			1.169 21.3%,
+			1.158 23.4%,
+			1.014 33.8%,
+			0.986 37%,
+			0.973 40.3%,
+			0.973 44.5%,
+			1.004 60.8%,
+			1
+		);
+
+		/***
+	  **** Semantic tokens (tier 2)
+		***/
+
+		--linkColor: var(--brand-700);
+		/* Better supported version of oklch(from var(--brand-700) l c calc(h + 90)); */
+		--linkColor-visited: oklch(0.404954 0.193833 352.677);
+		--focusRingColor: var(--secondary-600);
+
+		--editorButton-color-surface: var(--brand-300);
+		--editorButton-color-detail: var(--brand-700);
+		--editorButton-color-surface-interest: var(--brand-100);
+		--editorButton-color-detail-interest: var(--brand-600);
+		--editorButton-color-surface-active: var(--brand-050);
+		--editorButton-color-detail-active: var(--brand-500);
+
+		--fontFamily-body: var(--fontFamily-geometricHumanist);
+	}
+}

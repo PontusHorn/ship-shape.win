@@ -26,20 +26,16 @@
 		padding-block: 0.5em;
 		padding-inline: 0.7em;
 
-		--_lightness: var(--lightness, 0.92);
-		--_chroma: var(--chroma, 0.07);
-		--_hue: var(--hue, 238.85);
-		--_color: oklch(var(--_lightness) var(--_chroma) var(--_hue));
-		background: var(--_color) linear-gradient(155deg, rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.1));
+		--_backgroundColor: var(--backgroundColor, var(--brand-300));
+		--_textColor: var(--textColor, var(--brand-950));
+		--_pressedBackgroundColor: var(--backgroundColor, var(--secondary-300));
+		--_pressedTextColor: var(--textColor, var(--secondary-950));
+
+		background: var(--_backgroundColor);
 		background-blend-mode: luminosity;
-		color: color-mix(in srgb, var(--_color), black 75%);
+		color: var(--_textColor);
 		font-weight: 600;
 
-		box-shadow:
-			inset -3px -3px 10px -2px color-mix(in srgb, var(--_color), rgb(255 255 255 / 0.3)),
-			inset 1px 1px 2px color-mix(in srgb, var(--_color), rgb(255 255 255 / 0.5)),
-			inset -1px -1px 2px color-mix(in srgb, var(--_color), rgb(0 0 0 / 0.5)),
-			inset 3px 3px 10px -2px color-mix(in srgb, var(--_color), rgb(0 0 0 / 0.15));
 		letter-spacing: 0.01em;
 		transform-style: preserve-3d;
 
@@ -49,32 +45,26 @@
 			transform var(--_duration) var(--_easing),
 			background var(--_duration) var(--_easing);
 
-		--_border-color: color-mix(in srgb, var(--_color), black 50%);
-		--_radius-start: 0.75em;
-		--_radius-end: 0.75em;
-		border: 2px solid var(--_border-color);
-		border-start-start-radius: max(3px, var(--_radius-start));
-		border-end-start-radius: max(4px, var(--_radius-start));
-		border-start-end-radius: max(3px, var(--_radius-end));
-		border-end-end-radius: max(4px, var(--_radius-end));
+		--_borderColor: color-mix(in srgb, var(--_backgroundColor), var(--neutral-950) 50%);
+		--_radiusStart: 0.75em;
+		--_radiusEnd: 0.75em;
+		border: 2px solid var(--_borderColor);
+		border-start-start-radius: max(3px, var(--_radiusStart));
+		border-end-start-radius: max(4px, var(--_radiusStart));
+		border-start-end-radius: max(3px, var(--_radiusEnd));
+		border-end-end-radius: max(4px, var(--_radiusEnd));
 
 		--_depth: 1;
 		--_pressedness: 0em;
 		transform: translate(0em, var(--_pressedness));
 
-		--_shade-left: rgb(255 255 255 / 0.1);
-		--_shade-bottom: rgb(0 0 0 / 0.2);
-		--_shade-right: rgb(0 0 0 / 0.3);
-
 		/* Smush adjacent buttons together */
 		&:nth-child(n + 2 of button) {
 			margin-inline-start: -2px;
-			--_radius-start: 2px;
-			--_shade-left: rgb(0 0 0 / 0.4);
+			--_radiusStart: 2px;
 		}
 		&:nth-last-child(n + 2 of button) {
-			--_radius-end: 2px;
-			--_shade-right: rgb(0 0 0 / 0.5);
+			--_radiusEnd: 2px;
 		}
 
 		&::before {
@@ -83,41 +73,43 @@
 			width: 100%;
 			height: 100%;
 			inset: 0;
-			background: var(--_color)
-				linear-gradient(
-					to right,
-					var(--_shade-left),
-					var(--_shade-bottom) var(--_radius-start),
-					var(--_shade-bottom) calc(100% - var(--_radius-end)),
-					var(--_shade-right)
-				);
+			background: color-mix(in srgb, var(--_backgroundColor), var(--neutral-950) 10%);
 			background-blend-mode: luminosity;
-			border-start-start-radius: var(--_radius-start);
-			border-end-start-radius: var(--_radius-start);
-			border-start-end-radius: var(--_radius-end);
-			border-end-end-radius: var(--_radius-end);
+			border-start-start-radius: var(--_radiusStart);
+			border-end-start-radius: var(--_radiusStart);
+			border-start-end-radius: var(--_radiusEnd);
+			border-end-end-radius: var(--_radiusEnd);
 			box-shadow:
-				0 0 0 2px color-mix(in srgb, var(--_border-color), black 10%),
-				0.5px 1px 1px 3px color-mix(in srgb, var(--abyss), transparent 90%),
-				1px 2px 3px 3px color-mix(in srgb, var(--abyss), transparent 95%);
+				0 0 0 2px color-mix(in srgb, var(--_borderColor), var(--neutral-950) 10%),
+				0.5px 1px 1px 3px color-mix(in srgb, var(--neutral-950), transparent 90%),
+				1px 2px 3px 3px color-mix(in srgb, var(--neutral-950), transparent 95%);
 			transform: translate3d(0, calc((0.75em - var(--_pressedness)) * var(--_depth)), -1em);
 			transition:
 				transform var(--_duration) var(--_easing),
 				box-shadow var(--_duration) var(--_easing);
 		}
 
+		/* Use an additional pseudo-element to improve the hit area */
+		&::after {
+			position: absolute;
+			content: '';
+			inset: -3px;
+			transform: translate3d(0, calc((0.75em - var(--_pressedness)) * var(--_depth)), -1em);
+			transition: transform var(--_duration) var(--_easing);
+		}
+
 		&:hover,
 		&:focus-visible {
-			background-color: color-mix(in srgb, var(--_color), var(--linen) 25%);
+			background-color: color-mix(in srgb, var(--_backgroundColor), var(--neutral-050) 25%);
 			--_pressedness: 0.05em;
 			/* Bring the focus outline to the front */
 			z-index: 1;
 		}
 
 		&:is([aria-checked='true'], [aria-pressed='true']) {
-			--_hue: 150;
-			color: color-mix(in srgb, var(--_color), black 85%);
-			text-shadow: 0 0 4px color-mix(in srgb, var(--_color), white 75%);
+			--_backgroundColor: var(--_pressedBackgroundColor);
+			--_textColor: var(--_pressedTextColor);
+			-webkit-text-stroke: color-mix(in srgb, var(--_pressedTextColor), var(--neutral-050) 50%);
 			--_pressedness: 0.4em;
 			--_duration: 150ms;
 		}
@@ -134,8 +126,13 @@
 		&:disabled {
 			--_lightness: 0.95;
 			--_chroma: 0.02;
-			--_border-color: color-mix(in srgb, var(--_color), rgb(0 0 0 / 0.5) 30%);
-			color: color-mix(in srgb, var(--_color), black 60%);
+			--_borderColor: color-mix(
+				in srgb,
+				var(--_backgroundColor),
+				var(--neutral-950) 33%,
+				transparent 33%
+			);
+			color: color-mix(in srgb, var(--_textColor), var(--neutral-950) 60%);
 		}
 
 		&:disabled:active:not([aria-checked='true'], [aria-pressed='true']) {

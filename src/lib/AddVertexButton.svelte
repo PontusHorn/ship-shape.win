@@ -45,31 +45,41 @@
 		align-items: center;
 		justify-content: center;
 
+		--_surface: var(--editorButton-color-surface);
+		--_detail: var(--editorButton-color-detail);
+		background-color: var(--_surface);
+		border: 2px solid var(--_detail);
 		border-radius: 50%;
-		background-color: var(--pistachio);
-		border: 2px solid var(--fjord);
-		color: var(--fjord);
+		color: var(--_detail);
 		translate: -50% -50%;
 		opacity: 0;
 		scale: 0.8;
 		transition:
 			opacity 0.2s ease-in-out,
 			scale 0.2s ease-in-out,
+			background-color 0.1s ease-in-out,
 			box-shadow 0.1s ease-in-out,
-			filter 0.1s ease-in-out;
+			color 0.1s ease-in-out;
 
 		&:hover,
-		&:focus {
+		&:focus-visible {
 			opacity: 1;
 			scale: 1;
-			filter: brightness(1.1) saturate(1.2);
+			--_surface: var(--editorButton-color-surface-interest);
+			--_detail: var(--editorButton-color-detail-interest);
 		}
 
-		&:focus {
+		&:focus-visible,
+		&:active {
 			box-shadow:
-				0 0 0 2px var(--pistachio),
-				0 0 0 4px var(--fjord);
+				0 0 0 2px var(--_surface),
+				0 0 0 4px var(--_detail);
 			outline: none;
+		}
+
+		&:active {
+			--_surface: var(--editorButton-color-surface-active);
+			--_detail: var(--editorButton-color-detail-active);
 		}
 	}
 </style>
