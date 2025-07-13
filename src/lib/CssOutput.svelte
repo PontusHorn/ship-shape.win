@@ -13,11 +13,12 @@
 	let codeElement: HTMLElement;
 </script>
 
-<section>
+<section aria-labelledby="css-output">
 	<header>
-		<h2>CSS output</h2>
+		<h2 id="css-output">CSS output</h2>
 
-		<div class="tools">
+		<fieldset>
+			<legend class="visually-hidden">Code tools</legend>
 			<div>
 				<label for="shape-property">Target property:</label>
 				<select id="shape-property" bind:value={outputConfig.shapeProperty}>
@@ -43,14 +44,14 @@
 					--textColor="var(--secondary-800)"
 				>
 					{#snippet icon()}
-						<Copy size={16} />
+						<Copy size={16} aria-hidden="true" />
 					{/snippet}
 					Copy to clipboard
 				</Button>
 			</div>
-		</div>
+		</fieldset>
 		<div id="copied" popover onanimationend={(e) => e.currentTarget.hidePopover()}>
-			<Check />
+			<Check aria-hidden="true" />
 			Copied!
 		</div>
 	</header>
@@ -86,7 +87,8 @@
 		}
 	}
 
-	.tools {
+	fieldset {
+		all: unset;
 		display: flex;
 		align-items: center;
 		justify-content: end;
