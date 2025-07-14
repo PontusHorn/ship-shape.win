@@ -28,6 +28,8 @@
 </svelte:head>
 
 <header>
+	<a href="#main-content" class="skip-link">Skip to main content</a>
+
 	<div class="site-title">
 		<a href="/">
 			<span class="icon" aria-hidden="true">⚓︎</span>
@@ -56,7 +58,9 @@
 	</nav>
 </header>
 
-{@render children()}
+<main id="main-content">
+	{@render children()}
+</main>
 
 <footer>
 	<p>Made by <a href="https://pontushorn.me">Pontus Horn</a>. Use the output however you like!</p>
@@ -79,13 +83,44 @@
 		color: var(--brand-050);
 		padding: 1rem;
 		gap: 1rem;
+		--focusRingColor: var(--secondary-100);
 
 		@media (max-width: 400px) {
 			flex-direction: column;
 		}
+	}
 
-		:focus-visible {
-			outline-color: var(--secondary-100);
+	.skip-link {
+		position: absolute;
+		top: 1rem;
+		left: 50%;
+		padding-block: 0.2em;
+		padding-inline: 0.4em;
+
+		border-radius: 0.5rem;
+		color: var(--brand-050);
+		font-weight: 500;
+		opacity: 0;
+		text-underline-offset: 0.2em;
+		text-decoration-color: color-mix(in srgb, currentColor 80%, transparent);
+		transform: translateX(-50%);
+		translate: 0 -110%;
+		transition:
+			opacity 0.2s ease-in,
+			translate 0.2s ease-in;
+
+		&:focus {
+			opacity: 1;
+			text-decoration-color: currentColor;
+			text-decoration-thickness: 0.15em;
+			transition:
+				opacity 0.35s ease-out,
+				translate 0.7s var(--softSpring);
+			translate: 0 0;
+		}
+
+		@media (max-width: 600px) {
+			font-size: var(--fontSize-0);
 		}
 	}
 
@@ -188,6 +223,7 @@
 			opacity: 0;
 			transform: translate(0, -0.5rem) scaleY(0.95);
 			transform-origin: top center;
+			--focusRingColor: var(--secondary-700);
 
 			&:popover-open {
 				opacity: 1;
@@ -213,7 +249,7 @@
 				border-radius: 0.15rem;
 				color: var(--linkColor-visited);
 				font-weight: 500;
-				outline-offset: 0;
+				outline-offset: 0.1em;
 
 				&:hover,
 				&:focus-visible {

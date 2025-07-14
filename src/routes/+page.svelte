@@ -1,4 +1,4 @@
-<main>
+<div class="page">
 	<h1>Ship-shape CSS generators</h1>
 	<p>
 		A collection of CSS generators for creating common (and some uncommon) shapes. Useful for <code
@@ -22,10 +22,10 @@
 	<article>
 		<h2><a href="/editor">Editor</a></h2>
 	</article>
-</main>
+</div>
 
 <style>
-	main {
+	.page {
 		padding: 2rem;
 		max-width: 80ch;
 		margin: 0 auto;

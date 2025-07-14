@@ -5,7 +5,7 @@
 		$props();
 </script>
 
-<main>
+<div class="page">
 	<div class="input-pane">
 		{@render children()}
 	</div>
@@ -17,10 +17,10 @@
 	<div class="output-pane">
 		{@render output()}
 	</div>
-</main>
+</div>
 
 <style>
-	main {
+	.page {
 		display: grid;
 		grid-template-areas:
 			'input preview'
