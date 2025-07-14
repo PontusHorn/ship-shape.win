@@ -81,10 +81,7 @@
 		align-items: center;
 		padding: 1rem;
 		color: var(--secondary-900);
-
-		:global(:focus-visible) {
-			outline-color: var(--brand-800);
-		}
+		--focusRingColor: var(--brand-800);
 	}
 
 	fieldset {
