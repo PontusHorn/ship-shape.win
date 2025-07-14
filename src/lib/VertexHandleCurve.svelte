@@ -186,5 +186,16 @@
 			--_surface: var(--editorButton-color-surface-active);
 			--_detail: var(--editorButton-color-detail-active);
 		}
+
+		&::before {
+			position: absolute;
+			inset: -8px;
+			content: '';
+			border-radius: 50%;
+
+			@media (pointer: coarse) {
+				inset: -15px;
+			}
+		}
 	}
 </style>
