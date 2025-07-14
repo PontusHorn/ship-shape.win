@@ -8,6 +8,7 @@ import {
 	getTools,
 	getVertices
 } from './helpers';
+import { testDeleteVertexWithDeleteKey } from './editor-shared';
 
 test.describe('Editor: Select tool', () => {
 	test.beforeEach(async ({ page }) => {
@@ -201,4 +202,6 @@ test.describe('Editor: Select tool', () => {
 		await expect(newVertex).toBeVisible();
 		await expect(newVertex).toHaveAttribute('aria-pressed', 'true');
 	});
+
+	testDeleteVertexWithDeleteKey();
 });

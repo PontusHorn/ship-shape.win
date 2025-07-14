@@ -2,12 +2,13 @@
 	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
 	import { moveVertex, type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { editor, selectVertex } from './editor.svelte';
+	import { deleteVertex, editor, selectVertex } from './editor.svelte';
 	import { getArrowKeyDelta } from './keyboardNavigation';
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { disableUntilHydrated } from './disableUntilHydrated';
 	import { translate, type Vector } from './vector';
 	import { createVertexButtonId } from './elementIds';
+	import { UserError } from './UserError';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -19,6 +20,8 @@
 
 	const isSelected = $derived(editor.selection?.id === vertex.id);
 	const isPositionSelected = $derived(isSelected && editor.selection?.part === 'position');
+
+	let errorMessage = $state('');
 
 	function handleClick() {
 		selectVertex(vertex.id);
@@ -44,16 +47,32 @@
 
 	function handleKeydown(event: KeyboardEvent) {
 		const delta = getArrowKeyDelta(event);
-		if (!delta) return;
+		if (delta) {
+			event.preventDefault();
+			selectVertex(vertex.id);
 
-		event.preventDefault();
-		selectVertex(vertex.id);
+			const currentVector = vertex.position.toVector(maxSize);
+			const newVector = translate(currentVector, delta);
+			const newPosition = vertex.position.withVector(newVector, maxSize);
+			const newVertex = moveVertex(vertex, newPosition, maxSize);
+			onChangeVertex(newVertex);
+			return;
+		}
 
-		const currentVector = vertex.position.toVector(maxSize);
-		const newVector = translate(currentVector, delta);
-		const newPosition = vertex.position.withVector(newVector, maxSize);
-		const newVertex = moveVertex(vertex, newPosition, maxSize);
-		onChangeVertex(newVertex);
+		if (event.key === 'Delete') {
+			try {
+				deleteVertex(vertex.id);
+				event.preventDefault();
+			} catch (error) {
+				errorMessage =
+					error instanceof UserError
+						? error.userMessage
+						: "Can't delete the vertex due to an unexpected error.";
+				const errorPopover = document.getElementById(`vertex-error-${vertex.id}`);
+				errorPopover?.showPopover();
+				event.preventDefault();
+			}
+		}
 	}
 </script>
 
@@ -74,6 +93,20 @@
 				{vertex.position.y.toCss(maxSize[1], 'minimal')}
 			</span>
 		</button>
+
+		<div
+			role="alert"
+			class="error"
+			id="vertex-error-{vertex.id}"
+			popover="auto"
+			ontoggle={(event) => {
+				if (event.newState === 'closed') {
+					errorMessage = '';
+				}
+			}}
+		>
+			{errorMessage}
+		</div>
 	</div>
 
 	<div class="control-points">
@@ -113,6 +146,7 @@
 		top: 0;
 		/* Show above the connection lines to the control points */
 		z-index: 1;
+		anchor-name: --errorAnchor;
 	}
 
 	button {
@@ -172,5 +206,20 @@
 				inset: -15px;
 			}
 		}
+	}
+
+	.error:popover-open {
+		position: absolute;
+		position-anchor: --errorAnchor;
+		position-area: block-start;
+		margin: 1rem;
+		padding: 0.75rem;
+		/* Need to inherit the vertex translation for correct positioning */
+		translate: inherit;
+
+		background-color: var(--error-600);
+		border: 2px solid var(--error-950);
+		border-radius: 0.5rem;
+		color: var(--error-050);
 	}
 </style>

@@ -3,12 +3,13 @@
 	import { type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { disableUntilHydrated } from './disableUntilHydrated';
-	import { editor, selectVertex } from './editor.svelte';
+	import { deleteVertex, editor, selectVertex } from './editor.svelte';
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { VertexPosition } from './VertexPosition';
 	import type { Vector } from './vector';
 	import { tick } from 'svelte';
 	import { createVertexButtonId, getControlPointButton } from './elementIds';
+	import { UserError } from './UserError';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -22,6 +23,8 @@
 
 	const isSelected = $derived(editor.selection?.id === vertex.id);
 	const isPositionSelected = $derived(isSelected && editor.selection?.part === 'position');
+
+	let errorMessage = $state('');
 
 	// Make the button draggable for creating control points
 	const dragOptions: DragOptions = $derived({
@@ -81,6 +84,23 @@
 			getControlPointButton(vertex.id, 'forward')?.focus();
 		});
 	}
+
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Delete') {
+			try {
+				deleteVertex(vertex.id);
+				event.preventDefault();
+			} catch (error) {
+				errorMessage =
+					error instanceof UserError
+						? error.message
+						: "Couldn't delete the vertex due to an unexpected error.";
+				const errorPopover = document.getElementById(`vertex-error-${vertex.id}`);
+				errorPopover?.showPopover();
+				event.preventDefault();
+			}
+		}
+	}
 </script>
 
 <div class="wrapper" class:isSelected>
@@ -91,6 +111,7 @@
 			{...props}
 			onfocus={() => selectVertex(vertex.id)}
 			onclick={handleVertexClick}
+			onkeydown={handleKeydown}
 			aria-pressed={isPositionSelected}
 			{...disableUntilHydrated()}
 		>
@@ -100,6 +121,20 @@
 				{vertex.position.y.toCss(maxSize[1], 'minimal')}
 			</span>
 		</button>
+
+		<div
+			role="alert"
+			class="error"
+			id="vertex-error-{vertex.id}"
+			popover="auto"
+			ontoggle={(event) => {
+				if (event.newState === 'closed') {
+					errorMessage = '';
+				}
+			}}
+		>
+			{errorMessage}
+		</div>
 	</div>
 
 	<div class="control-points">
@@ -134,6 +169,7 @@
 
 	.vertex {
 		position: absolute;
+		anchor-name: --errorAnchor;
 		left: 0;
 		top: 0;
 		/* Show above the connection lines to the control points */
@@ -197,5 +233,20 @@
 				inset: -15px;
 			}
 		}
+	}
+
+	.error:popover-open {
+		position: absolute;
+		position-anchor: --errorAnchor;
+		position-area: block-start;
+		margin: 1rem;
+		padding: 0.75rem;
+		/* Need to inherit the vertex translation for correct positioning */
+		translate: inherit;
+
+		background-color: var(--error-600);
+		border: 2px solid var(--error-950);
+		border-radius: 0.5rem;
+		color: var(--error-050);
 	}
 </style>

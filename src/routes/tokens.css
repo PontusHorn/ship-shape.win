@@ -49,6 +49,17 @@
 		--neutral-800: #2a2622;
 		--neutral-900: #1b1917;
 		--neutral-950: #110f0e;
+		--error-050: #fdf1f1;
+		--error-100: #fbe1e1;
+		--error-200: #f9d0d0;
+		--error-300: #f7bebe;
+		--error-400: #ee7f7f;
+		--error-500: #e64141;
+		--error-600: #b33030;
+		--error-700: #812323;
+		--error-800: #4a1414;
+		--error-900: #320d0d;
+		--error-950: #1f0808;
 
 		/* Typography */
 		/* https://github.com/system-fonts/modern-font-stacks#geometric-humanist */

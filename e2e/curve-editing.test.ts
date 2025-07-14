@@ -8,6 +8,7 @@ import {
 	getTools,
 	getVertices
 } from './helpers';
+import { testDeleteVertexWithDeleteKey } from './editor-shared';
 
 test.describe('Editor: Curve tool', () => {
 	test.beforeEach(async ({ page }) => {
@@ -110,4 +111,6 @@ test.describe('Editor: Curve tool', () => {
 		await page.keyboard.press('Escape');
 		await expect(forward).toHaveAttribute('aria-pressed', 'false');
 	});
+
+	testDeleteVertexWithDeleteKey();
 });

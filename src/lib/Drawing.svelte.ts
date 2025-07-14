@@ -5,6 +5,7 @@ import { Shape } from './Shape';
 import { makeVertex, type Vertex } from './Vertex';
 import { VertexPosition } from './VertexPosition';
 import { lerp, subtract, type Vector } from './vector';
+import { UserError } from './UserError';
 
 export class Drawing {
 	vertices: Vertex[];
@@ -93,7 +94,7 @@ export class Drawing {
 			if (!vertexExists) {
 				throw new Error(`Vertex with id "${id}" not found`);
 			}
-			throw new Error('Cannot delete vertex: minimum of 3 vertices required');
+			throw new UserError("Can't delete. The shape must have at least 3 vertices.");
 		}
 
 		const index = this.vertices.findIndex((vertex) => vertex.id === id);
