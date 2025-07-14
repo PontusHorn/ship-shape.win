@@ -81,4 +81,22 @@ export class Drawing {
 			maxSize
 		);
 	}
+
+	canDeleteVertex(id: string): boolean {
+		const vertexExists = this.vertices.some((vertex) => vertex.id === id);
+		return vertexExists && this.vertices.length > 3;
+	}
+
+	deleteVertex(id: string): void {
+		if (!this.canDeleteVertex(id)) {
+			const vertexExists = this.vertices.some((vertex) => vertex.id === id);
+			if (!vertexExists) {
+				throw new Error(`Vertex with id "${id}" not found`);
+			}
+			throw new Error('Cannot delete vertex: minimum of 3 vertices required');
+		}
+
+		const index = this.vertices.findIndex((vertex) => vertex.id === id);
+		this.vertices.splice(index, 1);
+	}
 }

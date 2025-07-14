@@ -43,3 +43,13 @@ export function selectVertex(id: string, part: VertexPart = 'position') {
 export function clearVertexSelection() {
 	editor.selection = undefined;
 }
+
+export function deleteVertex(id: string) {
+	// Clear selection if the deleted vertex was currently selected
+	if (editor.selection?.id === id) {
+		editor.selection = undefined;
+	}
+
+	// Delete the vertex from the drawing (this will throw on failure)
+	editor.drawing.deleteVertex(id);
+}
