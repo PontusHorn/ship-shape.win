@@ -8,7 +8,7 @@ import {
 	getTools,
 	getVertices
 } from './helpers';
-import { testDeleteVertexWithDeleteKey } from './editor-shared';
+import { testDeleteVertexWithDeleteKey, testDeleteVertexWithAltClick } from './editor-shared';
 
 test.describe('Editor: Select tool', () => {
 	test.beforeEach(async ({ page }) => {
@@ -204,4 +204,5 @@ test.describe('Editor: Select tool', () => {
 	});
 
 	testDeleteVertexWithDeleteKey();
+	testDeleteVertexWithAltClick();
 });
