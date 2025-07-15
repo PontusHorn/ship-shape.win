@@ -7,7 +7,7 @@
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
-	import { clearVertexSelection, editor, selectVertex } from '$lib/editor.svelte';
+	import { clearVertexSelection, deleteVertex, editor, selectVertex } from '$lib/editor.svelte';
 	import EditorLayout from '$lib/EditorLayout.svelte';
 	import type { Vector } from '$lib/vector';
 	import { tick } from 'svelte';
@@ -15,8 +15,12 @@
 	import { getShapeCssProperties } from '$lib/output';
 	import ShapePreview from '$lib/ShapePreview.svelte';
 	import { outputConfig } from '$lib/outputConfig.svelte';
+	import { UserError } from '$lib/UserError';
+	import Button from '$lib/Button.svelte';
 
 	const previewSize: Vector = [300, 300];
+
+	let errorMessage = $state('');
 
 	const shape = $derived(editor.drawing.toShape(previewSize));
 
@@ -136,8 +140,24 @@
 		}
 	}
 
+	function handleDeleteButtonClick() {
+		if (!selectedVertex) return;
+
+		try {
+			deleteVertex(selectedVertex.id);
+		} catch (error) {
+			errorMessage = error instanceof UserError ? error.userMessage : 'Failed to delete vertex';
+			const errorPopover = document.getElementById('form-error');
+			errorPopover?.showPopover();
+		}
+	}
+
 	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === 'Escape' && editor.selection) {
+			// If there are any open popovers on the page, cede priority to closing
+			// them with the Escape key
+			if (document.querySelector(':popover-open')) return;
+
 			clearVertexSelection();
 			event.preventDefault();
 		}
@@ -253,8 +273,33 @@
 					<label for="vertex-mirrored">Mirrored control points</label>
 				</div>
 			</fieldset>
+
+			<div class="actions">
+				<Button
+					type="button"
+					size="small"
+					onclick={handleDeleteButtonClick}
+					--backgroundColor="var(--error-300)"
+				>
+					Delete vertex
+				</Button>
+			</div>
 		{/if}
 	</form>
+
+	<div
+		role="alert"
+		class="error"
+		id="form-error"
+		popover="auto"
+		ontoggle={(event) => {
+			if (event.newState === 'closed') {
+				errorMessage = '';
+			}
+		}}
+	>
+		{errorMessage}
+	</div>
 
 	{#snippet output()}
 		<CssOutput {cssProperties} />
@@ -266,6 +311,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+		anchor-name: --form;
 	}
 
 	.vertexPosition {
@@ -290,6 +336,12 @@
 		}
 	}
 
+	.actions {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: end;
+	}
+
 	.background {
 		all: unset;
 		position: absolute;
@@ -298,5 +350,21 @@
 
 	.preview {
 		position: relative;
+	}
+
+	.error:popover-open {
+		position: absolute;
+		position-anchor: --form;
+		position-area: block-end;
+		position-try: flip-block;
+		margin: 2rem;
+		max-inline-size: 30ch;
+		padding-block: 0.3rem;
+		padding-inline: 0.5rem;
+
+		background-color: var(--error-300);
+		border: 2px solid var(--error-950);
+		border-radius: 0.5rem;
+		color: var(--error-950);
 	}
 </style>

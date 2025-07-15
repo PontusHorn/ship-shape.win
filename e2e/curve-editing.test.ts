@@ -8,7 +8,11 @@ import {
 	getTools,
 	getVertices
 } from './helpers';
-import { testDeleteVertexWithDeleteKey, testDeleteVertexWithAltClick } from './editor-shared';
+import {
+	testDeleteVertexWithDeleteKey,
+	testDeleteVertexWithAltClick,
+	testDeleteVertexWithFormButton
+} from './editor-shared';
 
 test.describe('Editor: Curve tool', () => {
 	test.beforeEach(async ({ page }) => {
@@ -114,4 +118,5 @@ test.describe('Editor: Curve tool', () => {
 
 	testDeleteVertexWithDeleteKey();
 	testDeleteVertexWithAltClick();
+	testDeleteVertexWithFormButton();
 });

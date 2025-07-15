@@ -184,7 +184,7 @@
 		top: 0;
 		/* Show above the connection lines to the control points */
 		z-index: 1;
-		anchor-name: --errorAnchor;
+		anchor-name: --vertex;
 	}
 
 	button {
@@ -240,6 +240,10 @@
 			--_detail: var(--error-950);
 		}
 
+		&.isAltPressed:is(:hover, :focus-visible) {
+			--_delete-hint-opacity: 1;
+		}
+
 		&::before {
 			position: absolute;
 			inset: -8px;
@@ -256,13 +260,9 @@
 			left: 50%;
 			top: 50%;
 			translate: -50% -50%;
-			opacity: 0;
+			opacity: var(--_delete-hint-opacity, 0);
 			transition: opacity 0.2s ease;
 			border-radius: 50%;
-
-			.isAltPressed:is(:hover, :focus-visible) & {
-				opacity: 1;
-			}
 
 			:global(svg) {
 				max-width: none;
@@ -272,7 +272,7 @@
 
 	.error:popover-open {
 		position: absolute;
-		position-anchor: --errorAnchor;
+		position-anchor: --vertex;
 		position-area: block-start;
 		position-try: block-start, flip-block, inline-end, flip-inline;
 		margin: 2rem;
