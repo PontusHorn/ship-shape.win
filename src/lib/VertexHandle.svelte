@@ -32,19 +32,18 @@
 	const isSelected = $derived(editor.selection?.id === vertex.id);
 	const isPositionSelected = $derived(isSelected && editor.selection?.part === 'position');
 
+	const [x, y] = $derived(vertex.position.toVector(maxSize));
+
 	const fullDragOptions = $derived<DragOptions>({
 		handle: 'button',
-		position: {
-			x: vertex.position.x.toPixels(maxSize[0]),
-			y: vertex.position.y.toPixels(maxSize[1])
-		},
+		position: { x, y },
 		legacyTranslate: false,
 		...dragOptions
 	});
 </script>
 
 <div class="wrapper" class:isSelected>
-	<div class="vertex" use:draggable={fullDragOptions}>
+	<div class="vertex" style:translate={`${x}px  ${y}px`} use:draggable={fullDragOptions}>
 		<button
 			id={createVertexButtonId(vertex.id)}
 			class:isAltPressed
