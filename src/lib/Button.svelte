@@ -41,11 +41,14 @@
 
 		--_duration: 100ms;
 		--_easing: cubic-bezier(0, 0, 0.58, 1);
+		--_transformEasing: var(--_easing);
 		transition:
-			transform var(--_duration) var(--_easing),
-			background var(--_duration) var(--_easing);
+			transform var(--_duration) var(--_transformEasing),
+			background var(--_duration) var(--_easing),
+			--_borderColor var(--_duration) var(--_easing);
 
-		--_borderColor: color-mix(in srgb, var(--_backgroundColor), var(--neutral-950) 50%);
+		--_borderColorBase: color-mix(in srgb, var(--_backgroundColor), var(--neutral-950) 50%);
+		--_borderColor: var(--_borderColorBase);
 		--_radiusStart: 0.75em;
 		--_radiusEnd: 0.75em;
 		border: 2px solid var(--_borderColor);
@@ -133,13 +136,7 @@
 			);
 
 			/* Make the button feel more tactile when you press it */
-			&,
-			&::before {
-				transition-timing-function: var(--_clunk), var(--_easing);
-			}
-			&::after {
-				transition-timing-function: var(--_clunk);
-			}
+			--_transformEasing: var(--_clunk);
 		}
 
 		&:is([aria-checked='true'], [aria-pressed='true']):active {
@@ -147,15 +144,8 @@
 		}
 
 		&:disabled {
-			--_lightness: 0.95;
-			--_chroma: 0.02;
-			--_borderColor: color-mix(
-				in srgb,
-				var(--_backgroundColor),
-				var(--neutral-950) 33%,
-				transparent 33%
-			);
-			color: color-mix(in srgb, var(--_textColor), var(--neutral-950) 60%);
+			--_borderColor: color-mix(in srgb, var(--_borderColorBase), transparent 75%);
+			color: color-mix(in srgb, var(--_textColor), transparent 20%);
 		}
 
 		&:disabled:active:not([aria-checked='true'], [aria-pressed='true']) {
@@ -168,5 +158,11 @@
 			padding-inline: 0.5em;
 			font-size: var(--fontSize--1);
 		}
+	}
+
+	@property --_borderColor {
+		syntax: '<color>';
+		initial-value: red;
+		inherits: true;
 	}
 </style>
