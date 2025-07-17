@@ -116,7 +116,30 @@
 
 		&:active {
 			--_pressedness: 0.7em;
-			--_duration: 150ms;
+			--_duration: 300ms;
+			--_clunk: linear(
+				0 0%,
+				0.07 1%,
+				0.18 6%,
+				0.27 16%,
+				0.34 27%,
+				0.4 39%,
+				0.5 48%,
+				0.64 54%,
+				0.79 57%,
+				0.89 62%,
+				0.96 69%,
+				1 82% 100%
+			);
+
+			/* Make the button feel more tactile when you press it */
+			&,
+			&::before {
+				transition-timing-function: var(--_clunk), var(--_easing);
+			}
+			&::after {
+				transition-timing-function: var(--_clunk);
+			}
 		}
 
 		&:is([aria-checked='true'], [aria-pressed='true']):active {
