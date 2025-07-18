@@ -67,10 +67,11 @@
 			return;
 		}
 
-		selectVertex(vertex.id, 'controlPointForward');
-
-		// Initialize control points if they don't exist
-		if (vertex.controlPointForward || vertex.controlPointBackward) return;
+		// Initialize control points if either doesn't exist
+		if (vertex.controlPointForward && vertex.controlPointBackward) {
+			selectVertex(vertex.id);
+			return;
+		}
 
 		const controlPointForward = defaultControlPointPosition.toRounded();
 		const controlPointBackward = controlPointForward

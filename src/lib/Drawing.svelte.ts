@@ -100,4 +100,31 @@ export class Drawing {
 		const index = this.vertices.findIndex((vertex) => vertex.id === id);
 		this.vertices.splice(index, 1);
 	}
+
+	canDeleteControlPoint(id: string, direction: 'forward' | 'backward'): boolean {
+		const vertex = this.vertices.find((vertex) => vertex.id === id);
+		if (!vertex) return false;
+
+		const controlPoint =
+			direction === 'forward' ? vertex.controlPointForward : vertex.controlPointBackward;
+
+		return !!controlPoint;
+	}
+
+	deleteControlPoint(id: string, direction: 'forward' | 'backward'): void {
+		if (!this.canDeleteControlPoint(id, direction)) {
+			const vertex = this.vertices.find((vertex) => vertex.id === id);
+			if (!vertex) {
+				throw new Error(`Vertex with id "${id}" not found`);
+			}
+			throw new Error(`No ${direction} control point to delete.`);
+		}
+
+		const index = this.vertices.findIndex((vertex) => vertex.id === id);
+		const vertex = this.vertices[index];
+
+		// Create new vertex with the specified control point removed and mirroring broken
+		const field = direction === 'forward' ? 'controlPointForward' : 'controlPointBackward';
+		this.vertices[index] = { ...vertex, isMirrored: false, [field]: undefined };
+	}
 }

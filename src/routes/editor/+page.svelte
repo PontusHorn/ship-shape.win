@@ -7,7 +7,13 @@
 	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
 	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
-	import { clearVertexSelection, deleteVertex, editor, selectVertex } from '$lib/editor.svelte';
+	import {
+		clearVertexSelection,
+		deleteVertex,
+		deleteControlPoint,
+		editor,
+		selectVertex
+	} from '$lib/editor.svelte';
 	import EditorLayout from '$lib/EditorLayout.svelte';
 	import type { Vector } from '$lib/vector';
 	import { tick } from 'svelte';
@@ -141,12 +147,17 @@
 	}
 
 	function handleDeleteButtonClick() {
-		if (!selectedVertex) return;
+		if (!editor.selection) return;
 
 		try {
-			deleteVertex(selectedVertex.id);
+			if (editor.selection.part === 'position') {
+				deleteVertex(editor.selection.id);
+			} else {
+				const direction = editor.selection.part === 'controlPointForward' ? 'forward' : 'backward';
+				deleteControlPoint(editor.selection.id, direction);
+			}
 		} catch (error) {
-			errorMessage = error instanceof UserError ? error.userMessage : 'Failed to delete vertex';
+			errorMessage = error instanceof UserError ? error.userMessage : 'Failed to delete';
 			const errorPopover = document.getElementById('form-error');
 			errorPopover?.showPopover();
 		}
@@ -281,7 +292,11 @@
 					onclick={handleDeleteButtonClick}
 					--backgroundColor="var(--error-300)"
 				>
-					Delete vertex
+					{#if editor.selection?.part === 'position'}
+						Delete vertex
+					{:else}
+						Delete control point
+					{/if}
 				</Button>
 			</div>
 		{/if}

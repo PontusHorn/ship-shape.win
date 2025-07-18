@@ -53,3 +53,14 @@ export function deleteVertex(id: string) {
 		editor.selection = undefined;
 	}
 }
+
+export function deleteControlPoint(id: string, direction: 'forward' | 'backward') {
+	// Delete the control point from the drawing (this will throw on failure)
+	editor.drawing.deleteControlPoint(id, direction);
+
+	// Clear selection if the deleted control point was currently selected
+	const expectedPart = direction === 'forward' ? 'controlPointForward' : 'controlPointBackward';
+	if (editor.selection?.id === id && editor.selection.part === expectedPart) {
+		editor.selection = undefined;
+	}
+}

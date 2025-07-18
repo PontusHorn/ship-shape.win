@@ -4,10 +4,13 @@
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { disableUntilHydrated } from './disableUntilHydrated';
-	import { editor, selectVertex, type VertexPart } from './editor.svelte';
+	import { editor, selectVertex, deleteControlPoint, type VertexPart } from './editor.svelte';
 	import { getArrowKeyDelta } from './keyboardNavigation';
 	import { translate, type Vector } from './vector';
 	import { createControlPointButtonId } from './elementIds';
+	import { UserError } from './UserError';
+	import { X } from '@lucide/svelte';
+	import VertexErrorPopover from './VertexErrorPopover.svelte';
 
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
@@ -24,11 +27,38 @@
 	);
 	const isSelected = $derived(editor.selection?.id === vertex.id && editor.selection.part === part);
 
-	function handleClick() {
-		// The vertex is already selected on pointer down, but in case the "click"
-		// is triggered via keyboard or other non-pointer means, we need to select
-		// it here too.
+	// Alt key state and error handling
+	let isAltPressed = $state(false);
+	let errorMessage = $state<string>();
+	const buttonId = $derived(createControlPointButtonId(vertex.id, direction));
+
+	function handleClick(event: MouseEvent) {
+		// Alt+click to delete
+		if (event.altKey) {
+			event.preventDefault();
+			handleDeleteControlPoint();
+			return;
+		}
+
+		// Normal click behavior - select the control point
 		selectVertex(vertex.id, part);
+	}
+
+	function handleFocus() {
+		if (!isAltPressed) {
+			selectVertex(vertex.id, part);
+		}
+	}
+
+	function handleDeleteControlPoint() {
+		try {
+			deleteControlPoint(vertex.id, direction);
+		} catch (error) {
+			errorMessage =
+				error instanceof UserError
+					? error.userMessage
+					: "Can't delete the control point due to an unexpected error.";
+		}
 	}
 
 	const dragOptions: DragOptions = $derived({
@@ -38,10 +68,17 @@
 			y: controlPoint.y.toPixels(maxSize[1])
 		},
 		legacyTranslate: false,
-		onDrag: handleDrag
+		onDrag: handleDrag,
+		disabled: isAltPressed
 	});
 
 	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Delete') {
+			event.preventDefault();
+			handleDeleteControlPoint();
+			return;
+		}
+
 		const delta = getArrowKeyDelta(event);
 		if (!delta) return;
 
@@ -70,16 +107,32 @@
 
 		selectVertex(vertex.id, part);
 	}
+
+	function handleWindowKeyDown(event: KeyboardEvent) {
+		if (event.key === 'Alt') {
+			isAltPressed = true;
+		}
+	}
+
+	function handleWindowKeyUp(event: KeyboardEvent) {
+		if (event.key === 'Alt') {
+			isAltPressed = false;
+		}
+	}
 </script>
+
+<svelte:window onkeydown={handleWindowKeyDown} onkeyup={handleWindowKeyUp} />
 
 <div class="control-point" use:draggable={dragOptions}>
 	<button
-		id={createControlPointButtonId(vertex.id, direction)}
+		id={buttonId}
 		{...props}
+		class:isAltPressed
 		onclick={handleClick}
-		onfocus={() => selectVertex(vertex.id, part)}
+		onfocus={handleFocus}
 		onkeydown={handleKeydown}
 		aria-pressed={isSelected}
+		style:anchor-name="--{buttonId}"
 		{...disableUntilHydrated()}
 	>
 		<span class="visually-hidden">
@@ -87,8 +140,21 @@
 			{vertex.position.x.toCss(maxSize[0], 'minimal')},
 			{vertex.position.y.toCss(maxSize[1], 'minimal')}
 		</span>
+
+		<span class="delete-hint">
+			<X aria-hidden="true" size={8} />
+		</span>
 	</button>
 </div>
+
+<VertexErrorPopover
+	isOpen={errorMessage !== undefined}
+	onClose={() => {
+		errorMessage = undefined;
+	}}
+>
+	{errorMessage}
+</VertexErrorPopover>
 
 <!-- Connecting line between vertex and control point -->
 <svg class="control-line" aria-hidden="true">
@@ -119,6 +185,7 @@
 		--_detail: var(--editorButton-color-detail);
 		background-color: var(--_detail);
 		border: 1px solid transparent;
+		color: var(--_surface);
 		transition:
 			background-color 0.1s ease-in-out,
 			box-shadow 0.2s ease-in-out,
@@ -155,6 +222,15 @@
 			--_detail: var(--editorButton-color-detail-active);
 		}
 
+		&.isAltPressed {
+			--_surface: var(--error-300);
+			--_detail: var(--error-950);
+		}
+
+		&.isAltPressed:is(:hover, :focus-visible) {
+			--_delete-hint-opacity: 1;
+		}
+
 		&::before {
 			position: absolute;
 			inset: -8px;
@@ -163,6 +239,19 @@
 
 			@media (pointer: coarse) {
 				inset: -17px;
+			}
+		}
+
+		.delete-hint {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			translate: -50% -50%;
+			opacity: var(--_delete-hint-opacity, 0);
+			transition: opacity 0.2s ease;
+
+			:global(svg) {
+				max-width: none;
 			}
 		}
 	}

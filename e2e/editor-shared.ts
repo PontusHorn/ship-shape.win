@@ -98,8 +98,10 @@ export function testDeleteVertexWithFormButton() {
 		let vertices = getVertices(page);
 		await expect(vertices).toHaveCount(4);
 
-		// Select a vertex to show the form
+		// Select a vertex to show the form. Click it twice, since in the Curve tool
+		// the first click will create control points and select one of those.
 		const targetVertex = vertices.nth(0);
+		await targetVertex.click();
 		await targetVertex.click();
 
 		// Delete button should be visible and enabled
@@ -118,6 +120,7 @@ export function testDeleteVertexWithFormButton() {
 
 		// Try to delete another vertex to test error state
 		const firstVertex = vertices.nth(0);
+		await firstVertex.click();
 		await firstVertex.click();
 		await deleteButton.click();
 
