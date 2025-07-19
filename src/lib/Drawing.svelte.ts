@@ -4,7 +4,7 @@ import { Curve } from './commands/Curve';
 import { Shape } from './Shape';
 import { makeVertex, type Vertex } from './Vertex';
 import { VertexPosition } from './VertexPosition';
-import { lerp, subtract, type Vector } from './vector';
+import { subtract, type Vector, interpolateCurve } from './vector';
 import { UserError } from './UserError';
 
 export class Drawing {
@@ -63,7 +63,15 @@ export class Drawing {
 	getMidpointAt(maxSize: Vector, i: number): VertexPosition {
 		const from = this.vertices[i];
 		const to = this.vertices[(i + 1) % this.vertices.length];
-		const midpoint = lerp(from.position.toVector(maxSize), to.position.toVector(maxSize), 0.5);
+
+		// Get points and control points for this curve segment
+		const fromVector = from.position.toVector(maxSize);
+		const toVector = to.position.toVector(maxSize);
+		const controlPoint1 = from.controlPointForward?.toVector(maxSize);
+		const controlPoint2 = to.controlPointBackward?.toVector(maxSize);
+
+		// Interpolate the midpoint of the curve segment
+		const midpoint = interpolateCurve(fromVector, controlPoint1, controlPoint2, toVector, 0.5);
 		return from.position.withVector(midpoint, maxSize);
 	}
 
