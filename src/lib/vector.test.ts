@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { lerp, quadraticBezier, cubicBezier, type Vector } from './vector';
+import { lerp, distance, closestPointOnLine, type Vector } from './vector';
 
 describe('lerp', () => {
 	it('returns the endpoints at t=0 and t=1', () => {
@@ -33,139 +33,51 @@ describe('lerp', () => {
 	});
 });
 
-describe('quadraticBezier', () => {
-	it('returns the endpoints at t=0 and t=1', () => {
-		const from: Vector = [0, 0];
-		const control: Vector = [50, 100];
-		const control2: Vector = [100, 0];
-
-		expect(quadraticBezier(from, control, control2, 0)).toEqual([0, 0]);
-		expect(quadraticBezier(from, control, control2, 1)).toEqual([100, 0]);
-	});
-
-	it('calculates the midpoint correctly', () => {
-		// Simple case: control point at the peak of a parabola
-		const from: Vector = [0, 0];
-		const control: Vector = [50, 100];
-		const to: Vector = [100, 0];
-
-		// At t=0.5, quadratic bezier should be at [50, 50]
-		// This is because: (1-0.5)²*[0,0] + 2*(1-0.5)*0.5*[50,100] + 0.5²*[100,0]
-		// = 0.25*[0,0] + 0.5*[50,100] + 0.25*[100,0]
-		// = [0,0] + [25,50] + [25,0] = [50,50]
-		expect(quadraticBezier(from, control, to, 0.5)).toEqual([50, 50]);
-	});
-
-	it('handles a straight line (control point on the line)', () => {
-		const from: Vector = [0, 0];
-		const control: Vector = [50, 50]; // On the line between from and to
-		const to: Vector = [100, 100];
-
-		// Should behave like linear interpolation
-		expect(quadraticBezier(from, control, to, 0.5)).toEqual([50, 50]);
-	});
-
-	it('works with negative coordinates', () => {
-		const from: Vector = [-100, -100];
-		const control: Vector = [0, 100];
-		const to: Vector = [100, -100];
-
-		const result = quadraticBezier(from, control, to, 0.5);
-		expect(result).toEqual([0, 0]);
-	});
-
-	it('calculates quarter points correctly', () => {
-		const from: Vector = [0, 0];
-		const control: Vector = [0, 100];
-		const to: Vector = [100, 100];
-
-		// At t=0.25: (0.75)²*[0,0] + 2*0.75*0.25*[0,100] + (0.25)²*[100,100]
-		// = 0.5625*[0,0] + 0.375*[0,100] + 0.0625*[100,100]
-		// = [0,0] + [0,37.5] + [6.25,6.25] = [6.25,43.75]
-		expect(quadraticBezier(from, control, to, 0.25)).toEqual([6.25, 43.75]);
-	});
-
-	it('handles identical points', () => {
-		const point: Vector = [50, 50];
-
-		expect(quadraticBezier(point, point, point, 0.5)).toEqual([50, 50]);
+describe('distance', () => {
+	it('should calculate distance between two points', () => {
+		expect(distance([0, 0], [3, 4])).toBe(5);
+		expect(distance([0, 0], [0, 0])).toBe(0);
+		expect(distance([-1, -1], [1, 1])).toBeCloseTo(2.828, 2);
 	});
 });
 
-describe('cubicBezier', () => {
-	it('returns the endpoints at t=0 and t=1', () => {
-		const from: Vector = [0, 0];
-		const control1: Vector = [33, 100];
-		const control2: Vector = [67, 100];
-		const to: Vector = [100, 0];
+describe('closestPointOnLine', () => {
+	it('should find closest point on a horizontal line', () => {
+		const result = closestPointOnLine([0, 0], [100, 0], [50, 25]);
 
-		expect(cubicBezier(from, control1, control2, to, 0)).toEqual([0, 0]);
-		expect(cubicBezier(from, control1, control2, to, 1)).toEqual([100, 0]);
+		expect(result.point).toEqual([50, 0]);
+		expect(result.t).toBe(0.5);
 	});
 
-	it('calculates the midpoint of a symmetric curve', () => {
-		// Symmetric S-curve
-		const from: Vector = [0, 0];
-		const control1: Vector = [0, 100];
-		const control2: Vector = [100, 0];
-		const to: Vector = [100, 100];
+	it('should clamp to line segment endpoints', () => {
+		const lineStart: Vector = [0, 0];
+		const lineEnd: Vector = [100, 0];
 
-		// At t=0.5, this should be at [50, 50] due to symmetry
-		expect(cubicBezier(from, control1, control2, to, 0.5)).toEqual([50, 50]);
+		// Point before start
+		const result1 = closestPointOnLine(lineStart, lineEnd, [-50, 25]);
+		expect(result1.point).toEqual([0, 0]);
+		expect(result1.t).toBe(0);
+
+		// Point after end
+		const result2 = closestPointOnLine(lineStart, lineEnd, [150, 25]);
+		expect(result2.point).toEqual([100, 0]);
+		expect(result2.t).toBe(1);
 	});
 
-	it('handles a straight line (all control points on the line)', () => {
-		const from: Vector = [0, 0];
-		const control1: Vector = [33, 33];
-		const control2: Vector = [67, 67];
-		const to: Vector = [100, 100];
-
-		// Should behave like linear interpolation
-		expect(cubicBezier(from, control1, control2, to, 0.5)).toEqual([50, 50]);
-	});
-
-	it('works with negative coordinates', () => {
-		const from: Vector = [-100, 0];
-		const control1: Vector = [-50, 100];
-		const control2: Vector = [50, 100];
-		const to: Vector = [100, 0];
-
-		// At t=0.5, should be at [0, 75]
-		// This is a symmetric curve, so x should be 0 at midpoint
-		// y calculation: (1-0.5)³*0 + 3*(1-0.5)²*0.5*100 + 3*(1-0.5)*0.5²*100 + 0.5³*0
-		// = 0 + 3*0.25*0.5*100 + 3*0.5*0.25*100 + 0
-		// = 37.5 + 37.5 = 75
-		expect(cubicBezier(from, control1, control2, to, 0.5)).toEqual([0, 75]);
-	});
-
-	it('calculates midpoint when control points are the same', () => {
-		const from: Vector = [0, 0];
-		const control1: Vector = [50, 100];
-		const control2: Vector = [50, 100];
-		const to: Vector = [100, 0];
-
-		expect(cubicBezier(from, control1, control2, to, 0.5)).toEqual([50, 75]);
-	});
-
-	it('calculates quarter points correctly', () => {
-		const from: Vector = [0, 0];
-		const control1: Vector = [0, 100];
-		const control2: Vector = [100, 100];
-		const to: Vector = [100, 0];
-
-		const result = cubicBezier(from, control1, control2, to, 0.25);
-
-		// At t=0.25: (0.75)³*[0,0] + 3*(0.75)²*0.25*[0,100] + 3*0.75*(0.25)²*[100,100] + (0.25)³*[100,0]
-		// = 0.421875*[0,0] + 0.421875*[0,100] + 0.140625*[100,100] + 0.015625*[100,0]
-		// = [0,0] + [0,42.1875] + [14.0625,14.0625] + [1.5625,0]
-		// = [15.625, 56.25]
-		expect(result[0]).toBeCloseTo(15.625, 10);
-		expect(result[1]).toBeCloseTo(56.25, 10);
-	});
-
-	it('handless identical points', () => {
+	it('should handle zero-length line', () => {
 		const point: Vector = [50, 50];
+		const result = closestPointOnLine(point, point, [100, 100]);
 
-		expect(cubicBezier(point, point, point, point, 0.5)).toEqual([50, 50]);
+		expect(result.point).toEqual([50, 50]);
+		expect(result.t).toBe(0);
+	});
+
+	it('should work with diagonal lines', () => {
+		const result = closestPointOnLine([0, 0], [100, 100], [50, 0]);
+
+		// Closest point on diagonal should be at (25, 25)
+		expect(result.point[0]).toBeCloseTo(25, 1);
+		expect(result.point[1]).toBeCloseTo(25, 1);
+		expect(result.t).toBeCloseTo(0.25, 2);
 	});
 });

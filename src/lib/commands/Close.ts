@@ -1,6 +1,6 @@
 import type { Command } from './Command';
 
-export class Close implements Command {
+export class CloseCommand implements Command {
 	toCss() {
 		return 'close';
 	}
@@ -11,5 +11,5 @@ export class Close implements Command {
 }
 
 export function close() {
-	return new Close();
+	return new CloseCommand();
 }

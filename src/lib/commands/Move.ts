@@ -3,7 +3,7 @@ import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 import type { MoveMethod } from './shared';
 
-export class Move implements Command {
+export class MoveCommand implements Command {
 	method: MoveMethod;
 	coords: CoordinatePair;
 
@@ -22,9 +22,9 @@ export class Move implements Command {
 }
 
 export function moveBy(x: LengthPercentage, y: LengthPercentage) {
-	return new Move(new CoordinatePair(x, y), 'by');
+	return new MoveCommand(new CoordinatePair(x, y), 'by');
 }
 
 export function moveTo(x: LengthPercentage, y: LengthPercentage) {
-	return new Move(new CoordinatePair(x, y), 'to');
+	return new MoveCommand(new CoordinatePair(x, y), 'to');
 }

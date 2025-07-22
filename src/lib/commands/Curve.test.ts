@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { Curve } from './Curve';
+import { CurveCommand } from './Curve';
 import { CoordinatePair } from '$lib/CoordinatePair';
 import { px, raw } from '$lib/LengthPercentage';
 
 describe('Curve', () => {
 	describe('toCss', () => {
 		it('should return single-line format for short coordinates', () => {
-			const curve = new Curve(
+			const curve = new CurveCommand(
 				new CoordinatePair(px(10), px(20)),
 				new CoordinatePair(px(5), px(15))
 			);
@@ -19,7 +19,7 @@ describe('Curve', () => {
 		});
 
 		it('should include second control point when provided', () => {
-			const curve = new Curve(
+			const curve = new CurveCommand(
 				new CoordinatePair(px(10), px(20)),
 				new CoordinatePair(px(5), px(15)),
 				new CoordinatePair(px(8), px(12))
@@ -37,7 +37,7 @@ describe('Curve', () => {
 				raw('calc(var(--radius) * cos(0.25turn))', px(0)),
 				raw('calc(var(--radius) * sin(0.25turn))', px(0))
 			);
-			const curve = new Curve(to, control);
+			const curve = new CurveCommand(to, control);
 
 			expect(curve.toCss('default')).toBe(
 				'curve to' +
@@ -49,7 +49,7 @@ describe('Curve', () => {
 		it('should return multi-line format when one-liner exceeds 80 characters (two control points)', () => {
 			const longX = raw('calc(100vw - 50px)', px(0));
 			const longY = raw('calc(100vh - 30px)', px(0));
-			const curve = new Curve(
+			const curve = new CurveCommand(
 				new CoordinatePair(longX, longY),
 				new CoordinatePair(longX, longY),
 				new CoordinatePair(longX, longY)
@@ -72,7 +72,7 @@ describe('Curve', () => {
 				raw('calc(var(--center-x) + var(--swell-radius) * cos(0.5turn / var(--sides)))', px(0)),
 				raw('calc(var(--center-y) + var(--swell-radius) * sin(0.5turn / var(--sides)))', px(0))
 			);
-			const curve = new Curve(to, control);
+			const curve = new CurveCommand(to, control);
 
 			expect(curve.toCss('default')).toBe(
 				'curve to' +

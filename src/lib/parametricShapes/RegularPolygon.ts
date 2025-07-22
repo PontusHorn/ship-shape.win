@@ -1,8 +1,8 @@
 import { close } from '$lib/commands/Close';
 import type { Command } from '$lib/commands/Command';
-import { Curve } from '$lib/commands/Curve';
-import { From } from '$lib/commands/From';
-import { Line } from '$lib/commands/Line';
+import { CurveCommand } from '$lib/commands/Curve';
+import { FromCommand } from '$lib/commands/From';
+import { LineCommand } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
 import type { CssProperties } from '$lib/css';
 import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
@@ -110,15 +110,15 @@ export class RegularPolygon implements ParametricShape {
 	}
 
 	toShape(): Shape {
-		const from = new From(this.#getCornerCoordinates(0));
+		const from = new FromCommand(this.#getCornerCoordinates(0));
 		const commands: Command[] = [];
 		for (let i = 1; i <= this.sides; i++) {
 			const cornerCoordinates = this.#getCornerCoordinates(i);
 			const swellCoordinates = this.#getSwellCoordinates(i);
 			commands.push(
 				this.#hasSwell
-					? new Curve(cornerCoordinates, swellCoordinates)
-					: new Line(cornerCoordinates)
+					? new CurveCommand(cornerCoordinates, swellCoordinates)
+					: new LineCommand(cornerCoordinates)
 			);
 		}
 		commands.push(close());

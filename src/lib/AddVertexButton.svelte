@@ -1,23 +1,23 @@
 <script lang="ts">
+	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { disableUntilHydrated } from './disableUntilHydrated';
 	import type { Vector } from './vector';
 	import type { VertexPosition } from './VertexPosition';
 
-	type Props = {
+	type Props = HTMLButtonAttributes & {
 		position: VertexPosition;
 		maxSize: Vector;
 		onAddVertex: () => void;
 	};
 
-	const { position, onAddVertex, maxSize }: Props = $props();
+	const { position, onAddVertex, maxSize, ...props }: Props = $props();
 </script>
 
 <div
 	class="midpoint"
-	style:left={position.x.toCss(maxSize[0])}
-	style:top={position.y.toCss(maxSize[1])}
+	style:translate={`${position.x.toPixels(maxSize[0])}px ${position.y.toPixels(maxSize[1])}px`}
 >
-	<button onclick={onAddVertex} {...disableUntilHydrated()}>
+	<button onclick={onAddVertex} {...disableUntilHydrated()} {...props}>
 		<span class="visually-hidden">
 			Insert vertex at
 			{position.x.toCss(maxSize[0], 'minimal')},
@@ -34,6 +34,7 @@
 		position: absolute;
 		left: 0;
 		top: 0;
+		z-index: 1;
 	}
 
 	button {

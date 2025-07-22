@@ -1,7 +1,7 @@
 import { close } from '$lib/commands/Close';
 import type { Command } from '$lib/commands/Command';
-import { From } from '$lib/commands/From';
-import { Line } from '$lib/commands/Line';
+import { FromCommand } from '$lib/commands/From';
+import { LineCommand } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
 import type { CssProperties } from '$lib/css';
 import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
@@ -100,9 +100,9 @@ export class StarPolygon implements ParametricShape {
 
 	toShape(): Shape {
 		const [fromCoordinate, ...restCoordinates] = this.#coordinates;
-		const commands: Command[] = restCoordinates.map((coordinate) => new Line(coordinate));
+		const commands: Command[] = restCoordinates.map((coordinate) => new LineCommand(coordinate));
 		commands.push(close());
-		return new Shape(new From(fromCoordinate), commands);
+		return new Shape(new FromCommand(fromCoordinate), commands);
 	}
 
 	toCssProperties({ shapeProperty, codeStyle }: OutputConfig) {

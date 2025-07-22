@@ -15,7 +15,7 @@
 		selectVertex
 	} from '$lib/editor.svelte';
 	import EditorLayout from '$lib/EditorLayout.svelte';
-	import type { Vector } from '$lib/vector';
+	import { distance, type Vector } from '$lib/vector';
 	import { tick } from 'svelte';
 	import { getVertexButton } from '$lib/elementIds';
 	import { getShapeCssProperties } from '$lib/output';
@@ -23,6 +23,10 @@
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { UserError } from '$lib/UserError';
 	import Button from '$lib/Button.svelte';
+	import { closestPointOnCurve, interpolateCurve } from '$lib/curve';
+	import { VertexPosition } from '$lib/VertexPosition';
+	import { assert, nonNullish } from '$lib/assert';
+	import { clamp } from '$lib/math';
 
 	const previewSize: Vector = [300, 300];
 
@@ -173,6 +177,82 @@
 			event.preventDefault();
 		}
 	}
+
+	const curves = $derived(Array.from(editor.drawing.curves(previewSize)));
+
+	let addVertexPositionByCurveId = $state<Record<string, { t: number; point: VertexPosition }>>({});
+	function handlePointerMove(event: PointerEvent) {
+		const previewElement = event.currentTarget as HTMLElement;
+		const { left, top } = previewElement.getBoundingClientRect();
+		const pointerPos: Vector = [event.clientX - left, event.clientY - top];
+
+		for (const { id, curve, from } of curves) {
+			const closestResult = closestPointOnCurve(curve, pointerPos);
+
+			// Check if pointer is close enough to the curve (within 30px)
+			const distanceToCurve = distance(pointerPos, closestResult.point);
+			const threshold = 15;
+
+			if (distanceToCurve <= threshold) {
+				// Update dynamic position to closest point on curve
+				addVertexPositionByCurveId[id] = {
+					point: from.position.withVector(closestResult.point, previewSize),
+					t: closestResult.t
+				};
+				return;
+			}
+		}
+
+		// Don't reset state to prevent button from "jumping back" when leaving
+	}
+
+	function handlePointerLeave() {
+		addVertexPositionByCurveId = {};
+	}
+
+	function handleAddVertexKeydown(event: KeyboardEvent) {
+		const button = event.currentTarget as HTMLButtonElement;
+		const curveId = nonNullish(button.dataset.curveId, 'Curve ID is required for AddVertexButton');
+		const t = addVertexPositionByCurveId[curveId]?.t ?? 0.5;
+		const index = curves.findIndex(({ id }) => id === curveId);
+		assert(index !== -1, `Curve with ID ${curveId} not found`);
+		const { curve, from, to } = editor.drawing.getCurveAt(previewSize, index);
+		const direction =
+			from.position.x.toPixels(previewSize[0]) > to.position.x.toPixels(previewSize[0]) ? -1 : 1;
+
+		// Move along the curve with arrow keys
+		if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+			event.preventDefault();
+
+			const newT =
+				event.key === 'ArrowLeft'
+					? clamp(t - 0.05 * direction, 0, 1)
+					: clamp(t + 0.05 * direction, 0, 1);
+			const newPosition = interpolateCurve(curve, newT);
+			addVertexPositionByCurveId[curveId] = {
+				point: from.position.withVector(newPosition, previewSize),
+				t: newT
+			};
+			return;
+		}
+
+		// Handle number keys for precise control
+		if (event.key.match(/\d/) !== null) {
+			let newT = parseFloat(event.key) / 10; // Convert key to a value between 0 and 1
+			if (newT === 0) {
+				newT = 0.5; // Default to 0.5 (midpoint) if 0 is pressed
+			}
+
+			if (newT <= 0 || newT >= 1) return;
+
+			event.preventDefault();
+			const newPosition = interpolateCurve(curve, newT);
+			addVertexPositionByCurveId[curveId] = {
+				point: from.position.withVector(newPosition, previewSize),
+				t: newT
+			};
+		}
+	}
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
@@ -184,46 +264,54 @@
 
 <EditorLayout>
 	{#snippet preview()}
-		<button class="background" onclick={handleBackgroundClick}>
-			<span class="visually-hidden">Clear selection</span>
-		</button>
+		<div
+			class:hasSelection={!!editor.selection}
+			onpointermove={handlePointerMove}
+			onpointerleave={handlePointerLeave}
+		>
+			<button class="background" onclick={handleBackgroundClick}>
+				<span class="visually-hidden">Clear selection</span>
+			</button>
 
-		<div class="preview" class:hasSelection={!!editor.selection}>
-			<ShapePreview {cssProperties} {shape} />
+			<ShapePreview {cssProperties} {shape}>
+				{#each editor.drawing.vertices as vertex, index (vertex.id)}
+					{#if editor.tool === 'select'}
+						<VertexHandleSelect {vertex} {onChangeVertex} maxSize={previewSize} />
+					{:else if editor.tool === 'curve'}
+						<VertexHandleCurve
+							{vertex}
+							{onChangeVertex}
+							defaultControlPointPosition={editor.drawing.getTangentialPositionAt(
+								previewSize,
+								30,
+								index
+							)}
+							maxSize={previewSize}
+						/>
+					{/if}
+				{/each}
 
-			{#each editor.drawing.vertices as vertex, index (vertex.id)}
-				{#if editor.tool === 'select'}
-					<VertexHandleSelect {vertex} {onChangeVertex} maxSize={previewSize} />
-				{:else if editor.tool === 'curve'}
-					<VertexHandleCurve
-						{vertex}
-						{onChangeVertex}
-						defaultControlPointPosition={editor.drawing.getTangentialPositionAt(
-							previewSize,
-							30,
-							index
-						)}
+				{#each curves as { id }, index (id)}
+					{@const hoveredPosition = addVertexPositionByCurveId[id]?.point}
+					{@const position = hoveredPosition ?? editor.drawing.getMidpointAt(previewSize, index)}
+
+					<AddVertexButton
+						{position}
 						maxSize={previewSize}
+						onAddVertex={() => {
+							const newVertexId = editor.drawing.insertVertex(index, position.toRounded());
+
+							// Select the first control point, and focus it after mount
+							selectVertex(newVertexId);
+							tick().then(() => {
+								getVertexButton(newVertexId)?.focus();
+							});
+						}}
+						onkeydown={handleAddVertexKeydown}
+						data-curve-id={id}
 					/>
-				{/if}
-			{/each}
-
-			{#each editor.drawing.curves() as curve, index (curve.map((v) => v.id).join())}
-				{@const position = editor.drawing.getMidpointAt(previewSize, index)}
-				<AddVertexButton
-					{position}
-					maxSize={previewSize}
-					onAddVertex={() => {
-						const newVertexId = editor.drawing.insertVertex(index, position);
-
-						// Select the first control point, and focus it after mount
-						selectVertex(newVertexId);
-						tick().then(() => {
-							getVertexButton(newVertexId)?.focus();
-						});
-					}}
-				/>
-			{/each}
+				{/each}
+			</ShapePreview>
 		</div>
 	{/snippet}
 
@@ -361,10 +449,6 @@
 		all: unset;
 		position: absolute;
 		inset: 0;
-	}
-
-	.preview {
-		position: relative;
 	}
 
 	.error:popover-open {

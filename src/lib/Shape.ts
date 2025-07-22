@@ -1,13 +1,13 @@
 import type { Command } from './commands/Command';
-import { From } from './commands/From';
+import { FromCommand } from './commands/From';
 import type { CodeStyle } from './LengthPercentage';
 
 export class Shape {
 	fillRule?: FillRule;
-	from: From;
+	from: FromCommand;
 	commands: Command[];
 
-	constructor(from = new From(), commands: Command[] = [], fillRule?: FillRule) {
+	constructor(from = new FromCommand(), commands: Command[] = [], fillRule?: FillRule) {
 		this.from = from;
 		this.commands = commands;
 		this.fillRule = fillRule;

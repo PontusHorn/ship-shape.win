@@ -1,4 +1,5 @@
 import { type CodeStyle, type LengthPercentage, px } from './LengthPercentage';
+import type { Vector } from './vector';
 
 export class CoordinatePair {
 	x: LengthPercentage;
@@ -15,5 +16,9 @@ export class CoordinatePair {
 
 	toSvgPoint() {
 		return `${this.x.toSvg()},${this.y.toSvg()}`;
+	}
+
+	static fromVector([x, y]: Vector): CoordinatePair {
+		return new CoordinatePair(px(x), px(y));
 	}
 }

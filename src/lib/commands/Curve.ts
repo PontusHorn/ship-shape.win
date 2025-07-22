@@ -3,7 +3,7 @@ import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 import type { MoveMethod } from './shared';
 
-export class Curve implements Command {
+export class CurveCommand implements Command {
 	method: MoveMethod;
 	coords: CoordinatePair;
 	withCoords: CoordinatePair;
@@ -63,7 +63,7 @@ export function curveBy(
 	controlPoint1: [LengthPercentage, LengthPercentage],
 	controlPoint2?: [LengthPercentage, LengthPercentage]
 ) {
-	return new Curve(
+	return new CurveCommand(
 		new CoordinatePair(...coords),
 		new CoordinatePair(...controlPoint1),
 		controlPoint2 ? new CoordinatePair(...controlPoint2) : undefined,
@@ -76,7 +76,7 @@ export function curveTo(
 	controlPoint1: [LengthPercentage, LengthPercentage],
 	controlPoint2?: [LengthPercentage, LengthPercentage]
 ) {
-	return new Curve(
+	return new CurveCommand(
 		new CoordinatePair(...coords),
 		new CoordinatePair(...controlPoint1),
 		controlPoint2 ? new CoordinatePair(...controlPoint2) : undefined,

@@ -67,12 +67,13 @@
 			return;
 		}
 
-		// Initialize control points if either doesn't exist
+		// If the vertex already has control points, just select it
 		if (vertex.controlPointForward && vertex.controlPointBackward) {
 			selectVertex(vertex.id);
 			return;
 		}
 
+		// Initialize control points if either doesn't exist
 		const controlPointForward = defaultControlPointPosition.toRounded();
 		const controlPointBackward = controlPointForward
 			.toMirrored(vertex.position, maxSize)

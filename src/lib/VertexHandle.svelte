@@ -90,11 +90,6 @@
 <style>
 	.wrapper {
 		transition: opacity 0.2s ease;
-
-		/* Dim when any other vertex is selected */
-		:global(.hasSelection) &:not(.isSelected, :has(button:hover, :focus-visible)) {
-			opacity: 0.5;
-		}
 	}
 
 	.vertex {
@@ -102,8 +97,14 @@
 		anchor-name: --vertex;
 		left: 0;
 		top: 0;
-		/* Show above the connection lines to the control points */
-		z-index: 1;
+		/* Show above the connection lines to the control points, and above
+		AddVertexButton */
+		z-index: 2;
+
+		/* Dim when any other vertex is selected */
+		:global(.hasSelection) &:not(.isSelected &, :hover, :focus-visible) {
+			opacity: 0.5;
+		}
 	}
 
 	button {

@@ -3,7 +3,7 @@ import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 import type { MoveMethod } from './shared';
 
-export class Line implements Command {
+export class LineCommand implements Command {
 	method: MoveMethod;
 	coords: CoordinatePair;
 
@@ -29,9 +29,9 @@ export class Line implements Command {
 }
 
 export function lineBy(x: LengthPercentage, y: LengthPercentage) {
-	return new Line(new CoordinatePair(x, y), 'by');
+	return new LineCommand(new CoordinatePair(x, y), 'by');
 }
 
 export function lineTo(x: LengthPercentage, y: LengthPercentage) {
-	return new Line(new CoordinatePair(x, y), 'to');
+	return new LineCommand(new CoordinatePair(x, y), 'to');
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { Snippet } from 'svelte';
 	import { cssPropertiesToCss, type CssProperties } from './css';
 	import { getSvgPath, OFFSET_PATH_KEYFRAMES } from './output';
 	import { outputConfig } from './outputConfig.svelte';
@@ -7,11 +8,13 @@
 	type Props = {
 		cssProperties: CssProperties;
 		shape: Shape;
+		children?: Snippet;
 	};
 
-	const { cssProperties, shape }: Props = $props();
+	const { cssProperties, shape, children }: Props = $props();
 
 	const css = $derived(cssPropertiesToCss(cssProperties));
+	const offsetPathStyle = $derived(`<style>${OFFSET_PATH_KEYFRAMES}</style>`);
 </script>
 
 <div
@@ -25,10 +28,12 @@
 		</svg>
 		<div class="arrow" style={css}></div>
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html `<style>${OFFSET_PATH_KEYFRAMES}</style>`}
+		{@html offsetPathStyle}
 	{:else}
 		<div class="clippedShape" style={css}></div>
 	{/if}
+
+	{@render children?.()}
 </div>
 
 <style>

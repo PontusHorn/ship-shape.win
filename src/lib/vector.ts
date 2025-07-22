@@ -13,71 +13,43 @@ export function lerp(a: Vector, b: Vector, t: number): Vector {
 }
 
 /**
- * Quadratic bezier interpolation using de Casteljau's algorithm.
- * Given 3 control points, calculates the point at parameter t (0-1) along the curve.
- *
- * @param from Start point
- * @param control Control point
- * @param to End point
- * @param t Parameter from 0 to 1 (0 = start, 1 = end)
+ * Calculate the Euclidean distance between two points.
  */
-export function quadraticBezier(from: Vector, control: Vector, to: Vector, t: number): Vector {
-	// First level: interpolate between adjacent control points
-	const q0 = lerp(from, control, t);
-	const q1 = lerp(control, to, t);
-
-	// Second level: interpolate between the results
-	return lerp(q0, q1, t);
+export function distance(a: Vector, b: Vector): number {
+	const dx = b[0] - a[0];
+	const dy = b[1] - a[1];
+	return Math.sqrt(dx * dx + dy * dy);
 }
 
 /**
- * Cubic bezier interpolation using de Casteljau's algorithm.
- * Given 4 control points, calculates the point at parameter t (0-1) along the curve.
- *
- * @param from Start point
- * @param control1 First control point
- * @param control2 Second control point
- * @param to End point
- * @param t Parameter from 0 to 1 (0 = start, 1 = end)
+ * Find the closest point on a line segment to a given point.
+ * Returns both the closest point and the parameter t (0-1) along the line.
  */
-export function cubicBezier(
-	from: Vector,
-	control1: Vector,
-	control2: Vector,
-	to: Vector,
-	t: number
-): Vector {
-	// First level: interpolate between adjacent control points
-	const q0 = lerp(from, control1, t);
-	const q1 = lerp(control1, control2, t);
-	const q2 = lerp(control2, to, t);
+export function closestPointOnLine(
+	lineStart: Vector,
+	lineEnd: Vector,
+	point: Vector
+): { point: Vector; t: number } {
+	const lineVector = subtract(lineEnd, lineStart);
+	const pointVector = subtract(point, lineStart);
 
-	// Second level: interpolate between the first level results
-	const r0 = lerp(q0, q1, t);
-	const r1 = lerp(q1, q2, t);
-
-	console.log({ q0, q1, q2, r0, r1 });
-
-	// Third level: final interpolation
-	return lerp(r0, r1, t);
-}
-
-export function interpolateCurve(
-	from: Vector,
-	controlPoint1: Vector | undefined,
-	controlPoint2: Vector | undefined,
-	to: Vector,
-	t: number
-): Vector {
-	if (!controlPoint1 && !controlPoint2) {
-		// Linear interpolation when no control points
-		return lerp(from, to, t);
-	} else if (controlPoint1 && controlPoint2) {
-		// Cubic bezier curve with both control points
-		return cubicBezier(from, controlPoint1, controlPoint2, to, t);
-	} else {
-		// Quadratic bezier curve with one control point
-		const controlPoint = controlPoint1 || controlPoint2!;
-		return quadraticBezier(from, controlPoint, to, t);
+	// Project point onto line
+	const lineLengthSquared = lineVector[0] ** 2 + lineVector[1] ** 2;
+	if (lineLengthSquared === 0) {
+		// Line has zero length, return the start point
+		return { point: lineStart, t: 0 };
 	}
+
+	const t = Math.max(
+		0,
+		Math.min(
+			1,
+			(pointVector[0] * lineVector[0] + pointVector[1] * lineVector[1]) / lineLengthSquared
+		)
+	);
+
+	return {
+		point: lerp(lineStart, lineEnd, t),
+		t
+	};
 }

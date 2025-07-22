@@ -1,11 +1,12 @@
-import { From } from './commands/From';
-import { Line } from './commands/Line';
-import { Curve } from './commands/Curve';
+import { FromCommand } from './commands/From';
+import { LineCommand } from './commands/Line';
+import { CurveCommand } from './commands/Curve';
 import { Shape } from './Shape';
 import { makeVertex, type Vertex } from './Vertex';
 import { VertexPosition } from './VertexPosition';
-import { subtract, type Vector, interpolateCurve } from './vector';
+import { subtract, type Vector } from './vector';
 import { UserError } from './UserError';
+import { type Curve, interpolateCurve, makeCurve } from './curve';
 
 export class Drawing {
 	vertices: Vertex[];
@@ -14,10 +15,9 @@ export class Drawing {
 		this.vertices = $state(vertices);
 	}
 
-	*curves() {
-		for (const [i, vertex] of this.vertices.entries()) {
-			const nextVertex = this.vertices[(i + 1) % this.vertices.length];
-			yield [vertex, nextVertex];
+	*curves(maxSize: Vector): Generator<DrawingCurve> {
+		for (const i of this.vertices.keys()) {
+			yield this.getCurveAt(maxSize, i);
 		}
 	}
 
@@ -33,20 +33,24 @@ export class Drawing {
 
 			// If this segment has no control points, create a line command
 			if (!controlPoint) {
-				return new Line(vertex.position.toCoordinatePair(maxSize));
+				return new LineCommand(vertex.position.toCoordinatePair(maxSize));
 			}
 
 			// Otherwise, create a curve command
 			if (controlPoint1 && controlPoint2) {
 				// Both control points available - create a cubic curve
-				return new Curve(vertex.position.toCoordinatePair(maxSize), controlPoint1, controlPoint2);
+				return new CurveCommand(
+					vertex.position.toCoordinatePair(maxSize),
+					controlPoint1,
+					controlPoint2
+				);
 			}
 
 			// Only one control point - create a quadratic curve
-			return new Curve(vertex.position.toCoordinatePair(maxSize), controlPoint);
+			return new CurveCommand(vertex.position.toCoordinatePair(maxSize), controlPoint);
 		});
 
-		return new Shape(new From(from.position.toCoordinatePair(maxSize)), commands);
+		return new Shape(new FromCommand(from.position.toCoordinatePair(maxSize)), commands);
 	}
 
 	insertVertex(afterIndex: number, position: VertexPosition): string {
@@ -60,7 +64,7 @@ export class Drawing {
 		return vertex.id;
 	}
 
-	getMidpointAt(maxSize: Vector, i: number): VertexPosition {
+	getCurveAt(maxSize: Vector, i: number): DrawingCurve {
 		const from = this.vertices[i];
 		const to = this.vertices[(i + 1) % this.vertices.length];
 
@@ -70,8 +74,19 @@ export class Drawing {
 		const controlPoint1 = from.controlPointForward?.toVector(maxSize);
 		const controlPoint2 = to.controlPointBackward?.toVector(maxSize);
 
+		return {
+			id: `${from.id}-${to.id}`,
+			curve: makeCurve(fromVector, toVector, controlPoint1, controlPoint2),
+			from: from,
+			to: to
+		};
+	}
+
+	getMidpointAt(maxSize: Vector, i: number): VertexPosition {
+		const { curve, from } = this.getCurveAt(maxSize, i);
+
 		// Interpolate the midpoint of the curve segment
-		const midpoint = interpolateCurve(fromVector, controlPoint1, controlPoint2, toVector, 0.5);
+		const midpoint = interpolateCurve(curve, 0.5);
 		return from.position.withVector(midpoint, maxSize);
 	}
 
@@ -136,3 +151,10 @@ export class Drawing {
 		this.vertices[index] = { ...vertex, isMirrored: false, [field]: undefined };
 	}
 }
+
+type DrawingCurve = {
+	id: string;
+	curve: Curve;
+	from: Vertex;
+	to: Vertex;
+};

@@ -2,7 +2,7 @@ import { CoordinatePair } from '$lib/CoordinatePair';
 import type { CodeStyle, LengthPercentage } from '$lib/LengthPercentage';
 import type { Command } from './Command';
 
-export class From implements Command {
+export class FromCommand implements Command {
 	coords: CoordinatePair;
 
 	constructor(coords: CoordinatePair = new CoordinatePair()) {
@@ -26,5 +26,5 @@ export class From implements Command {
 }
 
 export function from(x: LengthPercentage, y: LengthPercentage) {
-	return new From(new CoordinatePair(x, y));
+	return new FromCommand(new CoordinatePair(x, y));
 }
