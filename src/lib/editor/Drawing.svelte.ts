@@ -7,22 +7,27 @@ import { VertexPosition } from './VertexPosition';
 import { subtract, type Vector } from '../util/vector';
 import { UserError } from '../UserError';
 import { type Curve, interpolateCurve, makeCurve } from '../util/curve';
+import { assert } from '$lib/util/assert';
 
 export class Drawing {
-	vertices: Vertex[];
+	#vertices: Vertex[];
 
 	constructor(vertices: Vertex[] = []) {
-		this.vertices = $state(vertices);
+		this.#vertices = $state(vertices);
+	}
+
+	get vertices(): Vertex[] {
+		return this.#vertices;
 	}
 
 	*curves(maxSize: Vector): Generator<DrawingCurve> {
-		for (const i of this.vertices.keys()) {
+		for (const i of this.#vertices.keys()) {
 			yield this.getCurveAt(maxSize, i);
 		}
 	}
 
 	toShape(maxSize: Vector): Shape {
-		const [from, ...rest] = this.vertices;
+		const [from, ...rest] = this.#vertices;
 
 		const commands = [...rest, from].map((vertex, index) => {
 			const previousVertex = index === 0 ? from : rest[index - 1];
@@ -55,18 +60,24 @@ export class Drawing {
 
 	insertVertex(afterIndex: number, position: VertexPosition): string {
 		const vertex = makeVertex({ position });
-		this.vertices = [
-			...this.vertices.slice(0, afterIndex + 1),
+		this.#vertices = [
+			...this.#vertices.slice(0, afterIndex + 1),
 			vertex,
-			...this.vertices.slice(afterIndex + 1)
+			...this.#vertices.slice(afterIndex + 1)
 		];
 
 		return vertex.id;
 	}
 
+	updateVertex(updatedVertex: Vertex) {
+		const index = this.#vertices.findIndex(({ id }) => id === updatedVertex.id);
+		assert(index !== -1, 'Vertex not found');
+		this.#vertices[index] = updatedVertex;
+	}
+
 	getCurveAt(maxSize: Vector, i: number): DrawingCurve {
-		const from = this.vertices[i];
-		const to = this.vertices[(i + 1) % this.vertices.length];
+		const from = this.#vertices[i];
+		const to = this.#vertices[(i + 1) % this.#vertices.length];
 
 		// Get points and control points for this curve segment
 		const fromVector = from.position.toVector(maxSize);
@@ -91,9 +102,9 @@ export class Drawing {
 	}
 
 	getTangentialPositionAt(maxSize: Vector, distance: number, i: number): VertexPosition {
-		const previous = this.vertices.at(i - 1);
-		const current = this.vertices.at(i);
-		const next = this.vertices.at((i + 1) % this.vertices.length);
+		const previous = this.#vertices.at(i - 1);
+		const current = this.#vertices.at(i);
+		const next = this.#vertices.at((i + 1) % this.#vertices.length);
 		if (!previous || !current || !next) {
 			throw new Error('Invalid vertex index');
 		}
@@ -107,25 +118,25 @@ export class Drawing {
 	}
 
 	canDeleteVertex(id: string): boolean {
-		const vertexExists = this.vertices.some((vertex) => vertex.id === id);
-		return vertexExists && this.vertices.length > 3;
+		const vertexExists = this.#vertices.some((vertex) => vertex.id === id);
+		return vertexExists && this.#vertices.length > 3;
 	}
 
 	deleteVertex(id: string): void {
 		if (!this.canDeleteVertex(id)) {
-			const vertexExists = this.vertices.some((vertex) => vertex.id === id);
+			const vertexExists = this.#vertices.some((vertex) => vertex.id === id);
 			if (!vertexExists) {
 				throw new Error(`Vertex with id "${id}" not found`);
 			}
 			throw new UserError("Can't delete. The shape must have at least 3 vertices.");
 		}
 
-		const index = this.vertices.findIndex((vertex) => vertex.id === id);
-		this.vertices.splice(index, 1);
+		const index = this.#vertices.findIndex((vertex) => vertex.id === id);
+		this.#vertices.splice(index, 1);
 	}
 
 	canDeleteControlPoint(id: string, direction: 'forward' | 'backward'): boolean {
-		const vertex = this.vertices.find((vertex) => vertex.id === id);
+		const vertex = this.#vertices.find((vertex) => vertex.id === id);
 		if (!vertex) return false;
 
 		const controlPoint =
@@ -136,19 +147,19 @@ export class Drawing {
 
 	deleteControlPoint(id: string, direction: 'forward' | 'backward'): void {
 		if (!this.canDeleteControlPoint(id, direction)) {
-			const vertex = this.vertices.find((vertex) => vertex.id === id);
+			const vertex = this.#vertices.find((vertex) => vertex.id === id);
 			if (!vertex) {
 				throw new Error(`Vertex with id "${id}" not found`);
 			}
 			throw new Error(`No ${direction} control point to delete.`);
 		}
 
-		const index = this.vertices.findIndex((vertex) => vertex.id === id);
-		const vertex = this.vertices[index];
+		const index = this.#vertices.findIndex((vertex) => vertex.id === id);
+		const vertex = this.#vertices[index];
 
 		// Create new vertex with the specified control point removed and mirroring broken
 		const field = direction === 'forward' ? 'controlPointForward' : 'controlPointBackward';
-		this.vertices[index] = { ...vertex, isMirrored: false, [field]: undefined };
+		this.#vertices[index] = { ...vertex, isMirrored: false, [field]: undefined };
 	}
 }
 

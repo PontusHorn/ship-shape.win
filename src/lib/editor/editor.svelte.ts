@@ -1,5 +1,5 @@
 import { Drawing } from './Drawing.svelte';
-import { vertexFromPercent } from './Vertex';
+import { vertexFromPercent, type Vertex } from './Vertex';
 
 export type ToolType = 'select' | 'curve';
 
@@ -42,6 +42,10 @@ export function selectVertex(id: string, part: VertexPart = 'position') {
 
 export function clearVertexSelection() {
 	editor.selection = undefined;
+}
+
+export function updateVertex(updatedVertex: Vertex) {
+	editor.drawing.updateVertex(updatedVertex);
 }
 
 export function deleteVertex(id: string) {
