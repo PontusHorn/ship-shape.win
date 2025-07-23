@@ -146,16 +146,14 @@ export class Drawing {
 	}
 
 	deleteControlPoint(id: string, direction: 'forward' | 'backward'): void {
-		if (!this.canDeleteControlPoint(id, direction)) {
-			const vertex = this.#vertices.find((vertex) => vertex.id === id);
-			if (!vertex) {
-				throw new Error(`Vertex with id "${id}" not found`);
-			}
-			throw new Error(`No ${direction} control point to delete.`);
-		}
-
 		const index = this.#vertices.findIndex((vertex) => vertex.id === id);
 		const vertex = this.#vertices[index];
+
+		if (!this.canDeleteControlPoint(id, direction)) {
+			throw new Error(
+				vertex ? `No ${direction} control point to delete.` : `Vertex with id "${id}" not found`
+			);
+		}
 
 		// Create new vertex with the specified control point removed and mirroring broken
 		const field = direction === 'forward' ? 'controlPointForward' : 'controlPointBackward';

@@ -1,130 +1,48 @@
 <script lang="ts">
-	import { Vertex } from '$lib/editor/Vertex';
-	import { VertexDimension } from '$lib/editor/VertexDimension';
-	import {
-		deleteVertex,
-		deleteControlPoint,
-		editor,
-		updateVertex
-	} from '$lib/editor/editor.svelte';
-	import { type Vector } from '$lib/util/vector';
+	import { editor, deleteSelection, updateVertex } from '$lib/editor/editor.svelte';
 	import { UserError } from '$lib/UserError';
 	import Button from '$lib/Button.svelte';
+	import { assert } from '$lib/util/assert';
+	import { isDimensionType } from './VertexDimension';
+	import { outputConfig } from '$lib/outputConfig.svelte';
 
-	const previewSize: Vector = [300, 300];
+	let maxSize = $derived(outputConfig.previewSize);
+	let { selection, selectedVertex, selectedVertexPosition } = $derived(editor);
 
 	let errorMessage = $state('');
 
-	const selectedVertex = $derived.by(() => {
-		const { selection, drawing } = editor;
-		if (!selection) return;
-
-		const selectedVertex = drawing.vertices.find((v) => v.id === selection.id);
-		if (!selectedVertex) throw new Error('Selected vertex not found');
-
-		return selectedVertex;
-	});
-
-	const selectedPosition = $derived.by(() => {
-		const { selection } = editor;
-		if (!selection || !selectedVertex) return;
-
-		const position = selectedVertex[selection.part];
-		if (!position) throw new Error(`Position "${selection.part}" not found in vertex`);
-
-		return position;
-	});
-
-	function handleVertexInputChange(coordinate: 'x' | 'y', value: number) {
-		if (!editor.selection || !selectedVertex || !selectedPosition) {
-			throw new Error('Invalid selection');
-		}
+	function handleVertexInputChange(dimension: 'x' | 'y', value: number) {
+		assert(selection && selectedVertex && selectedVertexPosition, 'Invalid selection');
 
 		if (Number.isNaN(value)) return;
 
-		const { x, y } = selectedPosition;
-		const newPosition =
-			coordinate === 'x'
-				? selectedPosition.withX(x.withValue(value))
-				: selectedPosition.withY(y.withValue(value));
-
-		let newVertex: Vertex;
-		switch (editor.selection.part) {
-			case 'position':
-				newVertex = selectedVertex.withPosition(newPosition, previewSize);
-				break;
-			case 'controlPointForward':
-				newVertex = selectedVertex.withControlPoint('forward', newPosition, previewSize);
-				break;
-			case 'controlPointBackward':
-				newVertex = selectedVertex.withControlPoint('backward', newPosition, previewSize);
-				break;
-		}
-
+		const newVertex = selectedVertex.withDimensionValue(selection.part, dimension, value, maxSize);
 		updateVertex(newVertex);
 	}
 
-	function handleVertexTypeChange(coordinate: 'x' | 'y', newType: string) {
-		if (!editor.selection || !selectedVertex || !selectedPosition) {
-			throw new Error('Invalid selection');
-		}
+	function handleVertexTypeChange(dimension: 'x' | 'y', newType: string) {
+		assert(selection && selectedVertex, 'Invalid selection');
+		assert(isDimensionType(newType), `Invalid dimension type: ${newType}`);
 
-		if (newType !== 'percent' && newType !== 'px_from_start' && newType !== 'px_from_end') {
-			return;
-		}
-
-		const currentDimension = coordinate === 'x' ? selectedPosition.x : selectedPosition.y;
-		const maxPx = coordinate === 'x' ? previewSize[0] : previewSize[1];
-
-		// Convert current value to pixels, then to new type
-		const currentPixels = currentDimension.toPixels(maxPx);
-		const newDimension = VertexDimension.fromPixels(newType, maxPx, currentPixels);
-
-		const newPosition =
-			coordinate === 'x'
-				? selectedPosition.withX(newDimension)
-				: selectedPosition.withY(newDimension);
-
-		updateVertex(
-			Vertex.make({
-				...selectedVertex,
-				[editor.selection.part]: newPosition
-			})
+		const newVertex = selectedVertex.withConvertedDimensionType(
+			selection.part,
+			dimension,
+			newType,
+			maxSize
 		);
+		updateVertex(newVertex);
 	}
 
 	function handleVertexMirroredChange(isMirrored: boolean) {
-		if (!selectedVertex) {
-			throw new Error('Invalid selection');
-		}
+		assert(selectedVertex, 'Invalid selection');
 
-		let newVertex = Vertex.make({ ...selectedVertex, isMirrored });
-
-		// If we turn on mirroring, we need to update the control points to be
-		// mirrored as well
-		if (isMirrored && selectedVertex.controlPointForward) {
-			newVertex.controlPointBackward = selectedVertex.controlPointForward
-				.toMirrored(selectedVertex.position, previewSize)
-				.toRounded();
-		} else if (isMirrored && selectedVertex.controlPointBackward) {
-			newVertex.controlPointForward = selectedVertex.controlPointBackward
-				.toMirrored(selectedVertex.position, previewSize)
-				.toRounded();
-		}
-
+		const newVertex = selectedVertex.withMirrored(isMirrored, maxSize);
 		updateVertex(newVertex);
 	}
 
 	function handleDeleteButtonClick() {
-		if (!editor.selection) return;
-
 		try {
-			if (editor.selection.part === 'position') {
-				deleteVertex(editor.selection.id);
-			} else {
-				const direction = editor.selection.part === 'controlPointForward' ? 'forward' : 'backward';
-				deleteControlPoint(editor.selection.id, direction);
-			}
+			deleteSelection();
 		} catch (error) {
 			errorMessage = error instanceof UserError ? error.userMessage : 'Failed to delete';
 			const errorPopover = document.getElementById('form-error');
@@ -134,10 +52,10 @@
 </script>
 
 <form>
-	{#if selectedVertex && selectedPosition}
+	{#if selectedVertex && selectedVertexPosition}
 		<fieldset>
 			<legend>
-				{#if editor.selection?.part === 'position'}Vertex position{:else}Control point position{/if}
+				{#if selection?.part === 'position'}Vertex position{:else}Control point position{/if}
 			</legend>
 
 			<div class="vertexPosition">
@@ -145,14 +63,14 @@
 				<input
 					id="vertex-x"
 					type="number"
-					value={selectedPosition.x.value.toString()}
+					value={selectedVertexPosition.x.value.toString()}
 					oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
 				/>
 
 				<label for="vertex-x-type" class="visually-hidden">X type</label>
 				<select
 					id="vertex-x-type"
-					value={selectedPosition.x.type}
+					value={selectedVertexPosition.x.type}
 					onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
 				>
 					<option value="percent">%</option>
@@ -164,14 +82,14 @@
 				<input
 					id="vertex-y"
 					type="number"
-					value={selectedPosition.y.value.toString()}
+					value={selectedVertexPosition.y.value.toString()}
 					oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
 				/>
 
 				<label for="vertex-y-type" class="visually-hidden">Y type</label>
 				<select
 					id="vertex-y-type"
-					value={selectedPosition.y.type}
+					value={selectedVertexPosition.y.type}
 					onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
 				>
 					<option value="percent">%</option>
@@ -196,7 +114,7 @@
 				onclick={handleDeleteButtonClick}
 				--backgroundColor="var(--error-300)"
 			>
-				{#if editor.selection?.part === 'position'}
+				{#if selection?.part === 'position'}
 					Delete vertex
 				{:else}
 					Delete control point

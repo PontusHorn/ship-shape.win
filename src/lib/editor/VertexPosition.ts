@@ -1,5 +1,5 @@
 import { CoordinatePair } from '../CoordinatePair';
-import { VertexDimension } from './VertexDimension';
+import { VertexDimension, type DimensionType } from './VertexDimension';
 import type { Vector } from '../util/vector';
 
 export class VertexPosition {
@@ -24,6 +24,16 @@ export class VertexPosition {
 			VertexDimension.fromPixels(this.x.type, maxX, x),
 			VertexDimension.fromPixels(this.y.type, maxY, y)
 		);
+	}
+
+	withConvertedDimensionType(
+		dimension: 'x' | 'y',
+		newType: DimensionType,
+		[maxX, maxY]: Vector
+	): VertexPosition {
+		return dimension === 'x'
+			? this.withX(this.x.withConvertedType(newType, maxX))
+			: this.withY(this.y.withConvertedType(newType, maxY));
 	}
 
 	toRounded(): VertexPosition {

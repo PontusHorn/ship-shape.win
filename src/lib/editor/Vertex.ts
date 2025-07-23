@@ -1,5 +1,7 @@
+import { assert } from '$lib/util/assert';
 import { randomId } from '../util/randomId';
 import { subtract, type Vector } from '../util/vector';
+import type { VertexPart } from './editor.svelte';
 import { VertexDimension } from './VertexDimension';
 import { VertexPosition } from './VertexPosition';
 
@@ -91,5 +93,61 @@ export class Vertex {
 			controlPointForward: controlPointForward?.toRounded(),
 			controlPointBackward: controlPointBackward?.toRounded()
 		});
+	}
+
+	withDimensionValue(part: VertexPart, dimension: 'x' | 'y', value: number, maxSize: Vector) {
+		const position = this[part];
+		assert(position, `Position "${part}" not found in vertex`);
+
+		const { x, y } = position;
+		const newPosition =
+			dimension === 'x' ? position.withX(x.withValue(value)) : position.withY(y.withValue(value));
+
+		switch (part) {
+			case 'position':
+				return this.withPosition(newPosition, maxSize);
+			case 'controlPointForward':
+				return this.withControlPoint('forward', newPosition, maxSize);
+			case 'controlPointBackward':
+				return this.withControlPoint('backward', newPosition, maxSize);
+		}
+	}
+
+	withConvertedDimensionType(
+		part: VertexPart,
+		dimension: 'x' | 'y',
+		newType: VertexDimension['type'],
+		maxSize: Vector
+	): Vertex {
+		const position = this[part];
+		assert(position, `Position "${part}" not found in vertex`);
+
+		const newPosition = position.withConvertedDimensionType(dimension, newType, maxSize);
+		switch (part) {
+			case 'position':
+				return this.withPosition(newPosition, maxSize);
+			case 'controlPointForward':
+				return this.withControlPoint('forward', newPosition, maxSize);
+			case 'controlPointBackward':
+				return this.withControlPoint('backward', newPosition, maxSize);
+		}
+	}
+
+	withMirrored(isMirrored: boolean, maxSize: Vector): Vertex {
+		const newVertex = Vertex.make({ ...this, isMirrored });
+
+		// If we turn on mirroring, we need to update the control points to be
+		// mirrored as well
+		if (isMirrored && this.controlPointForward) {
+			newVertex.controlPointBackward = this.controlPointForward
+				.toMirrored(this.position, maxSize)
+				.toRounded();
+		} else if (isMirrored && this.controlPointBackward) {
+			newVertex.controlPointForward = this.controlPointBackward
+				.toMirrored(this.position, maxSize)
+				.toRounded();
+		}
+
+		return newVertex;
 	}
 }

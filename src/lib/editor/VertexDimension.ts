@@ -1,6 +1,6 @@
 import { type CodeStyle, type LengthPercentage, percent, px, raw } from '../LengthPercentage';
 
-type DimensionType = 'percent' | 'px_from_start' | 'px_from_end';
+export type DimensionType = 'percent' | 'px_from_start' | 'px_from_end';
 
 export class VertexDimension {
 	type: DimensionType;
@@ -17,6 +17,12 @@ export class VertexDimension {
 
 	withValue(value: number): VertexDimension {
 		return new VertexDimension(this.type, value);
+	}
+
+	withConvertedType(newType: DimensionType, maxPx: number): VertexDimension {
+		// Convert current value to pixels, then to new type
+		const currentPixels = this.toPixels(maxPx);
+		return VertexDimension.fromPixels(newType, maxPx, currentPixels);
 	}
 
 	toPixels(maxPx: number): number {
@@ -75,4 +81,8 @@ export class VertexDimension {
 				return raw(`calc(100% - ${this.value}px)`, px(maxPx - this.value));
 		}
 	}
+}
+
+export function isDimensionType(value: string): value is DimensionType {
+	return ['percent', 'px_from_start', 'px_from_end'].includes(value);
 }
