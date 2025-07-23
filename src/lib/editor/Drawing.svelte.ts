@@ -2,7 +2,7 @@ import { FromCommand } from '../commands/From';
 import { LineCommand } from '../commands/Line';
 import { CurveCommand } from '../commands/Curve';
 import { Shape } from '../Shape';
-import { makeVertex, type Vertex } from './Vertex';
+import { Vertex } from './Vertex';
 import { VertexPosition } from './VertexPosition';
 import { subtract, type Vector } from '../util/vector';
 import { UserError } from '../UserError';
@@ -59,7 +59,7 @@ export class Drawing {
 	}
 
 	insertVertex(afterIndex: number, position: VertexPosition): string {
-		const vertex = makeVertex({ position });
+		const vertex = Vertex.make({ position });
 		this.#vertices = [
 			...this.#vertices.slice(0, afterIndex + 1),
 			vertex,
@@ -159,7 +159,7 @@ export class Drawing {
 
 		// Create new vertex with the specified control point removed and mirroring broken
 		const field = direction === 'forward' ? 'controlPointForward' : 'controlPointBackward';
-		this.#vertices[index] = { ...vertex, isMirrored: false, [field]: undefined };
+		this.#vertices[index] = Vertex.make({ ...vertex, isMirrored: false, [field]: undefined });
 	}
 }
 

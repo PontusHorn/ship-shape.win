@@ -1,5 +1,5 @@
 import { Drawing } from './Drawing.svelte';
-import { vertexFromPercent, type Vertex } from './Vertex';
+import { Vertex } from './Vertex';
 
 export type ToolType = 'select' | 'curve';
 
@@ -19,9 +19,9 @@ export type VertexPart = 'position' | 'controlPointForward' | 'controlPointBackw
 export const editor = $state<EditorState>({
 	tool: 'select',
 	drawing: new Drawing([
-		vertexFromPercent(50, 0),
-		vertexFromPercent(100, 100),
-		vertexFromPercent(0, 100)
+		Vertex.fromPercent(50, 0),
+		Vertex.fromPercent(100, 100),
+		Vertex.fromPercent(0, 100)
 	]),
 	selection: undefined
 });

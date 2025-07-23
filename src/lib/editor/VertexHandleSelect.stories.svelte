@@ -4,7 +4,7 @@
 	import VertexHandleSelect from './VertexHandleSelect.svelte';
 	import { VertexDimension } from './VertexDimension';
 	import { VertexPosition } from './VertexPosition';
-	import { makeVertex } from './Vertex';
+	import { Vertex } from './Vertex';
 
 	const { Story } = defineMeta({
 		title: 'VertexHandleSelect',
@@ -20,13 +20,13 @@
 	}
 
 	let vertices = $state({
-		centered: makeVertex({
+		centered: Vertex.make({
 			position: new VertexPosition(
 				new VertexDimension('percent', 50),
 				new VertexDimension('percent', 50)
 			)
 		}),
-		differentDimensionTypes: makeVertex({
+		differentDimensionTypes: Vertex.make({
 			position: new VertexPosition(
 				new VertexDimension('px_from_start', 50),
 				new VertexDimension('px_from_end', 30)

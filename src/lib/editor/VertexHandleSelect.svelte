@@ -1,7 +1,7 @@
 <script lang="ts">
 	import BaseVertexHandle from './VertexHandle.svelte';
 	import VertexErrorPopover from './VertexErrorPopover.svelte';
-	import { moveVertex, type Vertex } from './Vertex';
+	import { Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { deleteVertex, selectVertex } from './editor.svelte';
 	import { getArrowKeyDelta } from '../util/keyboardNavigation';
@@ -28,7 +28,7 @@
 
 	function handleDrag({ offsetX, offsetY }: DragEventData) {
 		const newPosition = vertex.position.withVector([offsetX, offsetY], maxSize);
-		const newVertex = moveVertex(vertex, newPosition, maxSize);
+		const newVertex = vertex.withPosition(newPosition, maxSize);
 		onChangeVertex(newVertex);
 		selectVertex(newVertex.id);
 	}
@@ -70,7 +70,7 @@
 			const currentVector = vertex.position.toVector(maxSize);
 			const newVector = translate(currentVector, delta);
 			const newPosition = vertex.position.withVector(newVector, maxSize);
-			const newVertex = moveVertex(vertex, newPosition, maxSize);
+			const newVertex = vertex.withPosition(newPosition, maxSize);
 			onChangeVertex(newVertex);
 			return;
 		}

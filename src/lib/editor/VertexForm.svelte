@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { moveVertex, moveVertexControlPoint, type Vertex } from '$lib/editor/Vertex';
+	import { Vertex } from '$lib/editor/Vertex';
 	import { VertexDimension } from '$lib/editor/VertexDimension';
 	import {
 		deleteVertex,
@@ -51,13 +51,13 @@
 		let newVertex: Vertex;
 		switch (editor.selection.part) {
 			case 'position':
-				newVertex = moveVertex(selectedVertex, newPosition, previewSize);
+				newVertex = selectedVertex.withPosition(newPosition, previewSize);
 				break;
 			case 'controlPointForward':
-				newVertex = moveVertexControlPoint(selectedVertex, 'forward', newPosition, previewSize);
+				newVertex = selectedVertex.withControlPoint('forward', newPosition, previewSize);
 				break;
 			case 'controlPointBackward':
-				newVertex = moveVertexControlPoint(selectedVertex, 'backward', newPosition, previewSize);
+				newVertex = selectedVertex.withControlPoint('backward', newPosition, previewSize);
 				break;
 		}
 
@@ -85,10 +85,12 @@
 				? selectedPosition.withX(newDimension)
 				: selectedPosition.withY(newDimension);
 
-		updateVertex({
-			...selectedVertex,
-			[editor.selection.part]: newPosition
-		});
+		updateVertex(
+			Vertex.make({
+				...selectedVertex,
+				[editor.selection.part]: newPosition
+			})
+		);
 	}
 
 	function handleVertexMirroredChange(isMirrored: boolean) {
@@ -96,7 +98,7 @@
 			throw new Error('Invalid selection');
 		}
 
-		let newVertex = { ...selectedVertex, isMirrored };
+		let newVertex = Vertex.make({ ...selectedVertex, isMirrored });
 
 		// If we turn on mirroring, we need to update the control points to be
 		// mirrored as well

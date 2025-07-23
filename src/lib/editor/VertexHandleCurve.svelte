@@ -1,7 +1,7 @@
 <script lang="ts">
 	import BaseVertexHandle from './VertexHandle.svelte';
 	import VertexErrorPopover from './VertexErrorPopover.svelte';
-	import { type Vertex } from './Vertex';
+	import { Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { deleteVertex, selectVertex } from './editor.svelte';
 	import { VertexPosition } from './VertexPosition';
@@ -39,12 +39,14 @@
 			.toMirrored(vertex.position, maxSize)
 			.toRounded();
 
-		onChangeVertex({
-			...vertex,
-			isMirrored: true,
-			controlPointForward,
-			controlPointBackward
-		});
+		onChangeVertex(
+			Vertex.make({
+				...vertex,
+				isMirrored: true,
+				controlPointForward,
+				controlPointBackward
+			})
+		);
 
 		// Select the first control point, and focus it after it mounts
 		selectVertex(vertex.id, 'controlPointForward');
@@ -79,12 +81,14 @@
 			.toMirrored(vertex.position, maxSize)
 			.toRounded();
 
-		onChangeVertex({
-			...vertex,
-			isMirrored: true,
-			controlPointForward,
-			controlPointBackward
-		});
+		onChangeVertex(
+			Vertex.make({
+				...vertex,
+				isMirrored: true,
+				controlPointForward,
+				controlPointBackward
+			})
+		);
 
 		// Select the first control point, and focus it after it mounts
 		selectVertex(vertex.id, 'controlPointForward');

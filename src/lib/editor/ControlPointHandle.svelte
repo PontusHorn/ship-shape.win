@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { draggable, type DragEventData, type DragOptions } from '@neodrag/svelte';
-	import { moveVertexControlPoint, type Vertex } from './Vertex';
+	import { Vertex } from './Vertex';
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { disableUntilHydrated } from '../util/disableUntilHydrated';
@@ -90,8 +90,8 @@
 		const newControlPoint = controlPoint.withVector(newVector, maxSize);
 
 		// Break mirroring if Alt key is held
-		let newVertex = event.altKey ? { ...vertex, isMirrored: false } : vertex;
-		newVertex = moveVertexControlPoint(newVertex, direction, newControlPoint, maxSize);
+		let newVertex = event.altKey ? Vertex.make({ ...vertex, isMirrored: false }) : vertex;
+		newVertex = newVertex.withControlPoint(direction, newControlPoint, maxSize);
 
 		onChangeVertex(newVertex);
 	}
@@ -100,8 +100,8 @@
 		const newControlPoint = controlPoint.withVector([offsetX, offsetY], maxSize);
 
 		// Break mirroring if Alt key is held
-		let newVertex = event.altKey ? { ...vertex, isMirrored: false } : vertex;
-		newVertex = moveVertexControlPoint(newVertex, direction, newControlPoint, maxSize);
+		let newVertex = event.altKey ? Vertex.make({ ...vertex, isMirrored: false }) : vertex;
+		newVertex = newVertex.withControlPoint(direction, newControlPoint, maxSize);
 
 		onChangeVertex(newVertex);
 
