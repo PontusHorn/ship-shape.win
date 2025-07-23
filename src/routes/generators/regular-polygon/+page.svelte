@@ -6,7 +6,7 @@
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
 	import ShapePreview from '$lib/ShapePreview.svelte';
-	import type { Vector } from '$lib/vector';
+	import type { Vector } from '$lib/util/vector';
 
 	let sides = $state(6);
 	let unit = $state<BaseUnit>('percent');

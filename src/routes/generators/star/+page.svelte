@@ -6,7 +6,7 @@
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { StarPolygon } from '$lib/parametricShapes/StarPolygon';
 	import ShapePreview from '$lib/ShapePreview.svelte';
-	import type { Vector } from '$lib/vector';
+	import type { Vector } from '$lib/util/vector';
 
 	let points = $state(6);
 	let unit = $state<BaseUnit>('percent');

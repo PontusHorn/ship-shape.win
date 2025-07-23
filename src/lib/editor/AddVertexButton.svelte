@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { disableUntilHydrated } from './disableUntilHydrated';
-	import type { Vector } from './vector';
+	import { disableUntilHydrated } from '../util/disableUntilHydrated';
+	import type { Vector } from '../util/vector';
 	import type { VertexPosition } from './VertexPosition';
 
 	type Props = HTMLButtonAttributes & {

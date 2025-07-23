@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { cssPropertiesToCss, type CssProperties } from './css';
-	import { getSvgPath, OFFSET_PATH_KEYFRAMES } from './output';
+	import { cssPropertiesToCss, type CssProperties } from './util/css';
+	import { getSvgPath, OFFSET_PATH_KEYFRAMES } from './util/output';
 	import { outputConfig } from './outputConfig.svelte';
 	import type { Shape } from './Shape';
 

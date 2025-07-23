@@ -1,12 +1,12 @@
-import { FromCommand } from './commands/From';
-import { LineCommand } from './commands/Line';
-import { CurveCommand } from './commands/Curve';
-import { Shape } from './Shape';
+import { FromCommand } from '../commands/From';
+import { LineCommand } from '../commands/Line';
+import { CurveCommand } from '../commands/Curve';
+import { Shape } from '../Shape';
 import { makeVertex, type Vertex } from './Vertex';
 import { VertexPosition } from './VertexPosition';
-import { subtract, type Vector } from './vector';
-import { UserError } from './UserError';
-import { type Curve, interpolateCurve, makeCurve } from './curve';
+import { subtract, type Vector } from '../util/vector';
+import { UserError } from '../UserError';
+import { type Curve, interpolateCurve, makeCurve } from '../util/curve';
 
 export class Drawing {
 	vertices: Vertex[];

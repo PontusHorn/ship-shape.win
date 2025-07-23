@@ -4,9 +4,9 @@
 	import { moveVertex, type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { deleteVertex, selectVertex } from './editor.svelte';
-	import { getArrowKeyDelta } from './keyboardNavigation';
-	import { translate, type Vector } from './vector';
-	import { UserError } from './UserError';
+	import { getArrowKeyDelta } from '../util/keyboardNavigation';
+	import { translate, type Vector } from '../util/vector';
+	import { UserError } from '../UserError';
 	import type { DragEventData, DragOptions } from '@neodrag/svelte';
 
 	type Props = HTMLButtonAttributes & {

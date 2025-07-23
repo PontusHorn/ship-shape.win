@@ -5,10 +5,10 @@
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { deleteVertex, selectVertex } from './editor.svelte';
 	import { VertexPosition } from './VertexPosition';
-	import type { Vector } from './vector';
+	import type { Vector } from '../util/vector';
 	import { tick } from 'svelte';
-	import { getControlPointButton } from './elementIds';
-	import { UserError } from './UserError';
+	import { getControlPointButton } from '../util/elementIds';
+	import { UserError } from '../UserError';
 	import type { DragEventData, DragOptions } from '@neodrag/svelte';
 
 	type Props = HTMLButtonAttributes & {

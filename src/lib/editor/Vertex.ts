@@ -1,5 +1,5 @@
-import { randomId } from './randomId';
-import { subtract, type Vector } from './vector';
+import { randomId } from '../util/randomId';
+import { subtract, type Vector } from '../util/vector';
 import { VertexDimension } from './VertexDimension';
 import { VertexPosition } from './VertexPosition';
 

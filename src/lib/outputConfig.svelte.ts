@@ -1,6 +1,6 @@
 import type { CodeStyle } from './LengthPercentage';
-import type { ShapeProperty } from './output';
-import type { Vector } from './vector';
+import type { ShapeProperty } from './util/output';
+import type { Vector } from './util/vector';
 
 export type OutputConfig = {
 	shapeProperty: ShapeProperty;

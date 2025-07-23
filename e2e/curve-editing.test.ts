@@ -1,4 +1,4 @@
-import { translate } from '../src/lib/vector';
+import { translate } from '../src/lib/util/vector';
 import { expect, test } from './test-api';
 import {
 	drag,

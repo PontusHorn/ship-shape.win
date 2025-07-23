@@ -3,12 +3,12 @@
 	import { moveVertexControlPoint, type Vertex } from './Vertex';
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { disableUntilHydrated } from './disableUntilHydrated';
+	import { disableUntilHydrated } from '../util/disableUntilHydrated';
 	import { editor, selectVertex, deleteControlPoint, type VertexPart } from './editor.svelte';
-	import { getArrowKeyDelta } from './keyboardNavigation';
-	import { translate, type Vector } from './vector';
-	import { createControlPointButtonId } from './elementIds';
-	import { UserError } from './UserError';
+	import { getArrowKeyDelta } from '../util/keyboardNavigation';
+	import { translate, type Vector } from '../util/vector';
+	import { createControlPointButtonId } from '../util/elementIds';
+	import { UserError } from '../UserError';
 	import { X } from '@lucide/svelte';
 	import VertexErrorPopover from './VertexErrorPopover.svelte';
 

@@ -1,4 +1,4 @@
-import { type CodeStyle, type LengthPercentage, percent, px, raw } from './LengthPercentage';
+import { type CodeStyle, type LengthPercentage, percent, px, raw } from '../LengthPercentage';
 
 type DimensionType = 'percent' | 'px_from_start' | 'px_from_end';
 

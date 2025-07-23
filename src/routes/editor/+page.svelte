@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
-	import AddVertexButton from '$lib/AddVertexButton.svelte';
+	import AddVertexButton from '$lib/editor/AddVertexButton.svelte';
 	import CssOutput from '$lib/CssOutput.svelte';
-	import { moveVertex, moveVertexControlPoint, type Vertex } from '$lib/Vertex';
-	import { VertexDimension } from '$lib/VertexDimension';
-	import VertexHandleCurve from '$lib/VertexHandleCurve.svelte';
-	import VertexHandleSelect from '$lib/VertexHandleSelect.svelte';
+	import { moveVertex, moveVertexControlPoint, type Vertex } from '$lib/editor/Vertex';
+	import { VertexDimension } from '$lib/editor/VertexDimension';
+	import VertexHandleCurve from '$lib/editor/VertexHandleCurve.svelte';
+	import VertexHandleSelect from '$lib/editor/VertexHandleSelect.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import {
 		clearVertexSelection,
@@ -13,20 +13,20 @@
 		deleteControlPoint,
 		editor,
 		selectVertex
-	} from '$lib/editor.svelte';
-	import EditorLayout from '$lib/EditorLayout.svelte';
-	import { distance, type Vector } from '$lib/vector';
+	} from '$lib/editor/editor.svelte';
+	import EditorLayout from '$lib/editor/EditorLayout.svelte';
+	import { distance, type Vector } from '$lib/util/vector';
 	import { tick } from 'svelte';
-	import { getVertexButton } from '$lib/elementIds';
-	import { getShapeCssProperties } from '$lib/output';
+	import { getVertexButton } from '$lib/util/elementIds';
+	import { getShapeCssProperties } from '$lib/util/output';
 	import ShapePreview from '$lib/ShapePreview.svelte';
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { UserError } from '$lib/UserError';
 	import Button from '$lib/Button.svelte';
-	import { closestPointOnCurve, interpolateCurve } from '$lib/curve';
-	import { VertexPosition } from '$lib/VertexPosition';
-	import { assert, nonNullish } from '$lib/assert';
-	import { clamp } from '$lib/math';
+	import { closestPointOnCurve, interpolateCurve } from '$lib/util/curve';
+	import { VertexPosition } from '$lib/editor/VertexPosition';
+	import { assert, nonNullish } from '$lib/util/assert';
+	import { clamp } from '$lib/util/math';
 
 	const previewSize: Vector = [300, 300];
 

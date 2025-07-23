@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { Check, Copy } from '@lucide/svelte';
 	import Button from './Button.svelte';
-	import { copyTextToClipboard } from './copyTextToClipboard';
-	import type { CssProperties } from './css';
+	import { copyTextToClipboard } from './util/copyTextToClipboard';
+	import type { CssProperties } from './util/css';
 	import { outputConfig } from './outputConfig.svelte';
-	import { getShapeExtraCss } from './output';
+	import { getShapeExtraCss } from './util/output';
 
 	const { cssProperties }: { cssProperties: CssProperties } = $props();
 

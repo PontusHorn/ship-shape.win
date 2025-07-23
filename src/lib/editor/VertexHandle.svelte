@@ -2,12 +2,12 @@
 	import { draggable, type DragOptions } from '@neodrag/svelte';
 	import { type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { disableUntilHydrated } from './disableUntilHydrated';
+	import { disableUntilHydrated } from '../util/disableUntilHydrated';
 	import { editor } from './editor.svelte';
 	import ControlPointHandle from './ControlPointHandle.svelte';
-	import { createVertexButtonId } from './elementIds';
+	import { createVertexButtonId } from '../util/elementIds';
 	import { X } from '@lucide/svelte';
-	import type { Vector } from './vector';
+	import type { Vector } from '../util/vector';
 	import type { Snippet } from 'svelte';
 
 	type Props = HTMLButtonAttributes & {

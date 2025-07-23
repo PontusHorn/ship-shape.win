@@ -1,11 +1,11 @@
 import { curveTo } from '$lib/commands/Curve';
 import { from } from '$lib/commands/From';
-import type { CssProperties } from '$lib/css';
+import type { CssProperties } from '$lib/util/css';
 import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
-import { getShapeCssProperties } from '$lib/output';
+import { getShapeCssProperties } from '$lib/util/output';
 import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
-import type { Vector } from '$lib/vector';
+import type { Vector } from '$lib/util/vector';
 import type { ParametricShape } from './ParametricShape';
 
 export class Squircle implements ParametricShape {

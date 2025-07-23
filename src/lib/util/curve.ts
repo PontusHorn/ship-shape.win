@@ -1,8 +1,8 @@
 import { assertNever } from './assert';
-import type { Command } from './commands/Command';
-import { CurveCommand } from './commands/Curve';
-import { LineCommand } from './commands/Line';
-import { CoordinatePair } from './CoordinatePair';
+import type { Command } from '../commands/Command';
+import { CurveCommand } from '../commands/Curve';
+import { LineCommand } from '../commands/Line';
+import { CoordinatePair } from '../CoordinatePair';
 import { clamp } from './math';
 import { closestPointOnLine, distance, lerp, type Vector } from './vector';
 

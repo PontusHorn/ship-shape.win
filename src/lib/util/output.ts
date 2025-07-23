@@ -1,6 +1,6 @@
 import type { CssProperties } from './css';
-import type { CodeStyle } from './LengthPercentage';
-import type { Shape } from './Shape';
+import type { CodeStyle } from '../LengthPercentage';
+import type { Shape } from '../Shape';
 
 export const OFFSET_PATH_KEYFRAMES = `
 

@@ -1,6 +1,6 @@
-import { CoordinatePair } from './CoordinatePair';
+import { CoordinatePair } from '../CoordinatePair';
 import { VertexDimension } from './VertexDimension';
-import type { Vector } from './vector';
+import type { Vector } from '../util/vector';
 
 export class VertexPosition {
 	x: VertexDimension;

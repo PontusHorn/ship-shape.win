@@ -1,5 +1,5 @@
 import { type CodeStyle, type LengthPercentage, px } from './LengthPercentage';
-import type { Vector } from './vector';
+import type { Vector } from './util/vector';
 
 export class CoordinatePair {
 	x: LengthPercentage;
