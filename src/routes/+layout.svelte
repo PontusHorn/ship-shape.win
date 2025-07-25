@@ -59,6 +59,10 @@
 </header>
 
 <main id="main-content">
+	<div class="browser-shape-support-warning">
+		Your browser does not support the <code>shape()</code> function, which means you won't be able to
+		see the shapes as intended.
+	</div>
 	{@render children()}
 </main>
 
@@ -267,6 +271,18 @@
 					text-decoration: none;
 				}
 			}
+		}
+	}
+
+	.browser-shape-support-warning {
+		display: none;
+		background-color: var(--error-400);
+		color: var(--error-950);
+		padding: 1rem;
+		text-align: center;
+
+		@supports not (clip-path: shape(from 0 0, line to 100% 100%)) {
+			display: block;
 		}
 	}
 
