@@ -32,18 +32,30 @@
 	const isSelected = $derived(editor.selection?.id === vertex.id);
 	const isPositionSelected = $derived(isSelected && editor.selection?.part === 'position');
 
-	const [x, y] = $derived(vertex.position.toVector(maxSize));
+	const position = $derived.by(() => {
+		const [x, y] = vertex.position.toVector(maxSize);
+		return { x, y };
+	});
 
 	const fullDragOptions = $derived<DragOptions>({
 		handle: 'button',
-		position: { x, y },
+		// By default neodrag moves the element on mouse move. In the Curve tool we
+		// want to prevent this as the control point should be what gets dragged.
+		// For that reason the `position` needs to be a new object on every mouse
+		// move while dragging. We accomplish this with the above `$derived.by`,
+		// which updates whenever `vertex` updates.
+		position,
 		legacyTranslate: false,
 		...dragOptions
 	});
 </script>
 
 <div class="wrapper" class:isSelected>
-	<div class="vertex" style:translate={`${x}px  ${y}px`} use:draggable={fullDragOptions}>
+	<div
+		class="vertex"
+		style:translate={`${position.x}px  ${position.y}px`}
+		use:draggable={fullDragOptions}
+	>
 		<button
 			id={createVertexButtonId(vertex.id)}
 			class:isAltPressed
