@@ -164,6 +164,13 @@
 		x2={controlPoint.x.toPixels(maxSize[0])}
 		y2={controlPoint.y.toPixels(maxSize[1])}
 	/>
+	<!-- Duplicate line with a different color, for better visibility -->
+	<line
+		x1={vertex.position.x.toPixels(maxSize[0])}
+		y1={vertex.position.y.toPixels(maxSize[1])}
+		x2={controlPoint.x.toPixels(maxSize[0])}
+		y2={controlPoint.y.toPixels(maxSize[1])}
+	/>
 </svg>
 
 <style>
@@ -269,6 +276,12 @@
 			stroke: var(--brand-400);
 			stroke-width: 1;
 			stroke-dasharray: 2, 2;
+		}
+		/* Make the second line a lighter color and offset dashes to stand out
+		against both dark and light backgrounds */
+		line + line {
+			stroke: var(--brand-050);
+			stroke-dashoffset: 2;
 		}
 	}
 </style>
