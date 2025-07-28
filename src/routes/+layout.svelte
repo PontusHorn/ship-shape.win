@@ -218,6 +218,9 @@
 			background: var(--brand-100);
 			border: 4px solid var(--brand-800);
 			border-radius: 0.5rem;
+			box-shadow:
+				1px 2px 4px color-mix(in srgb, var(--brand-950) 15%, transparent),
+				0.5px 1px 2px color-mix(in srgb, var(--brand-950) 25%, transparent);
 			--_duration: 0.75s;
 			transition:
 				display var(--_duration) allow-discrete,
