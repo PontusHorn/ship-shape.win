@@ -112,6 +112,11 @@
 		color: var(--secondary-050);
 
 		animation: fade-in-out 3s forwards;
+
+		/* Show in center of screen when anchor positioning is not supported */
+		@supports not (position-area: start start) {
+			margin: auto;
+		}
 	}
 
 	@keyframes fade-in-out {

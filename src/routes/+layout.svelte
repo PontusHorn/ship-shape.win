@@ -202,7 +202,6 @@
 		}
 
 		[popovertarget] {
-			anchor-name: --dropdown;
 			/* The extra white-space in the chevron icon makes the spacing look
 			unbalanced, so adjust the padding slightly on that side */
 			padding-inline-end: 0.2rem;
@@ -210,9 +209,9 @@
 
 		[popover] {
 			position: fixed;
-			position-anchor: --dropdown;
 			position-area: end span-start;
-			margin: 0;
+			margin-block: 0.2em;
+			margin-inline: 0;
 			padding: 0.5rem;
 
 			background: var(--brand-100);
@@ -231,6 +230,13 @@
 			transform: translate(0, -0.5rem) scaleY(0.95);
 			transform-origin: top center;
 			--focusRingColor: var(--secondary-700);
+
+			/* Estimate an OK position when anchor positioning is not supported */
+			@supports not (position-area: start start) {
+				inset: auto;
+				right: 5.2em;
+				top: 2.8em;
+			}
 
 			&:popover-open {
 				opacity: 1;

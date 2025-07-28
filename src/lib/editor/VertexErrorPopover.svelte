@@ -49,5 +49,12 @@
 		border: 2px solid var(--error-950);
 		border-radius: 0.5rem;
 		color: var(--error-950);
+
+		/* Fallback position when anchor positioning is not supported */
+		@supports not (position-area: start start) {
+			inset: 0;
+			margin: 0;
+			transform: translateY(100px);
+		}
 	}
 </style>

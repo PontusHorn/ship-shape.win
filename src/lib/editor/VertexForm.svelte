@@ -175,7 +175,7 @@
 	}
 
 	.error:popover-open {
-		position: absolute;
+		position: fixed;
 		position-anchor: --form;
 		position-area: block-end;
 		position-try: flip-block;
@@ -188,5 +188,10 @@
 		border: 2px solid var(--error-950);
 		border-radius: 0.5rem;
 		color: var(--error-950);
+
+		/* Show in center of screen when anchor positioning is not supported */
+		@supports not (position-area: start start) {
+			margin: auto;
+		}
 	}
 </style>
