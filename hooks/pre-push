@@ -1,0 +1,41 @@
+#!/bin/sh
+#
+# Pre-push hook that runs various checks before allowing the push
+#
+
+echo "Running pre-push validation..."
+
+# Run svelte-check
+npm run check
+if [ $? -ne 0 ]; then
+  echo "❌ Svelte validation failed! Push aborted."
+  echo "Please fix the issues and try again."
+  exit 1
+fi
+
+# Run eslint
+npm run lint
+if [ $? -ne 0 ]; then
+  echo "❌ Linting failed! Push aborted."
+  echo "Please fix the issues and try again."
+  exit 1
+fi
+
+# Run tests
+npm test
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed! Push aborted."
+  echo "Please fix the issues and try again."
+  exit 1
+fi
+
+# Check for invalid licenses
+npm run check-licenses
+if [ $? -ne 0 ]; then
+  echo "❌ License validation failed! Push aborted."
+  echo "Please fix the issues and try again."
+  exit 1
+fi
+
+echo "✅ Validation passed! Proceeding with push."
+exit 0
