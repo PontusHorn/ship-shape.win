@@ -74,9 +74,7 @@
 			</span>
 		</button>
 
-		{#if children}
-			{@render children()}
-		{/if}
+		{@render children?.()}
 	</div>
 
 	<div class="control-points">

@@ -144,7 +144,7 @@
 	<VertexErrorPopover
 		isOpen={errorMessage !== undefined}
 		onClose={() => {
-			errorMessage = '';
+			errorMessage = undefined;
 		}}
 	>
 		{errorMessage}
