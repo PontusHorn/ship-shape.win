@@ -5,7 +5,7 @@
 	import EditorLayout from '$lib/editor/EditorLayout.svelte';
 	import VertexForm from '$lib/editor/VertexForm.svelte';
 	import EditorDrawing from '$lib/editor/EditorDrawing.svelte';
-	import { editor } from '$lib/editor/editor.svelte';
+	import { editor } from '$lib/editor/Editor.svelte';
 </script>
 
 <svelte:head>

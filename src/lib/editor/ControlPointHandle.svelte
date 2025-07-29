@@ -4,7 +4,7 @@
 	import { VertexPosition } from './VertexPosition';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { disableUntilHydrated } from '../util/disableUntilHydrated';
-	import { editor, selectVertex, deleteControlPoint, type VertexPart } from './editor.svelte';
+	import { editor, selectVertex, deleteControlPoint, type VertexPart } from './Editor.svelte';
 	import { getArrowKeyDelta } from '../util/keyboardNavigation';
 	import { translate, type Vector } from '../util/vector';
 	import { createControlPointButtonId } from '../util/elementIds';

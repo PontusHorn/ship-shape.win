@@ -2,7 +2,7 @@
 	import { MousePointer, Tangent } from '@lucide/svelte';
 	import { ToggleGroup as ToggleGroupPrimitive } from 'bits-ui';
 	import Button from './Button.svelte';
-	import { editor } from './editor/editor.svelte';
+	import { editor } from './editor/Editor.svelte';
 	import { disableUntilHydrated } from './util/disableUntilHydrated';
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { editor, deleteSelection, updateVertex } from '$lib/editor/editor.svelte';
+	import { editor, deleteSelection, updateVertex } from '$lib/editor/Editor.svelte';
 	import { UserError } from '$lib/UserError';
 	import Button from '$lib/Button.svelte';
 	import { assert } from '$lib/util/assert';

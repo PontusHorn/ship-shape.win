@@ -3,7 +3,7 @@
 	import { type Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
 	import { disableUntilHydrated } from '../util/disableUntilHydrated';
-	import { editor } from './editor.svelte';
+	import { editor } from './Editor.svelte';
 	import ControlPointHandle from './ControlPointHandle.svelte';
 	import { createVertexButtonId } from '../util/elementIds';
 	import { X } from '@lucide/svelte';

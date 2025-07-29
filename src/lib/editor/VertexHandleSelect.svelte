@@ -3,7 +3,7 @@
 	import VertexErrorPopover from './VertexErrorPopover.svelte';
 	import { Vertex } from './Vertex';
 	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import { deleteVertex, selectVertex } from './editor.svelte';
+	import { deleteVertex, selectVertex } from './Editor.svelte';
 	import { getArrowKeyDelta } from '../util/keyboardNavigation';
 	import { translate, type Vector } from '../util/vector';
 	import { UserError } from '../UserError';

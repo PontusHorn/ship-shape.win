@@ -3,7 +3,7 @@
 	import Button from '$lib/Button.svelte';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import CssOutput from '$lib/CssOutput.svelte';
-	import { editor } from '$lib/editor/editor.svelte';
+	import { editor } from '$lib/editor/Editor.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
 	import type { BaseUnit } from '$lib/LengthPercentage';
 	import { outputConfig } from '$lib/outputConfig.svelte';

@@ -7,7 +7,7 @@
 		editor,
 		selectVertex,
 		updateVertex
-	} from '$lib/editor/editor.svelte';
+	} from '$lib/editor/Editor.svelte';
 	import { distance, type Vector } from '$lib/util/vector';
 	import { tick } from 'svelte';
 	import { getVertexButton } from '$lib/util/elementIds';

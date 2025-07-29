@@ -1,7 +1,7 @@
 import { assert } from '$lib/util/assert';
 import { randomId } from '../util/randomId';
 import { subtract, type Vector } from '../util/vector';
-import type { VertexPart } from './editor.svelte';
+import type { VertexPart } from './Editor.svelte';
 import { VertexDimension } from './VertexDimension';
 import { VertexPosition } from './VertexPosition';
 
