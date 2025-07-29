@@ -1,8 +1,11 @@
+import { VertexDimension } from './editor/VertexDimension';
+
 export type CodeStyle = 'default' | 'minimal';
 
 export interface LengthPercentage {
 	toCss(style: CodeStyle): string;
 	toSvg(): string;
+	toVertexDimension(): VertexDimension;
 }
 
 export type BaseUnit = 'px' | 'percent';
@@ -20,6 +23,10 @@ export class Px implements LengthPercentage {
 
 	toSvg() {
 		return this.value.toString();
+	}
+
+	toVertexDimension(): VertexDimension {
+		return new VertexDimension('px_from_start', this.value);
 	}
 }
 
@@ -41,6 +48,10 @@ export class Percent implements LengthPercentage {
 	toSvg() {
 		// This operates on the assumption that the svg viewbox is "0 0 100 100"
 		return this.value.toString();
+	}
+
+	toVertexDimension(): VertexDimension {
+		return new VertexDimension('percent', this.value);
 	}
 }
 
@@ -70,6 +81,10 @@ export class Raw implements LengthPercentage {
 
 	toSvg(): string {
 		return this.calculatedValue.toSvg();
+	}
+
+	toVertexDimension(): VertexDimension {
+		return this.calculatedValue.toVertexDimension();
 	}
 }
 

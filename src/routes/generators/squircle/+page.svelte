@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import Button from '$lib/Button.svelte';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import CssOutput from '$lib/CssOutput.svelte';
+	import { editor } from '$lib/editor/editor.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
 	import type { BaseUnit } from '$lib/LengthPercentage';
 	import { outputConfig } from '$lib/outputConfig.svelte';
@@ -63,6 +66,19 @@
 		</select>
 	</form>
 
+	<div class="actions">
+		<Button
+			type="button"
+			size="small"
+			onclick={() => {
+				editor.drawing = shape.toDrawing(outputConfig.previewSize);
+				goto('/editor');
+			}}
+		>
+			Open in editor
+		</Button>
+	</div>
+
 	{#snippet preview()}
 		<ShapePreview {cssProperties} {shape} />
 	{/snippet}
@@ -83,5 +99,11 @@
 
 	label {
 		text-align: right;
+	}
+
+	.actions {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: end;
 	}
 </style>

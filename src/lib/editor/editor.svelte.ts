@@ -30,6 +30,7 @@ class Editor {
 	}
 	set drawing(drawing: Drawing) {
 		this.#drawing = drawing;
+		this.#selection = undefined; // Clear selection when changing drawing
 	}
 
 	get selection(): SelectedVertex | undefined {

@@ -10,14 +10,14 @@ export class Vertex {
 	position: VertexPosition;
 	controlPointForward?: VertexPosition;
 	controlPointBackward?: VertexPosition;
-	isMirrored?: boolean;
+	isMirrored: boolean;
 
 	constructor(
 		id: string,
 		position: VertexPosition,
 		controlPointForward?: VertexPosition,
 		controlPointBackward?: VertexPosition,
-		isMirrored?: boolean
+		isMirrored = false
 	) {
 		this.id = id;
 		this.position = position;

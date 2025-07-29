@@ -1,3 +1,4 @@
+import { VertexPosition } from './editor/VertexPosition';
 import { type CodeStyle, type LengthPercentage, px } from './LengthPercentage';
 import type { Vector } from './util/vector';
 
@@ -16,6 +17,10 @@ export class CoordinatePair {
 
 	toSvgPoint() {
 		return `${this.x.toSvg()},${this.y.toSvg()}`;
+	}
+
+	toVertexPosition(): VertexPosition {
+		return new VertexPosition(this.x.toVertexDimension(), this.y.toVertexDimension());
 	}
 
 	static fromVector([x, y]: Vector): CoordinatePair {
