@@ -9,6 +9,7 @@
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { StarPolygon } from '$lib/parametricShapes/StarPolygon';
 	import ShapePreview from '$lib/ShapePreview.svelte';
+	import { disableUntilHydrated } from '$lib/util/disableUntilHydrated';
 	import type { Vector } from '$lib/util/vector';
 
 	let points = $state(6);
@@ -73,6 +74,7 @@
 
 	<div class="actions">
 		<Button
+			{...disableUntilHydrated()}
 			type="button"
 			size="small"
 			onclick={() => {

@@ -9,6 +9,7 @@
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
 	import ShapePreview from '$lib/ShapePreview.svelte';
+	import { disableUntilHydrated } from '$lib/util/disableUntilHydrated';
 	import type { Vector } from '$lib/util/vector';
 
 	let sides = $state(6);
@@ -90,6 +91,7 @@
 
 	<div class="actions">
 		<Button
+			{...disableUntilHydrated()}
 			type="button"
 			size="small"
 			onclick={() => {

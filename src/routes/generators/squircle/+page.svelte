@@ -9,6 +9,7 @@
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { Squircle } from '$lib/parametricShapes/Squircle';
 	import ShapePreview from '$lib/ShapePreview.svelte';
+	import { disableUntilHydrated } from '$lib/util/disableUntilHydrated';
 
 	let curvature = $state(0.25);
 	let unit = $state<BaseUnit>('percent');
@@ -68,6 +69,7 @@
 
 	<div class="actions">
 		<Button
+			{...disableUntilHydrated()}
 			type="button"
 			size="small"
 			onclick={() => {
