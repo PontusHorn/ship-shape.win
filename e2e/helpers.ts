@@ -73,7 +73,7 @@ function extractShapeCommands(cssText: string): string[] {
 	return (
 		cssText
 			// Trim everything except the contents of the shape() function
-			.replace(/^.+: shape\(/, '')
+			.replace(/^.+: shape\(/s, '')
 			.replace(/\);\s*$/, '')
 			// Split into an array of individual commands
 			.split(',')

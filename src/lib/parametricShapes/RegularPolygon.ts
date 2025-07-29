@@ -1,4 +1,3 @@
-import { close } from '$lib/commands/Close';
 import type { Command } from '$lib/commands/Command';
 import { CurveCommand } from '$lib/commands/Curve';
 import { FromCommand } from '$lib/commands/From';
@@ -121,7 +120,6 @@ export class RegularPolygon implements ParametricShape {
 					: new LineCommand(cornerCoordinates)
 			);
 		}
-		commands.push(close());
 		return new Shape(from, commands);
 	}
 
