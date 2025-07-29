@@ -45,7 +45,11 @@ export default ts.config(
 			}
 		},
 		rules: {
-			'svelte/no-useless-mustaches': ['error', { ignoreStringEscape: true }]
+			'svelte/no-useless-mustaches': ['error', { ignoreStringEscape: true }],
+			// This is a reasonable warning, but in practice I trust myself to use it
+			// safely and it's a pain to have to disable it everywhere, especially
+			// since I need it to render comments for `html-validate`.
+			'svelte/no-at-html-tags': 'off'
 		}
 	}
 );

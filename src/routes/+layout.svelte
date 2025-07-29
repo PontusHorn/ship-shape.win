@@ -40,7 +40,7 @@
 	</div>
 
 	<nav>
-		<button popovertarget="shapes">Shapes <ChevronDown aria-hidden="true" /></button>
+		<button type="button" popovertarget="shapes">Shapes <ChevronDown aria-hidden="true" /></button>
 		<div id="shapes" popover>
 			<a
 				href="/generators/regular-polygon"

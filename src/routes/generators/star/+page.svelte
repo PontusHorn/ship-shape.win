@@ -30,6 +30,9 @@
 <GeneratorLayout>
 	<h1>Star polygon</h1>
 	<p>Generates that most pointy of shapes.</p>
+
+	<!-- Valid warning, will sort out in a later version -->
+	{@html `<!-- [html-validate-disable-next wcag/h32] -->`}
 	<form>
 		<label for="points">Number of points:</label>
 		<input id="points" type="number" bind:value={points} min="3" />

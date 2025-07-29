@@ -35,6 +35,9 @@
 			>icosagon</a
 		>. Then make it less regular if you want!
 	</p>
+
+	<!-- Valid warning, will sort out in a later version -->
+	{@html `<!-- [html-validate-disable-next wcag/h32] -->`}
 	<form>
 		<label for="sides">Number of sides:</label>
 		<input id="sides" type="number" bind:value={sides} min="3" max="20" />

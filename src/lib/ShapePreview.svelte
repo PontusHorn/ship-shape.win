@@ -27,7 +27,6 @@
 			<path d={getSvgPath(shape)} />
 		</svg>
 		<div class="arrow" style={css}></div>
-		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
 		{@html offsetPathStyle}
 	{:else}
 		<div class="clippedShape" style={css}></div>

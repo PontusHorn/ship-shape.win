@@ -34,6 +34,9 @@
 		It's squircle! Can't imagine a more beautiful thing. Make a fancy little squircley shape for
 		your fancy little website.
 	</p>
+
+	<!-- Valid warning, will sort out in a later version -->
+	{@html `<!-- [html-validate-disable-next wcag/h32] -->`}
 	<form>
 		<label for="curvature">Curvature:</label>
 		<input

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { getVertices } from './helpers';
+import { getVertices } from '../helpers';
 
 export function testDeleteVertexWithDeleteKey() {
 	test('should handle vertex deletion with Delete key', async ({ page }) => {

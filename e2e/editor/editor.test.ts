@@ -1,13 +1,13 @@
-import { expect, test } from './test-api';
+import { expect, test } from '../test-api';
 
-test.describe('Homepage', () => {
+test.describe('Editor', () => {
 	test.beforeEach(async ({ page }) => {
-		await page.goto('/');
+		await page.goto('/editor');
 	});
 
 	test('has title', async ({ page }) => {
 		const title = await page.title();
-		expect(title).toBe('ship-shape.win');
+		expect(title).toBe('Visual shape() editor - ship-shape.win');
 	});
 
 	test('renders valid HTML', async ({ page }) => {

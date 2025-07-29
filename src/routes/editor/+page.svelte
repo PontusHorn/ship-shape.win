@@ -13,6 +13,8 @@
 	<meta name="description" content={`TODO ${SITE_DESCRIPTION}`} />
 </svelte:head>
 
+<h1 class="visually-hidden">Visual shape() editor</h1>
+
 <EditorLayout>
 	{#snippet preview()}
 		<EditorDrawing />

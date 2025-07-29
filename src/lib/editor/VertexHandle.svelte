@@ -57,6 +57,7 @@
 		use:draggable={fullDragOptions}
 	>
 		<button
+			type="button"
 			id={createVertexButtonId(vertex.id)}
 			class:isAltPressed
 			aria-pressed={isPositionSelected}

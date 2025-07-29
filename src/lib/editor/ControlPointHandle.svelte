@@ -125,6 +125,7 @@
 
 <div class="control-point" use:draggable={dragOptions}>
 	<button
+		type="button"
 		id={buttonId}
 		{...props}
 		class:isAltPressed

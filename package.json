@@ -44,6 +44,7 @@
 		"eslint-plugin-storybook": "^9.0.8",
 		"eslint-plugin-svelte": "^3.9.2",
 		"globals": "^16.0.0",
+		"html-validate": "^9.7.1",
 		"license-checker": "^25.0.1",
 		"prettier": "^3.4.2",
 		"prettier-plugin-svelte": "^3.4.0",

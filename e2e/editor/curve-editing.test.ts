@@ -1,5 +1,5 @@
-import { translate } from '../src/lib/util/vector';
-import { expect, test } from './test-api';
+import { translate } from '../../src/lib/util/vector';
+import { expect, test } from '../test-api';
 import {
 	drag,
 	getControlPoints,
@@ -7,7 +7,7 @@ import {
 	getOutputShapeCommands,
 	getTools,
 	getVertices
-} from './helpers';
+} from '../helpers';
 import {
 	testDeleteVertexWithDeleteKey,
 	testDeleteVertexWithAltClick,

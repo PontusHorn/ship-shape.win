@@ -37,6 +37,7 @@
 
 			<div class="copy">
 				<Button
+					type="button"
 					size="small"
 					onclick={() => copyTextToClipboard(codeElement)}
 					popovertarget="copied"

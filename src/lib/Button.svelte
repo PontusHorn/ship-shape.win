@@ -7,7 +7,12 @@
 		icon,
 		size = 'normal',
 		...restProps
-	}: HTMLButtonAttributes & { size?: 'small' | 'normal'; icon?: Snippet } = $props();
+	}: HTMLButtonAttributes & {
+		// Require the `type` attribute to be specified
+		type: NonNullable<HTMLButtonAttributes['type']>;
+		size?: 'small' | 'normal';
+		icon?: Snippet;
+	} = $props();
 </script>
 
 <button {...restProps} class={size}>

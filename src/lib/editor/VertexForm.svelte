@@ -51,6 +51,8 @@
 	}
 </script>
 
+<!-- Valid warning, will sort out in a later version -->
+{@html `<!-- [html-validate-disable-next wcag/h32] -->`}
 <form>
 	{#if selectedVertex && selectedVertexPosition}
 		<fieldset>

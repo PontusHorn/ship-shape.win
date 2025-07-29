@@ -17,7 +17,7 @@
 	class="midpoint"
 	style:translate={`${position.x.toPixels(maxSize[0])}px ${position.y.toPixels(maxSize[1])}px`}
 >
-	<button onclick={onAddVertex} {...disableUntilHydrated()} {...props}>
+	<button type="button" onclick={onAddVertex} {...disableUntilHydrated()} {...props}>
 		<span class="visually-hidden">
 			Insert vertex at
 			{position.x.toCss(maxSize[0], 'minimal')},

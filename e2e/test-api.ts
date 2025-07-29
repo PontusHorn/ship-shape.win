@@ -1,5 +1,7 @@
 import { expect as baseExpect } from '@playwright/test';
-import type { Vector } from '../src/lib/vector';
+import type { Vector } from '../src/lib/util/vector';
+import { HtmlValidate } from 'html-validate/browser';
+import { formatterFactory } from 'html-validate';
 
 export { test } from '@playwright/test';
 
@@ -36,6 +38,45 @@ export const expect = baseExpect.extend({
 			name: assertionName,
 			expected,
 			actual
+		};
+	},
+
+	async toBeValidHTML(content: string) {
+		const assertionName = 'toBeValidHTML';
+		const { isNot } = this;
+
+		const htmlValidate = new HtmlValidate({
+			// We don't use the "recommended" preset here since it includes a lot of
+			// stylistic, opinionated rules, many of which are hard to satisfy in
+			// SvelteKit. Instead, we use the "standard" preset to ensure compliance
+			// with the WHATWG HTML standard, the "a11y" preset for more accessibility
+			// checks, and the "document" preset to ensure the HTML represents a
+			// whole, well-formed document.
+			extends: ['html-validate:standard', 'html-validate:a11y', 'html-validate:document'],
+			rules: {
+				// SRI would be nice, but not sure we can add it in SvelteKit
+				'require-sri': 'off'
+			}
+		});
+		const report = await htmlValidate.validateString(content);
+		let pass = report.valid;
+
+		if (isNot) {
+			pass = !pass;
+		}
+
+		const formatErrors = formatterFactory('stylish');
+		const message = () =>
+			this.utils.matcherHint(assertionName, undefined, undefined, { isNot }) +
+			'\n\n' +
+			`Expected HTML ${isNot ? 'not ' : ''}to pass validation.` +
+			(isNot ? '' : ` Issues:\n` + formatErrors(report.results));
+
+		return {
+			message,
+			pass,
+			name: assertionName,
+			actual: content
 		};
 	}
 });

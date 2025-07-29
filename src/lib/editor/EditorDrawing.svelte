@@ -121,7 +121,7 @@
 	onpointermove={handlePointerMove}
 	onpointerleave={handlePointerLeave}
 >
-	<button class="background" onclick={handleBackgroundClick}>
+	<button type="button" class="background" onclick={handleBackgroundClick}>
 		<span class="visually-hidden">Clear selection</span>
 	</button>
 

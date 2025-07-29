@@ -1,4 +1,4 @@
-import { expect, test } from './test-api';
+import { expect, test } from '../test-api';
 import {
 	getElementCenter,
 	getOutputShapeCommands,
@@ -6,7 +6,7 @@ import {
 	getVertices,
 	getControlPoints,
 	getElementOffsetCenter
-} from './helpers';
+} from '../helpers';
 
 test.describe('Editor: Vertex form', () => {
 	test.beforeEach(async ({ page }) => {
