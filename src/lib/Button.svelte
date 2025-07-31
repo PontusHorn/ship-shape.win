@@ -111,7 +111,7 @@
 			background-color: color-mix(in srgb, var(--_backgroundColor), var(--neutral-050) 25%);
 			--_pressedness: 0.05em;
 			/* Bring the focus outline to the front */
-			z-index: 1;
+			z-index: 2;
 		}
 
 		&:is([aria-checked='true'], [aria-pressed='true']) {
@@ -120,6 +120,16 @@
 			-webkit-text-stroke: color-mix(in srgb, var(--_pressedTextColor), var(--neutral-050) 50%);
 			--_pressedness: 0.4em;
 			--_duration: 150ms;
+		}
+
+		&:enabled {
+			/* Show enabled buttons over disabled ones */
+			z-index: 1;
+		}
+
+		&:disabled {
+			/* Show enabled buttons over disabled ones */
+			z-index: 0;
 		}
 
 		&:active {
