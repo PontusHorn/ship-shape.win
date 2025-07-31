@@ -15,11 +15,13 @@
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
+		onCommitChange: (description: string) => void;
 		controlPoint: VertexPosition;
 		maxSize: Vector;
 	};
 
-	const { vertex, onChangeVertex, controlPoint, maxSize, ...props }: Props = $props();
+	const { vertex, onChangeVertex, onCommitChange, controlPoint, maxSize, ...props }: Props =
+		$props();
 
 	const direction = $derived(controlPoint === vertex.controlPointForward ? 'forward' : 'backward');
 	const part = $derived<VertexPart>(
@@ -59,6 +61,8 @@
 					? error.userMessage
 					: "Can't delete the control point due to an unexpected error.";
 		}
+
+		onCommitChange('Delete control point');
 	}
 
 	const dragOptions: DragOptions = $derived({
@@ -69,6 +73,7 @@
 		},
 		legacyTranslate: false,
 		onDrag: handleDrag,
+		onDragEnd: handleDragEnd,
 		disabled: isAltPressed
 	});
 
@@ -106,6 +111,10 @@
 		onChangeVertex(newVertex);
 
 		selectVertex(vertex.id, part);
+	}
+
+	function handleDragEnd() {
+		onCommitChange(`Move control point`);
 	}
 
 	function handleWindowKeyDown(event: KeyboardEvent) {

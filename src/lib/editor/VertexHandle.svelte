@@ -13,6 +13,7 @@
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
+		onCommitChange: (description: string) => void;
 		maxSize: Vector;
 		dragOptions: DragOptions;
 		isAltPressed: boolean;
@@ -22,6 +23,7 @@
 	const {
 		vertex,
 		onChangeVertex,
+		onCommitChange,
 		maxSize,
 		dragOptions,
 		isAltPressed,
@@ -83,6 +85,7 @@
 			<ControlPointHandle
 				{vertex}
 				{onChangeVertex}
+				{onCommitChange}
 				controlPoint={vertex.controlPointForward}
 				{maxSize}
 			/>
@@ -91,6 +94,7 @@
 			<ControlPointHandle
 				{vertex}
 				{onChangeVertex}
+				{onCommitChange}
 				controlPoint={vertex.controlPointBackward}
 				{maxSize}
 			/>

@@ -1,19 +1,42 @@
 import { outputConfig } from '$lib/outputConfig.svelte';
 import { getShapeCssProperties } from '$lib/util/output';
-import { Drawing } from './Drawing.svelte';
+import { Drawing, type SerializedDrawing } from './Drawing.svelte';
+import { StateHistory } from './StateHistory.svelte';
 import { Vertex } from './Vertex';
 import type { VertexPosition } from './VertexPosition';
 
-class Editor {
-	#tool = $state<ToolType>('select');
-	#drawing = $state(
-		new Drawing([
-			Vertex.fromPercent(50, 0),
-			Vertex.fromPercent(100, 100),
-			Vertex.fromPercent(0, 100)
-		])
-	);
-	#selection = $state<SelectedVertex>();
+export class Editor {
+	#tool: ToolType;
+	#drawing: Drawing;
+	#selection: SelectedVertex | undefined;
+
+	/**
+	 * Version of the editor state, used to track changes for history.
+	 * Incremented whenever the state changes.
+	 */
+	#stateVersion: number;
+	#history: StateHistory<SerializedEditor>;
+
+	constructor(
+		tool: ToolType = 'select',
+		drawing = makeDefaultDrawing(),
+		selection?: SelectedVertex,
+		stateVersion = 0
+	) {
+		this.#tool = $state(tool);
+		this.#drawing = $state(drawing);
+		this.#selection = $state(selection);
+
+		this.#stateVersion = stateVersion;
+		this.#history = new StateHistory(this.serialize());
+		this.#history.subscribe((state) => {
+			if (state.stateVersion === this.#stateVersion) return;
+			this.#tool = state.tool;
+			this.#drawing = Drawing.fromSerialized(state.drawing);
+			this.#selection = state.selection;
+			this.#stateVersion = state.stateVersion;
+		});
+	}
 
 	get tool(): ToolType {
 		return this.#tool;
@@ -77,9 +100,51 @@ class Editor {
 	get drawingCssProperties() {
 		return this.#cssProperties;
 	}
+
+	recordChange(description: string): void {
+		this.#stateVersion++;
+		this.#history.recordChange(description, this.serialize());
+	}
+
+	get history(): StateHistory<SerializedEditor> {
+		return this.#history;
+	}
+
+	serialize(): SerializedEditor {
+		return {
+			type: 'Editor',
+			tool: this.tool,
+			drawing: this.drawing.serialize(),
+			selection: this.selection ? { id: this.selection.id, part: this.selection.part } : undefined,
+			stateVersion: this.#stateVersion
+		};
+	}
+
+	static fromSerialized(data: SerializedEditor): Editor {
+		const drawing = Drawing.fromSerialized(data.drawing);
+		const selection = data.selection ? { ...data.selection } : undefined;
+
+		return new Editor(data.tool, drawing, selection, data.stateVersion);
+	}
 }
 
+export type SerializedEditor = {
+	type: 'Editor';
+	tool: ToolType;
+	drawing: SerializedDrawing;
+	selection?: SelectedVertex;
+	stateVersion: number;
+};
+
 export type ToolType = 'select' | 'curve';
+
+function makeDefaultDrawing() {
+	return new Drawing([
+		Vertex.fromPercent(50, 0),
+		Vertex.fromPercent(100, 100),
+		Vertex.fromPercent(0, 100)
+	]);
+}
 
 type SelectedVertex = {
 	id: string;

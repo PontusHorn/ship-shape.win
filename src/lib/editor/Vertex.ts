@@ -2,8 +2,8 @@ import { assert } from '$lib/util/assert';
 import { randomId } from '../util/randomId';
 import { subtract, type Vector } from '../util/vector';
 import type { VertexPart } from './Editor.svelte';
-import { VertexDimension } from './VertexDimension';
-import { VertexPosition } from './VertexPosition';
+import { VertexDimension, type DimensionType } from './VertexDimension';
+import { VertexPosition, type SerializedVertexPosition } from './VertexPosition';
 
 export class Vertex {
 	id: string;
@@ -116,7 +116,7 @@ export class Vertex {
 	withConvertedDimensionType(
 		part: VertexPart,
 		dimension: 'x' | 'y',
-		newType: VertexDimension['type'],
+		newType: DimensionType,
 		maxSize: Vector
 	): Vertex {
 		const position = this[part];
@@ -150,4 +150,34 @@ export class Vertex {
 
 		return newVertex;
 	}
+
+	serialize(): SerializedVertex {
+		return {
+			type: 'Vertex',
+			id: this.id,
+			position: this.position.serialize(),
+			controlPointForward: this.controlPointForward?.serialize(),
+			controlPointBackward: this.controlPointBackward?.serialize(),
+			isMirrored: this.isMirrored
+		};
+	}
+
+	static fromSerialized(data: SerializedVertex): Vertex {
+		return new Vertex(
+			data.id,
+			VertexPosition.fromSerialized(data.position),
+			data.controlPointForward && VertexPosition.fromSerialized(data.controlPointForward),
+			data.controlPointBackward && VertexPosition.fromSerialized(data.controlPointBackward),
+			data.isMirrored
+		);
+	}
 }
+
+export type SerializedVertex = {
+	type: 'Vertex';
+	id: string;
+	position: SerializedVertexPosition;
+	controlPointForward?: SerializedVertexPosition;
+	controlPointBackward?: SerializedVertexPosition;
+	isMirrored: boolean;
+};

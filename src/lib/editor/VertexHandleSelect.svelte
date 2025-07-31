@@ -12,17 +12,18 @@
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
+		onCommitChange: (description: string) => void;
 		maxSize: Vector;
 	};
 
-	const { vertex, onChangeVertex, maxSize, ...props }: Props = $props();
+	const { vertex, onChangeVertex, onCommitChange, maxSize, ...props }: Props = $props();
 
 	let errorMessage = $state<string>();
 	let isAltPressed = $state(false);
 
 	const dragOptions = $derived<DragOptions>({
 		onDrag: handleDrag,
-		onDragEnd: handleDrag,
+		onDragEnd: handleDragEnd,
 		disabled: isAltPressed
 	});
 
@@ -31,6 +32,10 @@
 		const newVertex = vertex.withPosition(newPosition, maxSize);
 		onChangeVertex(newVertex);
 		selectVertex(newVertex.id);
+	}
+
+	function handleDragEnd() {
+		onCommitChange('Move vertex');
 	}
 
 	function handleFocus() {
@@ -59,6 +64,8 @@
 					? error.message
 					: "Couldn't delete the vertex due to an unexpected error.";
 		}
+
+		onCommitChange('Delete vertex');
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -99,6 +106,7 @@
 <BaseVertexHandle
 	{vertex}
 	{onChangeVertex}
+	{onCommitChange}
 	{maxSize}
 	{dragOptions}
 	{isAltPressed}

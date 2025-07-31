@@ -40,7 +40,9 @@
 	</div>
 
 	<nav>
-		<button type="button" popovertarget="shapes">Shapes <ChevronDown aria-hidden="true" /></button>
+		<button type="button" popovertarget="shapes">
+			Shapes <ChevronDown aria-hidden="true" absoluteStrokeWidth />
+		</button>
 		<div id="shapes" popover>
 			<a
 				href="/generators/regular-polygon"
@@ -71,7 +73,7 @@
 
 	<div class="links">
 		<a href="https://github.com/PontusHorn/ship-shape.win">
-			<GithubIcon aria-hidden="true" />
+			<GithubIcon aria-hidden="true" absoluteStrokeWidth />
 			GitHub repository
 		</a>
 	</div>

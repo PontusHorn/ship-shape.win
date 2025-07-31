@@ -11,7 +11,7 @@
 
 	let errorMessage = $state('');
 
-	function handleVertexInputChange(dimension: 'x' | 'y', value: number) {
+	function handleDimensionValueInput(dimension: 'x' | 'y', value: number) {
 		assert(selection && selectedVertex && selectedVertexPosition, 'Invalid selection');
 
 		if (Number.isNaN(value)) return;
@@ -20,7 +20,11 @@
 		updateVertex(newVertex);
 	}
 
-	function handleVertexTypeChange(dimension: 'x' | 'y', newType: string) {
+	function handleDimensionValueChange() {
+		editor.recordChange(selection?.part === 'position' ? 'Move vertex' : 'Move control point');
+	}
+
+	function handleDimensionTypeChange(dimension: 'x' | 'y', newType: string) {
 		assert(selection && selectedVertex, 'Invalid selection');
 		assert(isDimensionType(newType), `Invalid dimension type: ${newType}`);
 
@@ -31,6 +35,7 @@
 			maxSize
 		);
 		updateVertex(newVertex);
+		editor.recordChange('Change dimension type');
 	}
 
 	function handleVertexMirroredChange(isMirrored: boolean) {
@@ -38,6 +43,7 @@
 
 		const newVertex = selectedVertex.withMirrored(isMirrored, maxSize);
 		updateVertex(newVertex);
+		editor.recordChange('Toggle control point mirroring');
 	}
 
 	function handleDeleteButtonClick() {
@@ -48,6 +54,8 @@
 			const errorPopover = document.getElementById('form-error');
 			errorPopover?.showPopover();
 		}
+
+		editor.recordChange(selection?.part === 'position' ? 'Delete vertex' : 'Delete control point');
 	}
 </script>
 
@@ -66,14 +74,15 @@
 					id="vertex-x"
 					type="number"
 					value={selectedVertexPosition.x.value.toString()}
-					oninput={(e) => handleVertexInputChange('x', e.currentTarget.valueAsNumber)}
+					oninput={(e) => handleDimensionValueInput('x', e.currentTarget.valueAsNumber)}
+					onchange={handleDimensionValueChange}
 				/>
 
 				<label for="vertex-x-type" class="visually-hidden">X type</label>
 				<select
 					id="vertex-x-type"
-					value={selectedVertexPosition.x.type}
-					onchange={(e) => handleVertexTypeChange('x', e.currentTarget.value)}
+					value={selectedVertexPosition.x.dimensionType}
+					onchange={(e) => handleDimensionTypeChange('x', e.currentTarget.value)}
 				>
 					<option value="percent">%</option>
 					<option value="px_from_start">px</option>
@@ -85,14 +94,15 @@
 					id="vertex-y"
 					type="number"
 					value={selectedVertexPosition.y.value.toString()}
-					oninput={(e) => handleVertexInputChange('y', e.currentTarget.valueAsNumber)}
+					oninput={(e) => handleDimensionValueInput('y', e.currentTarget.valueAsNumber)}
+					onchange={handleDimensionValueChange}
 				/>
 
 				<label for="vertex-y-type" class="visually-hidden">Y type</label>
 				<select
 					id="vertex-y-type"
-					value={selectedVertexPosition.y.type}
-					onchange={(e) => handleVertexTypeChange('y', e.currentTarget.value)}
+					value={selectedVertexPosition.y.dimensionType}
+					onchange={(e) => handleDimensionTypeChange('y', e.currentTarget.value)}
 				>
 					<option value="percent">%</option>
 					<option value="px_from_start">px</option>

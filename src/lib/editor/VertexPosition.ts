@@ -1,5 +1,9 @@
 import { CoordinatePair } from '../CoordinatePair';
-import { VertexDimension, type DimensionType } from './VertexDimension';
+import {
+	VertexDimension,
+	type DimensionType,
+	type SerializedVertexDimension
+} from './VertexDimension';
 import type { Vector } from '../util/vector';
 
 export class VertexPosition {
@@ -21,8 +25,8 @@ export class VertexPosition {
 
 	withVector([x, y]: Vector, [maxX, maxY]: Vector): VertexPosition {
 		return new VertexPosition(
-			VertexDimension.fromPixels(this.x.type, maxX, x),
-			VertexDimension.fromPixels(this.y.type, maxY, y)
+			VertexDimension.fromPixels(this.x.dimensionType, maxX, x),
+			VertexDimension.fromPixels(this.y.dimensionType, maxY, y)
 		);
 	}
 
@@ -55,4 +59,25 @@ export class VertexPosition {
 	toVector([maxX, maxY]: Vector): Vector {
 		return [this.x.toPixels(maxX), this.y.toPixels(maxY)];
 	}
+
+	serialize(): SerializedVertexPosition {
+		return {
+			type: 'VertexPosition',
+			x: this.x.serialize(),
+			y: this.y.serialize()
+		};
+	}
+
+	static fromSerialized(data: SerializedVertexPosition): VertexPosition {
+		return new VertexPosition(
+			VertexDimension.fromSerialized(data.x),
+			VertexDimension.fromSerialized(data.y)
+		);
+	}
 }
+
+export type SerializedVertexPosition = {
+	type: 'VertexPosition';
+	x: SerializedVertexDimension;
+	y: SerializedVertexDimension;
+};

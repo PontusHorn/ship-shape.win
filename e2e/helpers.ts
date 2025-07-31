@@ -64,9 +64,17 @@ export function getControlPoints(page: Page, direction?: 'forward' | 'backward')
 	}
 }
 
+export function getAddVertexButtons(page: Page) {
+	return page.getByRole('button', { name: /^insert vertex at/i });
+}
+
 export async function getOutputShapeCommands(page: Page): Promise<string[]> {
-	const output = page.getByTestId('css-output');
+	const output = getOutputCssElement(page);
 	return extractShapeCommands((await output.textContent()) ?? '');
+}
+
+export function getOutputCssElement(page: Page): Locator {
+	return page.getByTestId('css-output');
 }
 
 function extractShapeCommands(cssText: string): string[] {

@@ -3,12 +3,16 @@ import { type CodeStyle, type LengthPercentage, percent, px, raw } from '../Leng
 export type DimensionType = 'percent' | 'px_from_start' | 'px_from_end';
 
 export class VertexDimension {
-	type: DimensionType;
+	dimensionType: DimensionType;
 	value: number;
 
 	constructor(type: DimensionType, value: number) {
-		this.type = type;
+		this.dimensionType = type;
 		this.value = value;
+	}
+
+	clone(): VertexDimension {
+		return new VertexDimension(this.dimensionType, this.value);
 	}
 
 	get roundedValue() {
@@ -16,7 +20,7 @@ export class VertexDimension {
 	}
 
 	withValue(value: number): VertexDimension {
-		return new VertexDimension(this.type, value);
+		return new VertexDimension(this.dimensionType, value);
 	}
 
 	withConvertedType(newType: DimensionType, maxPx: number): VertexDimension {
@@ -26,7 +30,7 @@ export class VertexDimension {
 	}
 
 	toPixels(maxPx: number): number {
-		switch (this.type) {
+		switch (this.dimensionType) {
 			case 'percent':
 				return Math.round((this.value / 100) * maxPx);
 			case 'px_from_start':
@@ -38,14 +42,14 @@ export class VertexDimension {
 
 	toRounded(): VertexDimension {
 		const percentPrecision = 10;
-		return this.type === 'percent'
+		return this.dimensionType === 'percent'
 			? this.withValue(Math.round(this.value * percentPrecision) / percentPrecision)
 			: this.withValue(Math.round(this.value));
 	}
 
 	toTranslated(deltaPx: number, maxPx: number): VertexDimension {
 		const newPx = this.toPixels(maxPx) + deltaPx;
-		return VertexDimension.fromPixels(this.type, maxPx, newPx);
+		return VertexDimension.fromPixels(this.dimensionType, maxPx, newPx);
 	}
 
 	toMirrored(origin: VertexDimension, maxPx: number): VertexDimension {
@@ -53,7 +57,7 @@ export class VertexDimension {
 		const originPx = origin.toPixels(maxPx);
 		const delta = thisPx - originPx;
 		const mirroredPx = originPx - delta;
-		return VertexDimension.fromPixels(this.type, maxPx, mirroredPx);
+		return VertexDimension.fromPixels(this.dimensionType, maxPx, mirroredPx);
 	}
 
 	static fromPixels(type: DimensionType, maxPx: number, px: number): VertexDimension {
@@ -72,7 +76,7 @@ export class VertexDimension {
 	}
 
 	toLengthPercentage(maxPx: number): LengthPercentage {
-		switch (this.type) {
+		switch (this.dimensionType) {
 			case 'percent':
 				return percent(this.roundedValue);
 			case 'px_from_start':
@@ -81,7 +85,25 @@ export class VertexDimension {
 				return raw(`calc(100% - ${this.value}px)`, px(maxPx - this.value));
 		}
 	}
+
+	serialize(): SerializedVertexDimension {
+		return {
+			type: 'VertexDimension',
+			dimensionType: this.dimensionType,
+			value: this.value
+		};
+	}
+
+	static fromSerialized(data: SerializedVertexDimension): VertexDimension {
+		return new VertexDimension(data.dimensionType, data.value);
+	}
 }
+
+export type SerializedVertexDimension = {
+	type: 'VertexDimension';
+	dimensionType: DimensionType;
+	value: number;
+};
 
 export function isDimensionType(value: string): value is DimensionType {
 	return ['percent', 'px_from_start', 'px_from_end'].includes(value);

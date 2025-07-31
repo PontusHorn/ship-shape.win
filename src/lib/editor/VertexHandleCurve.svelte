@@ -14,12 +14,19 @@
 	type Props = HTMLButtonAttributes & {
 		vertex: Vertex;
 		onChangeVertex: (vertex: Vertex) => void;
+		onCommitChange: (description: string) => void;
 		defaultControlPointPosition: VertexPosition;
 		maxSize: Vector;
 	};
 
-	const { vertex, onChangeVertex, defaultControlPointPosition, maxSize, ...props }: Props =
-		$props();
+	const {
+		vertex,
+		onChangeVertex,
+		onCommitChange,
+		defaultControlPointPosition,
+		maxSize,
+		...props
+	}: Props = $props();
 
 	let errorMessage = $state<string>();
 	let isAltPressed = $state(false);
@@ -27,6 +34,7 @@
 	// Make the button draggable for creating control points
 	const dragOptions = $derived<DragOptions>({
 		onDrag: handleDrag,
+		onDragEnd: handleDragEnd,
 		disabled: isAltPressed
 	});
 
@@ -53,6 +61,10 @@
 		tick().then(() => {
 			getControlPointButton(vertex.id, 'forward')?.focus();
 		});
+	}
+
+	function handleDragEnd() {
+		onCommitChange('Create control points');
 	}
 
 	function handleFocus() {
@@ -95,6 +107,8 @@
 		tick().then(() => {
 			getControlPointButton(vertex.id, 'forward')?.focus();
 		});
+
+		onCommitChange('Create control points');
 	}
 
 	function handleDeleteVertex() {
@@ -106,6 +120,8 @@
 					? error.message
 					: "Couldn't delete the vertex due to an unexpected error.";
 		}
+
+		onCommitChange('Delete vertex');
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
@@ -133,6 +149,7 @@
 <BaseVertexHandle
 	{vertex}
 	{onChangeVertex}
+	{onCommitChange}
 	{maxSize}
 	{dragOptions}
 	{isAltPressed}

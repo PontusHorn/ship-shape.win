@@ -1,11 +1,10 @@
 import { expect, test } from '@playwright/test';
-import { getVertices } from '../helpers';
+import { getAddVertexButtons, getVertices } from '../helpers';
 
 export function testDeleteVertexWithDeleteKey() {
 	test('should handle vertex deletion with Delete key', async ({ page }) => {
 		// First add a vertex so we have more than 3 to test deletion
-		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at 75%, 50%/i });
-		await addVertexHandle.click();
+		await getAddVertexButtons(page).first().click();
 
 		let vertices = getVertices(page);
 		await expect(vertices).toHaveCount(4);
@@ -47,8 +46,7 @@ export function testDeleteVertexWithDeleteKey() {
 export function testDeleteVertexWithAltClick() {
 	test('should handle vertex deletion with Alt+click', async ({ page }) => {
 		// First add a vertex so we have more than 3 to test deletion
-		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at 75%, 50%/i });
-		await addVertexHandle.click();
+		await getAddVertexButtons(page).first().click();
 
 		let vertices = getVertices(page);
 		await expect(vertices).toHaveCount(4);
@@ -92,8 +90,7 @@ export function testDeleteVertexWithAltClick() {
 export function testDeleteVertexWithFormButton() {
 	test('should handle vertex deletion with form delete button', async ({ page }) => {
 		// First add a vertex so we have more than 3 to test deletion
-		const addVertexHandle = page.getByRole('button', { name: /^insert vertex at 75%, 50%/i });
-		await addVertexHandle.click();
+		await getAddVertexButtons(page).first().click();
 
 		let vertices = getVertices(page);
 		await expect(vertices).toHaveCount(4);

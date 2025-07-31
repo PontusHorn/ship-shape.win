@@ -2,7 +2,7 @@ import { FromCommand } from '../commands/From';
 import { LineCommand } from '../commands/Line';
 import { CurveCommand } from '../commands/Curve';
 import { Shape } from '../Shape';
-import { Vertex } from './Vertex';
+import { Vertex, type SerializedVertex } from './Vertex';
 import { VertexPosition } from './VertexPosition';
 import { subtract, type Vector } from '../util/vector';
 import { UserError } from '../UserError';
@@ -159,7 +159,24 @@ export class Drawing {
 		const field = direction === 'forward' ? 'controlPointForward' : 'controlPointBackward';
 		this.#vertices[index] = Vertex.make({ ...vertex, isMirrored: false, [field]: undefined });
 	}
+
+	serialize(): SerializedDrawing {
+		return {
+			type: 'Drawing',
+			vertices: this.#vertices.map((vertex) => vertex.serialize())
+		};
+	}
+
+	static fromSerialized(data: SerializedDrawing): Drawing {
+		const vertices = data.vertices.map(Vertex.fromSerialized);
+		return new Drawing(vertices);
+	}
 }
+
+export type SerializedDrawing = {
+	type: 'Drawing';
+	vertices: SerializedVertex[];
+};
 
 type DrawingCurve = {
 	id: string;

@@ -17,6 +17,8 @@
 	import { VertexPosition } from '$lib/editor/VertexPosition';
 	import { assert, nonNullish } from '$lib/util/assert';
 	import { clamp } from '$lib/util/math';
+	import Button from '$lib/Button.svelte';
+	import { Redo, Undo } from '@lucide/svelte';
 
 	const maxSize = $derived(outputConfig.previewSize);
 
@@ -112,6 +114,10 @@
 			};
 		}
 	}
+
+	function handleCommitChange(description: string) {
+		editor.recordChange(description);
+	}
 </script>
 
 <svelte:window onkeydown={handleKeyDown} />
@@ -128,11 +134,17 @@
 	<ShapePreview cssProperties={editor.drawingCssProperties} shape={editor.drawingShape}>
 		{#each editor.drawing.vertices as vertex, index (vertex.id)}
 			{#if editor.tool === 'select'}
-				<VertexHandleSelect {vertex} onChangeVertex={updateVertex} {maxSize} />
+				<VertexHandleSelect
+					{vertex}
+					onChangeVertex={updateVertex}
+					onCommitChange={handleCommitChange}
+					{maxSize}
+				/>
 			{:else if editor.tool === 'curve'}
 				<VertexHandleCurve
 					{vertex}
 					onChangeVertex={updateVertex}
+					onCommitChange={handleCommitChange}
 					defaultControlPointPosition={editor.drawing.getTangentialPositionAt(maxSize, 30, index)}
 					{maxSize}
 				/>
@@ -148,6 +160,7 @@
 				{maxSize}
 				onAddVertex={() => {
 					const newVertexId = editor.drawing.insertVertex(index, position.toRounded());
+					editor.recordChange('Add vertex');
 
 					// Select the first control point, and focus it after mount
 					selectVertex(newVertexId);
@@ -160,6 +173,29 @@
 			/>
 		{/each}
 	</ShapePreview>
+
+	<div class="drawing-ui">
+		<div class="history">
+			<Button
+				type="button"
+				size="small"
+				onclick={() => editor.history.undo()}
+				disabled={editor.history.undoStack.length === 0}
+			>
+				<Undo aria-hidden="true" size={12} absoluteStrokeWidth />
+				Undo
+			</Button>
+			<Button
+				type="button"
+				size="small"
+				onclick={() => editor.history.redo()}
+				disabled={editor.history.redoStack.length === 0}
+			>
+				<Redo aria-hidden="true" size={12} absoluteStrokeWidth />
+				<span class="visually-hidden">Redo</span>
+			</Button>
+		</div>
+	</div>
 </div>
 
 <style>
@@ -167,5 +203,27 @@
 		all: unset;
 		position: absolute;
 		inset: 0;
+	}
+
+	.drawing-ui {
+		position: absolute;
+		inset: 0;
+		container: drawing-ui / inline-size;
+		pointer-events: none;
+	}
+
+	.history {
+		position: absolute;
+		inset-inline-end: 1rem;
+		inset-block-start: 1rem;
+		display: flex;
+		pointer-events: auto;
+
+		@container drawing-ui (inline-size < 400px) {
+			inset-inline-start: 50%;
+			inset-inline-end: auto;
+			inset-block-start: -1.25rem;
+			translate: -50% 0;
+		}
 	}
 </style>

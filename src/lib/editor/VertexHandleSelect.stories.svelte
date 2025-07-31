@@ -1,6 +1,6 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
-	import { expect, fireEvent, within } from 'storybook/test';
+	import { expect, fireEvent, fn, within } from 'storybook/test';
 	import VertexHandleSelect from './VertexHandleSelect.svelte';
 	import { VertexDimension } from './VertexDimension';
 	import { VertexPosition } from './VertexPosition';
@@ -11,6 +11,9 @@
 		component: VertexHandleSelect,
 		parameters: {
 			layout: 'centered'
+		},
+		args: {
+			onCommitChange: fn()
 		}
 	});
 
@@ -63,8 +66,8 @@
 		expect(position).toEqual({ x: start.x + 50, y: start.y + 50 });
 
 		// Verify that the input vertex is updated (moved 50px/200px = 25% in each direction)
-		expect(vertices.centered.position.x).toMatchObject({ type: 'percent', value: 75 });
-		expect(vertices.centered.position.y).toMatchObject({ type: 'percent', value: 75 });
+		expect(vertices.centered.position.x).toMatchObject({ dimensionType: 'percent', value: 75 });
+		expect(vertices.centered.position.y).toMatchObject({ dimensionType: 'percent', value: 75 });
 
 		// Move pointer back and release to "reset" the story state
 		fireEvent.pointerMove(button, { clientX: start.x, clientY: start.y });
@@ -100,11 +103,11 @@
 
 		// Verify that the input vertex is updated and that the dimension type is preserved
 		expect(vertices.differentDimensionTypes.position.x).toMatchObject({
-			type: 'px_from_start',
+			dimensionType: 'px_from_start',
 			value: 100
 		});
 		expect(vertices.differentDimensionTypes.position.y).toMatchObject({
-			type: 'px_from_end',
+			dimensionType: 'px_from_end',
 			value: -20
 		});
 
