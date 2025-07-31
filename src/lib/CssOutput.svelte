@@ -45,14 +45,14 @@
 					--textColor="var(--secondary-800)"
 				>
 					{#snippet icon()}
-						<Copy size={16} aria-hidden="true" />
+						<Copy size={16} aria-hidden="true" absoluteStrokeWidth />
 					{/snippet}
 					Copy to clipboard
 				</Button>
 			</div>
 		</fieldset>
 		<div id="copied" popover onanimationend={(e) => e.currentTarget.hidePopover()}>
-			<Check aria-hidden="true" />
+			<Check aria-hidden="true" absoluteStrokeWidth />
 			Copied!
 		</div>
 	</header>

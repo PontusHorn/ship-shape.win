@@ -19,7 +19,7 @@
 				{#snippet child({ props })}
 					<Button {...props} {...disableUntilHydrated()} type="button">
 						{#snippet icon()}
-							<MousePointer size={20} aria-hidden="true" />
+							<MousePointer size={20} aria-hidden="true" absoluteStrokeWidth />
 						{/snippet}
 						Select
 					</Button>
@@ -30,7 +30,7 @@
 				{#snippet child({ props })}
 					<Button {...props} {...disableUntilHydrated()} type="button">
 						{#snippet icon()}
-							<Tangent size={20} aria-hidden="true" />
+							<Tangent size={20} aria-hidden="true" absoluteStrokeWidth />
 						{/snippet}
 						Curve
 					</Button>

@@ -6,12 +6,33 @@
 	import VertexForm from '$lib/editor/VertexForm.svelte';
 	import EditorDrawing from '$lib/editor/EditorDrawing.svelte';
 	import { editor } from '$lib/editor/Editor.svelte';
+
+	function handleKeyDown(event: KeyboardEvent) {
+		const ctrlOrMeta = event.metaKey || event.ctrlKey;
+		if (ctrlOrMeta && event.key === 'z') {
+			if (event.shiftKey) {
+				editor.history.redo();
+			} else {
+				editor.history.undo();
+			}
+			event.preventDefault();
+			return;
+		}
+
+		if (ctrlOrMeta && event.key === 'y') {
+			editor.history.redo();
+			event.preventDefault();
+			return;
+		}
+	}
 </script>
 
 <svelte:head>
 	<title>Visual shape() editor - {SITE_TITLE}</title>
 	<meta name="description" content={`TODO ${SITE_DESCRIPTION}`} />
 </svelte:head>
+
+<svelte:window onkeydown={handleKeyDown} />
 
 <h1 class="visually-hidden">Visual shape() editor</h1>
 

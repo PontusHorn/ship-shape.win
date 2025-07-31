@@ -143,7 +143,7 @@
 		</span>
 
 		<span class="delete-hint">
-			<X aria-hidden="true" size={8} />
+			<X aria-hidden="true" size={8} absoluteStrokeWidth />
 		</span>
 	</button>
 </div>
