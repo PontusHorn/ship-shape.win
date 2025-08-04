@@ -61,6 +61,44 @@
 			<p>Everybody's favourite shape, a square with smoothly rounded corners.</p>
 		</article>
 	</div>
+
+	<h2>About the <code>shape()</code> function</h2>
+	<p>
+		There are other ways to define shapes for <code>clip-path</code> and <code>offset-path</code>,
+		such as using the <code>path()</code> or <code>polygon()</code> functions. These are older and
+		have better browser support. So why use <code>shape()</code>?
+	</p>
+	<ul>
+		<li>
+			<code>path()</code> uses SVG syntax that is optimised for brevity and as such can be hard to
+			read. <code>shape()</code> is arguably easier to read and modify by hand.
+		</li>
+		<li>
+			<code>path()</code> only supports pixel values, making it hard to use in responsive settings.
+			<code>shape()</code>
+			supports percentages and all length values. Better yet, it allows using math functions like
+			<code>calc()</code> too!
+		</li>
+		<li>
+			The <code>polygon()</code> function also allows many units, but has no support for curves.
+		</li>
+	</ul>
+	<p>
+		That's not to say that the older functions are bad by any means. If they work for your use case,
+		use them and enjoy the browser support! This site is not here to convince you to use <code
+			>shape()</code
+		>
+		for everything, but rather about exploring what the <code>shape()</code>
+		function can do for us, and to inspire learning, experimentation, and creativity.
+	</p>
+	<h3>Browser support</h3>
+	<p>
+		<code>shape()</code> is a newer function, but it is supported in Chrome, Edge, and Safari since
+		early 2025. At the time of writing this, Firefox has implemented it in their nightly build, but
+		not yet in a stable release. As such, this site is best viewed in an up-to-date Chromium-based
+		browser or Safari for the moment. Normally I wouldn't be too happy about that, but since the
+		site is specifically about <code>shape()</code> I think it's acceptable.
+	</p>
 </div>
 
 <style>

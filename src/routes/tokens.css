@@ -65,6 +65,10 @@
 		/* https://github.com/system-fonts/modern-font-stacks#geometric-humanist */
 		--fontFamily-geometricHumanist:
 			Avenir, Montserrat, Corbel, 'URW Gothic', source-sans-pro, sans-serif;
+		/* https://github.com/system-fonts/modern-font-stacks?tab=readme-ov-file#monospace-code */
+		--fontFamily-monospaceCode:
+			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
+			monospace;
 
 		/* @link https://utopia.fyi/type/calculator?c=320,16,1.2,1240,20,1.25,5,2,&s=0.75|0.5|0.25,1.5|2|3|4|6,s-l&g=s,l,xl,12 */
 		--fontSize--1: clamp(0.8333rem, 0.7754rem + 0.2899vw, 1rem);
@@ -111,5 +115,6 @@
 		--editorButton-color-detail-active: var(--brand-500);
 
 		--fontFamily-body: var(--fontFamily-geometricHumanist);
+		--fontFamily-code: var(--fontFamily-monospaceCode);
 	}
 }

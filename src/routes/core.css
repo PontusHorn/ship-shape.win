@@ -35,6 +35,10 @@
 		font-weight: 500;
 	}
 
+	* + :is(h1, h2, h3) {
+		margin-block-start: 1em;
+	}
+
 	:where(a, button, input, select) {
 		outline: 3px solid transparent;
 		outline-offset: 0.2em;
@@ -106,14 +110,17 @@
 
 	input[type='range'] {
 		border-radius: 0.25rem;
-		/* outline-offset: 1px; */
 	}
 
 	pre {
-		/* https://github.com/system-fonts/modern-font-stacks?tab=readme-ov-file#monospace-code */
-		font-family:
-			ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono',
-			monospace;
+		font-family: var(--fontFamily-code);
+	}
+
+	code {
+		background: var(--brand-050);
+		border-radius: 0.25em / 50%;
+		font-family: var(--fontFamily-code);
+		padding-inline: 0.25em;
 	}
 
 	button {
