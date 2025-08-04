@@ -182,7 +182,9 @@
 				onclick={() => editor.history.undo()}
 				disabled={editor.history.undoStack.length === 0}
 			>
-				<Undo aria-hidden="true" size={12} absoluteStrokeWidth />
+				{#snippet icon()}
+					<Undo aria-hidden="true" size={12} absoluteStrokeWidth />
+				{/snippet}
 				Undo
 			</Button>
 			<Button
@@ -191,7 +193,9 @@
 				onclick={() => editor.history.redo()}
 				disabled={editor.history.redoStack.length === 0}
 			>
-				<Redo aria-hidden="true" size={12} absoluteStrokeWidth />
+				{#snippet icon()}
+					<Redo aria-hidden="true" size={12} absoluteStrokeWidth />
+				{/snippet}
 				<span class="visually-hidden">Redo</span>
 			</Button>
 		</div>
