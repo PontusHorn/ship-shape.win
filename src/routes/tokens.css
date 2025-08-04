@@ -71,6 +71,7 @@
 		--fontSize-0: clamp(1rem, 0.913rem + 0.4348vw, 1.25rem);
 		--fontSize-1: clamp(1.2rem, 1.0739rem + 0.6304vw, 1.5625rem);
 		--fontSize-2: clamp(1.44rem, 1.2615rem + 0.8924vw, 1.9531rem);
+		--fontSize-3: clamp(1.728rem, 1.4799rem + 1.2407vw, 2.4414rem);
 
 		/* Animation */
 		--softSpring: linear(
