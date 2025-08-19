@@ -29,7 +29,10 @@
 
 <svelte:head>
 	<title>Visual shape() editor - {SITE_TITLE}</title>
-	<meta name="description" content={`TODO ${SITE_DESCRIPTION}`} />
+	<meta
+		name="description"
+		content={`Drag-n-drop visual editor for simple CSS shapes. ${SITE_DESCRIPTION}`}
+	/>
 </svelte:head>
 
 <svelte:window onkeydown={handleKeyDown} />
