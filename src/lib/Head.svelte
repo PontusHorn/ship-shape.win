@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { SITE_TITLE, SITE_DESCRIPTION } from '$lib/constants';
+	import { SITE_TITLE, SITE_DESCRIPTION, SITE_URL } from '$lib/constants';
 	import { page } from '$app/state';
 
 	let {
@@ -26,4 +26,6 @@
 	<meta property="og:url" content={page.url.toString()} />
 	<meta property="og:image" content="{page.url.origin}/{image?.src ?? 'icons/anchor-192.png'}" />
 	<meta property="og:image:alt" content={image?.alt ?? 'A white anchor on a blue background'} />
+
+	<link rel="canonical" href="{SITE_URL}{page.url.pathname}" />
 </svelte:head>
