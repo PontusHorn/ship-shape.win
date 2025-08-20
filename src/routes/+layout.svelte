@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import { ChevronDown, GithubIcon } from '@lucide/svelte';
+	import Logo from '$lib/editor/Logo.svelte';
 
 	let { children } = $props();
 
@@ -32,10 +33,13 @@
 
 	<div class="site-title">
 		<a href="/">
-			<span class="icon" aria-hidden="true">⚓︎</span>
-			ship-shape<span class="parenthesis">&hairsp;(&hairsp;</span><span class="win">.win</span><span
-				class="parenthesis">&hairsp;)</span
-			>
+			<span class="icon" aria-hidden="true">
+				<Logo --size="1.6em" />
+			</span>
+			<span class="text">
+				ship-shape<span class="parenthesis">&hairsp;(&hairsp;</span><span class="win">.win</span
+				><span class="parenthesis">&hairsp;)</span>
+			</span>
 		</a>
 	</div>
 
@@ -136,8 +140,7 @@
 		a {
 			color: inherit;
 			--_decorationColor: color-mix(in srgb, currentColor 50%, transparent);
-			text-underline-offset: 0.2em;
-			text-decoration-color: var(--_decorationColor);
+			text-decoration: none;
 
 			&:hover,
 			&:focus-visible {
@@ -145,8 +148,16 @@
 			}
 		}
 
+		.text {
+			text-decoration: underline;
+			text-underline-offset: 0.2em;
+			text-decoration-color: var(--_decorationColor);
+			transition: text-decoration-color 0.2s ease;
+		}
+
 		.parenthesis {
 			color: var(--_decorationColor);
+			transition: color 0.2s ease;
 		}
 
 		.win {
