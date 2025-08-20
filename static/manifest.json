@@ -1,0 +1,81 @@
+{
+	"name": "ship-shape.win",
+	"short_name": "ship-shape",
+	"description": "Generate and edit CSS shape() values, for use in clip-path and other properties.",
+	"start_url": "/",
+	"display": "minimal-ui",
+	"background_color": "#dde8ff",
+	"theme_color": "#034ff2",
+	"icons": [
+		{
+			"src": "/icons/anchor.svg",
+			"sizes": "any",
+			"type": "image/svg+xml"
+		},
+		{
+			"src": "/icons/anchor-192.png",
+			"sizes": "192x192",
+			"type": "image/png"
+		},
+		{
+			"src": "/icons/anchor-512.png",
+			"sizes": "512x512",
+			"type": "image/png"
+		},
+		{
+			"src": "/icons/anchor-maskable.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/icons/anchor-maskable-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/icons/anchor-maskable-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/icons/anchor-monochrome.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "monochrome"
+		},
+		{
+			"src": "/icons/anchor-monochrome-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "monochrome"
+		},
+		{
+			"src": "/icons/anchor-monochrome-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "monochrome"
+		},
+		{
+			"src": "/icons/anchor-monochrome-maskable.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "monochrome maskable"
+		},
+		{
+			"src": "/icons/anchor-monochrome-maskable-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "monochrome maskable"
+		},
+		{
+			"src": "/icons/anchor-monochrome-maskable-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "monochrome maskable"
+		}
+	],
+	"categories": ["utilities", "developer", "design"]
+}
