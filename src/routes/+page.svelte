@@ -1,8 +1,11 @@
 <script lang="ts">
+	import Head from '$lib/Head.svelte';
 	import RegularPolygonPreview from '$lib/homepage/RegularPolygonPreview.svelte';
 	import SquirclePreview from '$lib/homepage/SquirclePreview.svelte';
 	import StarPreview from '$lib/homepage/StarPreview.svelte';
 </script>
+
+<Head title="" description="" />
 
 <div class="page">
 	<h1>Ship-shape CSS generators</h1>

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Button from '$lib/Button.svelte';
-	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { editor } from '$lib/editor/Editor.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
+	import Head from '$lib/Head.svelte';
 	import type { BaseUnit } from '$lib/LengthPercentage';
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { RegularPolygon } from '$lib/parametricShapes/RegularPolygon';
@@ -24,13 +24,10 @@
 	const cssProperties = $derived(polygon.toCssProperties(outputConfig));
 </script>
 
-<svelte:head>
-	<title>Regular polygon shape() generator - {SITE_TITLE}</title>
-	<meta
-		name="description"
-		content={`Generates anything from a triangle to an icosagon. ${SITE_DESCRIPTION}`}
-	/>
-</svelte:head>
+<Head
+	title="Regular polygon shape() generator"
+	description="Generates anything from a triangle to an icosagon."
+/>
 
 <GeneratorLayout>
 	<h1>Regular polygon</h1>

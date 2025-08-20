@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Button from '$lib/Button.svelte';
-	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { editor } from '$lib/editor/Editor.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
+	import Head from '$lib/Head.svelte';
 	import type { BaseUnit } from '$lib/LengthPercentage';
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { Squircle } from '$lib/parametricShapes/Squircle';
@@ -24,13 +24,10 @@
 	const cssProperties = $derived(squircle.toCssProperties(outputConfig));
 </script>
 
-<svelte:head>
-	<title>Squircle shape() generator - {SITE_TITLE}</title>
-	<meta
-		name="description"
-		content={`Make a fancy little squircley shape for your fancy little website. ${SITE_DESCRIPTION}`}
-	/>
-</svelte:head>
+<Head
+	title="Squircle shape() generator"
+	description="Make a fancy little squircley shape for your fancy little website."
+/>
 
 <GeneratorLayout>
 	<h1>Squircle</h1>

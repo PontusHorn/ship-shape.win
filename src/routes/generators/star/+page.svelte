@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import Button from '$lib/Button.svelte';
-	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import { editor } from '$lib/editor/Editor.svelte';
 	import GeneratorLayout from '$lib/GeneratorLayout.svelte';
+	import Head from '$lib/Head.svelte';
 	import type { BaseUnit } from '$lib/LengthPercentage';
 	import { outputConfig } from '$lib/outputConfig.svelte';
 	import { StarPolygon } from '$lib/parametricShapes/StarPolygon';
@@ -26,10 +26,7 @@
 	let cssProperties = $derived(polygon.toCssProperties(outputConfig));
 </script>
 
-<svelte:head>
-	<title>Star shape() generator - {SITE_TITLE}</title>
-	<meta name="description" content={`Generates that most pointy of shapes. ${SITE_DESCRIPTION}`} />
-</svelte:head>
+<Head title="Star shape() generator" description="Generates that most pointy of shapes." />
 
 <GeneratorLayout>
 	<h1>Star polygon</h1>

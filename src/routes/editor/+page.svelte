@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import CssOutput from '$lib/CssOutput.svelte';
 	import Toolbar from '$lib/Toolbar.svelte';
 	import EditorLayout from '$lib/editor/EditorLayout.svelte';
 	import VertexForm from '$lib/editor/VertexForm.svelte';
 	import EditorDrawing from '$lib/editor/EditorDrawing.svelte';
 	import { editor } from '$lib/editor/Editor.svelte';
+	import Head from '$lib/Head.svelte';
 
 	function handleKeyDown(event: KeyboardEvent) {
 		const ctrlOrMeta = event.metaKey || event.ctrlKey;
@@ -27,13 +27,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>Visual shape() editor - {SITE_TITLE}</title>
-	<meta
-		name="description"
-		content={`Drag-n-drop visual editor for simple CSS shapes. ${SITE_DESCRIPTION}`}
-	/>
-</svelte:head>
+<Head
+	title="Visual shape() editor"
+	description="Drag-n-drop visual editor for simple CSS shapes."
+/>
 
 <svelte:window onkeydown={handleKeyDown} />
 

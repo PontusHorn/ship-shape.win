@@ -4,7 +4,6 @@
 	import './core.css';
 	import { onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
-	import { SITE_DESCRIPTION, SITE_TITLE } from '$lib/constants';
 	import { ChevronDown, GithubIcon } from '@lucide/svelte';
 	import Logo from '$lib/editor/Logo.svelte';
 
@@ -22,11 +21,6 @@
 		});
 	});
 </script>
-
-<svelte:head>
-	<title>{SITE_TITLE}</title>
-	<meta name="description" content={SITE_DESCRIPTION} />
-</svelte:head>
 
 <header>
 	<a href="#main-content" class="skip-link">Skip to main content</a>
