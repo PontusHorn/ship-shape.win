@@ -88,9 +88,11 @@
 	fieldset {
 		all: unset;
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		justify-content: end;
 		gap: 1rem;
+		text-align: end;
 	}
 
 	.copy {
