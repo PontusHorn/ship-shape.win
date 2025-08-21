@@ -53,7 +53,6 @@ export class StateHistory<State> {
 			state: structuredClone(this.#currentState)
 		});
 		this.#currentState = structuredClone($state.snapshot(lastChange.state) as State);
-		console.log('undid', this.#redoStack.length);
 	}
 
 	redo(): void {
