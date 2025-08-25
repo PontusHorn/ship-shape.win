@@ -1,6 +1,6 @@
 <script lang="ts">
 	import CssOutput from '$lib/CssOutput.svelte';
-	import Toolbar from '$lib/Toolbar.svelte';
+	import ToolSelector from '$lib/ToolSelector.svelte';
 	import EditorLayout from '$lib/editor/EditorLayout.svelte';
 	import VertexForm from '$lib/editor/VertexForm.svelte';
 	import EditorDrawing from '$lib/editor/EditorDrawing.svelte';
@@ -41,7 +41,7 @@
 		<EditorDrawing />
 	{/snippet}
 
-	<Toolbar />
+	<ToolSelector />
 
 	<VertexForm />
 

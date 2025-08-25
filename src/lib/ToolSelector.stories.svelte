@@ -1,11 +1,11 @@
 <script module lang="ts">
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import { expect, userEvent, within } from 'storybook/test';
-	import Toolbar from './Toolbar.svelte';
+	import ToolSelector from './ToolSelector.svelte';
 
 	const { Story } = defineMeta({
-		title: 'Toolbar',
-		component: Toolbar,
+		title: 'ToolSelector',
+		component: ToolSelector,
 		tags: ['autodocs']
 	});
 </script>
