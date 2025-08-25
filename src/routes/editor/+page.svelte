@@ -1,11 +1,11 @@
 <script lang="ts">
 	import CssOutput from '$lib/CssOutput.svelte';
-	import ToolSelector from '$lib/ToolSelector.svelte';
 	import EditorLayout from '$lib/editor/EditorLayout.svelte';
 	import VertexForm from '$lib/editor/VertexForm.svelte';
 	import EditorDrawing from '$lib/editor/EditorDrawing.svelte';
 	import { editor } from '$lib/editor/Editor.svelte';
 	import Head from '$lib/Head.svelte';
+	import Tools from '$lib/editor/Tools.svelte';
 
 	function handleKeyDown(event: KeyboardEvent) {
 		const ctrlOrMeta = event.metaKey || event.ctrlKey;
@@ -41,7 +41,7 @@
 		<EditorDrawing />
 	{/snippet}
 
-	<ToolSelector />
+	<Tools />
 
 	<VertexForm />
 

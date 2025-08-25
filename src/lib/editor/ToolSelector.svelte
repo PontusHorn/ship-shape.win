@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { MousePointer, Tangent } from '@lucide/svelte';
 	import { ToggleGroup as ToggleGroupPrimitive } from 'bits-ui';
-	import Button from './Button.svelte';
-	import { editor } from './editor/Editor.svelte';
-	import { disableUntilHydrated } from './util/disableUntilHydrated';
+	import Button from '../Button.svelte';
+	import { editor } from './Editor.svelte';
+	import { disableUntilHydrated } from '../util/disableUntilHydrated';
 </script>
 
 <ToggleGroupPrimitive.Root

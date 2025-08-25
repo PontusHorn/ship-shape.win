@@ -17,8 +17,6 @@
 	import { VertexPosition } from '$lib/editor/VertexPosition';
 	import { assert, nonNullish } from '$lib/util/assert';
 	import { clamp } from '$lib/util/math';
-	import Button from '$lib/Button.svelte';
-	import { Redo, Undo } from '@lucide/svelte';
 
 	const maxSize = $derived(outputConfig.previewSize);
 
@@ -173,33 +171,6 @@
 			/>
 		{/each}
 	</ShapePreview>
-
-	<div class="drawing-ui">
-		<div class="history">
-			<Button
-				type="button"
-				size="small"
-				onclick={() => editor.history.undo()}
-				disabled={editor.history.undoStack.length === 0}
-			>
-				{#snippet icon()}
-					<Undo aria-hidden="true" size={12} absoluteStrokeWidth />
-				{/snippet}
-				Undo
-			</Button>
-			<Button
-				type="button"
-				size="small"
-				onclick={() => editor.history.redo()}
-				disabled={editor.history.redoStack.length === 0}
-			>
-				{#snippet icon()}
-					<Redo aria-hidden="true" size={12} absoluteStrokeWidth />
-				{/snippet}
-				<span class="visually-hidden">Redo</span>
-			</Button>
-		</div>
-	</div>
 </div>
 
 <style>
@@ -207,27 +178,5 @@
 		all: unset;
 		position: absolute;
 		inset: 0;
-	}
-
-	.drawing-ui {
-		position: absolute;
-		inset: 0;
-		container: drawing-ui / inline-size;
-		pointer-events: none;
-	}
-
-	.history {
-		position: absolute;
-		inset-inline-end: 1rem;
-		inset-block-start: 1rem;
-		display: flex;
-		pointer-events: auto;
-
-		@container drawing-ui (inline-size < 400px) {
-			inset-inline-start: 50%;
-			inset-inline-end: auto;
-			inset-block-start: -1.25rem;
-			translate: -50% 0;
-		}
 	}
 </style>
