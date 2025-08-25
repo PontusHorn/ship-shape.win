@@ -17,6 +17,7 @@
 	import { VertexPosition } from '$lib/editor/VertexPosition';
 	import { assert, nonNullish } from '$lib/util/assert';
 	import { clamp } from '$lib/util/math';
+	import { display } from '$lib/display.svelte';
 
 	const maxSize = $derived(outputConfig.previewSize);
 
@@ -121,6 +122,7 @@
 <svelte:window onkeydown={handleKeyDown} />
 
 <div
+	class="drawing"
 	class:hasSelection={!!editor.selection}
 	onpointermove={handlePointerMove}
 	onpointerleave={handlePointerLeave}
@@ -130,46 +132,48 @@
 	</button>
 
 	<ShapePreview cssProperties={editor.drawingCssProperties} shape={editor.drawingShape}>
-		{#each editor.drawing.vertices as vertex, index (vertex.id)}
-			{#if editor.tool === 'select'}
-				<VertexHandleSelect
-					{vertex}
-					onChangeVertex={updateVertex}
-					onCommitChange={handleCommitChange}
+		{#if display.showEditorHandles}
+			{#each editor.drawing.vertices as vertex, index (vertex.id)}
+				{#if editor.tool === 'select'}
+					<VertexHandleSelect
+						{vertex}
+						onChangeVertex={updateVertex}
+						onCommitChange={handleCommitChange}
+						{maxSize}
+					/>
+				{:else if editor.tool === 'curve'}
+					<VertexHandleCurve
+						{vertex}
+						onChangeVertex={updateVertex}
+						onCommitChange={handleCommitChange}
+						defaultControlPointPosition={editor.drawing.getTangentialPositionAt(maxSize, 30, index)}
+						{maxSize}
+					/>
+				{/if}
+			{/each}
+
+			{#each curves as { id }, index (id)}
+				{@const hoveredPosition = addVertexPositionByCurveId[id]?.point}
+				{@const position = hoveredPosition ?? editor.drawing.getMidpointAt(maxSize, index)}
+
+				<AddVertexButton
+					{position}
 					{maxSize}
+					onAddVertex={() => {
+						const newVertexId = editor.drawing.insertVertex(index, position.toRounded());
+						editor.recordChange('Add vertex');
+
+						// Select the first control point, and focus it after mount
+						selectVertex(newVertexId);
+						tick().then(() => {
+							getVertexButton(newVertexId)?.focus();
+						});
+					}}
+					onkeydown={handleAddVertexKeydown}
+					data-curve-id={id}
 				/>
-			{:else if editor.tool === 'curve'}
-				<VertexHandleCurve
-					{vertex}
-					onChangeVertex={updateVertex}
-					onCommitChange={handleCommitChange}
-					defaultControlPointPosition={editor.drawing.getTangentialPositionAt(maxSize, 30, index)}
-					{maxSize}
-				/>
-			{/if}
-		{/each}
-
-		{#each curves as { id }, index (id)}
-			{@const hoveredPosition = addVertexPositionByCurveId[id]?.point}
-			{@const position = hoveredPosition ?? editor.drawing.getMidpointAt(maxSize, index)}
-
-			<AddVertexButton
-				{position}
-				{maxSize}
-				onAddVertex={() => {
-					const newVertexId = editor.drawing.insertVertex(index, position.toRounded());
-					editor.recordChange('Add vertex');
-
-					// Select the first control point, and focus it after mount
-					selectVertex(newVertexId);
-					tick().then(() => {
-						getVertexButton(newVertexId)?.focus();
-					});
-				}}
-				onkeydown={handleAddVertexKeydown}
-				data-curve-id={id}
-			/>
-		{/each}
+			{/each}
+		{/if}
 	</ShapePreview>
 </div>
 

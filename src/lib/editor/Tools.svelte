@@ -3,6 +3,7 @@
 	import Button from '../Button.svelte';
 	import { editor } from './Editor.svelte';
 	import ToolSelector from './ToolSelector.svelte';
+	import { display } from '$lib/display.svelte';
 </script>
 
 <div class="toolbar">
@@ -34,12 +35,26 @@
 			<span class="visually-hidden">Redo</span>
 		</Button>
 	</div>
+
+	<div class="display">
+		<span class="display-setting">
+			<label for="show-ui">Show handles</label>
+			<input
+				id="show-ui"
+				type="checkbox"
+				checked={display.showEditorHandles}
+				onchange={(event) => (display.showEditorHandles = event.currentTarget.checked)}
+			/>
+		</span>
+	</div>
 </div>
 
 <style>
 	.toolbar {
 		display: grid;
-		grid-template-areas: 'tool-selector history';
+		grid-template-areas:
+			'tool-selector history'
+			'display display';
 		grid-template-columns: 1fr auto;
 		justify-items: start;
 		align-items: center;
@@ -53,5 +68,18 @@
 	.history {
 		grid-area: history;
 		display: flex;
+	}
+
+	.display {
+		grid-area: display;
+		justify-self: end;
+		display: flex;
+		gap: 0.25em;
+	}
+
+	.display-setting {
+		display: flex;
+		align-items: center;
+		gap: 0.125em;
 	}
 </style>
