@@ -4,6 +4,9 @@
 	import { editor } from './Editor.svelte';
 	import ToolSelector from './ToolSelector.svelte';
 	import { display } from '$lib/display.svelte';
+	import { disableUntilHydrated } from '$lib/util/disableUntilHydrated';
+
+	let showEditorHandlesInput: HTMLInputElement;
 </script>
 
 <div class="toolbar">
@@ -38,16 +41,28 @@
 
 	<div class="display">
 		<span class="display-setting">
-			<label for="show-ui">Show handles</label>
+			<label for="show-editor-handles">Show handles</label>
 			<input
-				id="show-ui"
+				id="show-editor-handles"
+				bind:this={showEditorHandlesInput}
 				type="checkbox"
 				checked={display.showEditorHandles}
 				onchange={(event) => (display.showEditorHandles = event.currentTarget.checked)}
+				{...disableUntilHydrated()}
 			/>
 		</span>
 	</div>
 </div>
+
+<svelte:window
+	onkeydown={(event) => {
+		// Toggle editor handles with H
+		if (event.key === 'h') {
+			display.showEditorHandles = !display.showEditorHandles;
+			showEditorHandlesInput.focus();
+		}
+	}}
+/>
 
 <style>
 	.toolbar {
