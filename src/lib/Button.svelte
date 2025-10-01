@@ -54,13 +54,14 @@
 
 		--_borderColorBase: color-mix(in srgb, var(--_backgroundColor), var(--neutral-950) 50%);
 		--_borderColor: var(--_borderColorBase);
-		--_radiusStart: 0.75em;
-		--_radiusEnd: 0.75em;
+		--_radiusStart: 1.5em;
+		--_radiusEnd: 1.5em;
 		border: 2px solid var(--_borderColor);
 		border-start-start-radius: max(3px, var(--_radiusStart));
 		border-end-start-radius: max(4px, var(--_radiusStart));
 		border-start-end-radius: max(3px, var(--_radiusEnd));
 		border-end-end-radius: max(4px, var(--_radiusEnd));
+		corner-shape: var(--cornerShape);
 
 		--_depth: 1;
 		--_pressedness: 0em;
@@ -91,6 +92,7 @@
 				0 0 0 2px color-mix(in srgb, var(--_borderColor), var(--neutral-950) 10%),
 				0.5px 1px 1px 3px color-mix(in srgb, var(--neutral-950), transparent 90%),
 				1px 2px 3px 3px color-mix(in srgb, var(--neutral-950), transparent 95%);
+			corner-shape: inherit;
 			transform: translate3d(0, calc((0.75em - var(--_pressedness)) * var(--_depth)), -1em);
 			transition:
 				transform var(--_duration) var(--_easing),

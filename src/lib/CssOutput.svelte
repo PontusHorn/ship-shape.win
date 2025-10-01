@@ -67,12 +67,13 @@
 
 <style>
 	section {
-		--border-radius: 1.5rem;
+		--border-radius: 2rem;
 		--border-width: 4px;
 		background-color: var(--secondary-400);
 		border: var(--border-width) solid var(--secondary-400);
 		border-radius: var(--border-radius);
 		box-shadow: 1px 2px 4px var(--brand-300);
+		corner-shape: superellipse(-1);
 		overflow: clip;
 	}
 
@@ -80,7 +81,8 @@
 		display: grid;
 		grid-template-columns: auto 1fr;
 		align-items: center;
-		padding: 1rem;
+		padding-block: 1rem;
+		padding-inline: 2.5rem;
 		color: var(--secondary-900);
 		--focusRingColor: var(--brand-800);
 	}
@@ -111,8 +113,9 @@
 
 		background-color: var(--secondary-600);
 		border: 2px solid transparent;
-		border-radius: 0.5rem;
+		border-radius: 1rem;
 		color: var(--secondary-050);
+		corner-shape: var(--cornerShape);
 
 		animation: fade-in-out 3s forwards;
 
@@ -143,10 +146,11 @@
 		--inner-border-radius: calc(var(--border-radius) - var(--border-width));
 		display: block;
 		background-color: var(--secondary-100);
-		border-start-start-radius: var(--inner-border-radius);
-		border-start-end-radius: var(--inner-border-radius);
+		border-radius: var(--inner-border-radius);
 		color: var(--secondary-800);
+		corner-shape: var(--cornerShape);
 		padding: 1rem;
+		padding-block-end: calc(1rem + 1lh);
 		paint-order: stroke fill;
 		overflow: auto;
 		tab-size: 2;

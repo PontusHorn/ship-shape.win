@@ -130,8 +130,9 @@
 		grid-template-columns: 150px 1fr;
 		gap: 0.25rem 1rem;
 		background: var(--brand-050);
-		border-radius: 0.5rem;
+		border-radius: 1rem;
 		box-shadow: 0.5px 1px 4px var(--brand-200);
+		corner-shape: var(--cornerShape);
 		padding: 1rem;
 
 		h3 {

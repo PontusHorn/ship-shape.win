@@ -58,8 +58,9 @@
 		min-inline-size: 0;
 
 		background: var(--brand-050);
-		border-radius: 1.5rem;
+		border-radius: 3rem;
 		box-shadow: inset 0.5px 1px 2px var(--brand-200);
+		corner-shape: var(--cornerShape);
 	}
 
 	.output-pane {

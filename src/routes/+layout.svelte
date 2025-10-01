@@ -101,8 +101,9 @@
 		padding-block: 0.2em;
 		padding-inline: 0.4em;
 
-		border-radius: 0.5rem;
+		border-radius: 1rem;
 		color: var(--brand-050);
+		corner-shape: var(--cornerShape);
 		font-weight: 500;
 		opacity: 0;
 		text-underline-offset: 0.2em;
@@ -176,8 +177,9 @@
 			background: transparent;
 			padding-block: 0.2em;
 			padding-inline: 0.4em;
-			border-radius: 0.5rem;
+			border-radius: 1rem;
 			color: inherit;
+			corner-shape: var(--cornerShape);
 			font-weight: 500;
 			text-underline-offset: 0.2em;
 			text-decoration-color: color-mix(in srgb, currentColor 80%, transparent);
@@ -223,10 +225,11 @@
 
 			background: var(--brand-100);
 			border: 4px solid var(--brand-800);
-			border-radius: 0.5rem;
+			border-radius: 1rem;
 			box-shadow:
 				1px 2px 4px color-mix(in srgb, var(--brand-950) 15%, transparent),
 				0.5px 1px 2px color-mix(in srgb, var(--brand-950) 25%, transparent);
+			corner-shape: var(--cornerShape);
 			--_duration: 0.75s;
 			transition:
 				display var(--_duration) allow-discrete,
@@ -266,8 +269,9 @@
 				display: block;
 				padding-block: 0.2em;
 				padding-inline: 0.4em;
-				border-radius: 0.15rem;
+				border-radius: 0.5rem;
 				color: var(--linkColor-visited);
+				corner-shape: var(--cornerShape);
 				font-weight: 500;
 				outline-offset: 0.1em;
 

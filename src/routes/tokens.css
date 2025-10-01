@@ -98,6 +98,9 @@
 			1
 		);
 
+		/* Corners */
+		--cornerShape: superellipse(1.5);
+
 		/***
 	  **** Semantic tokens (tier 2)
 		***/
