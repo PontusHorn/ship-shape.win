@@ -6,6 +6,7 @@
 	import { page } from '$app/state';
 	import { ChevronDown, GithubIcon } from '@lucide/svelte';
 	import Logo from '$lib/editor/Logo.svelte';
+	import { outputConfig } from '$lib/outputConfig.svelte';
 
 	let { children } = $props();
 
@@ -59,10 +60,16 @@
 </header>
 
 <main id="main-content">
-	<div class="browser-shape-support-warning">
+	<div class="shape-support-warning">
 		Your browser does not support the <code>shape()</code> function, which means you won't be able to
 		see the shapes as intended.
 	</div>
+	{#if outputConfig.shapeProperty === 'border-shape'}
+		<div class="border-shape-support-warning">
+			Your browser does not support the <code>border-shape</code> property, which means the preview and
+			output may not work as expected.
+		</div>
+	{/if}
 	{@render children()}
 </main>
 
@@ -294,7 +301,7 @@
 		}
 	}
 
-	.browser-shape-support-warning {
+	.shape-support-warning {
 		display: none;
 		background-color: var(--error-400);
 		color: var(--error-950);
@@ -302,6 +309,18 @@
 		text-align: center;
 
 		@supports not (clip-path: shape(from 0 0, line to 100% 100%)) {
+			display: block;
+		}
+	}
+
+	.border-shape-support-warning {
+		display: none;
+		background-color: var(--error-400);
+		color: var(--error-950);
+		padding: 1rem;
+		text-align: center;
+
+		@supports not (border-shape: shape(from 0 0, line to 100% 100%)) {
 			display: block;
 		}
 	}

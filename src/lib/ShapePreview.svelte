@@ -28,6 +28,8 @@
 		</svg>
 		<div class="arrow" style={css}></div>
 		{@html offsetPathStyle}
+	{:else if outputConfig.shapeProperty === 'border-shape'}
+		<div class="borderedShape" style={css}></div>
 	{:else}
 		<div class="clippedShape" style={css}></div>
 	{/if}
@@ -69,5 +71,12 @@
 		/* Add a faint outline that shows when the clip-path extends outside the
 		element bounds, so it's easier to see the path */
 		outline: 9999px solid color-mix(in srgb, var(--brand-400), transparent 90%);
+	}
+
+	.borderedShape {
+		background-color: var(--brand-100);
+		border: 4px solid var(--brand-400);
+		width: 100%;
+		height: 100%;
 	}
 </style>

@@ -13,16 +13,21 @@ export const OFFSET_PATH_KEYFRAMES = `
 	}
 }`;
 
-export type ShapeProperty = 'clip-path' | 'offset-path';
+export type ShapeProperty = 'clip-path' | 'offset-path' | 'border-shape';
 
 export function getShapeCssProperties(
 	shape: Shape,
 	property: ShapeProperty,
 	style: CodeStyle
 ): CssProperties {
-	return property === 'clip-path'
-		? getClipPathCssProperties(shape, style)
-		: getOffsetPathCssProperties(shape, style);
+	switch (property) {
+		case 'clip-path':
+			return getClipPathCssProperties(shape, style);
+		case 'offset-path':
+			return getOffsetPathCssProperties(shape, style);
+		case 'border-shape':
+			return getBorderShapeCssProperties(shape, style);
+	}
 }
 
 export function getClipPathCssProperties(shape: Shape, style: CodeStyle): CssProperties {
@@ -36,8 +41,12 @@ export function getOffsetPathCssProperties(shape: Shape, style: CodeStyle): CssP
 	};
 }
 
+export function getBorderShapeCssProperties(shape: Shape, style: CodeStyle): CssProperties {
+	return { 'border-shape': shape.toCss(style) };
+}
+
 export function getShapeExtraCss(property: ShapeProperty): string {
-	return property === 'clip-path' ? '' : OFFSET_PATH_KEYFRAMES;
+	return property === 'offset-path' ? OFFSET_PATH_KEYFRAMES : '';
 }
 
 export function getSvgPath(shape: Shape) {

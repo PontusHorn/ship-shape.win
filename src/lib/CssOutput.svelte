@@ -24,6 +24,7 @@
 				<select id="shape-property" bind:value={outputConfig.shapeProperty}>
 					<option>clip-path</option>
 					<option>offset-path</option>
+					<option>border-shape</option>
 				</select>
 			</div>
 
