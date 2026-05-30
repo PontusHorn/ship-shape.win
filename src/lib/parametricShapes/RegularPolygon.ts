@@ -3,9 +3,9 @@ import { CurveCommand } from '$lib/commands/Curve';
 import { FromCommand } from '$lib/commands/From';
 import { LineCommand } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
-import type { CssProperties } from '$lib/util/css';
+import type { CssDeclarationBlock } from '$lib/util/css';
 import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
-import { getShapeCssProperties } from '$lib/util/output';
+import { getShapeCssDeclarationBlock } from '$lib/util/output';
 import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
 import type { Vector } from '$lib/util/vector';
@@ -85,8 +85,8 @@ export class RegularPolygon implements ParametricShape {
 		return new CoordinatePair(x, y);
 	}
 
-	get #customProperties(): CssProperties {
-		const properties: CssProperties = {
+	get #customProperties(): CssDeclarationBlock {
+		const properties: Record<string, string> = {
 			['--sides']: this.sides.toString(),
 			['--radius']: this.#unitFactory(this.radius).toCss(),
 			['--swell']: this.swell.toString(),
@@ -105,7 +105,7 @@ export class RegularPolygon implements ParametricShape {
 			delete properties['--swell'];
 		}
 
-		return properties;
+		return Object.entries(properties).map(([key, value]) => ({ type: 'property', key, value }));
 	}
 
 	toShape(): Shape {
@@ -123,12 +123,9 @@ export class RegularPolygon implements ParametricShape {
 		return new Shape(from, commands);
 	}
 
-	toCssProperties({ shapeProperty, codeStyle }: OutputConfig) {
-		const properties = {
-			...(codeStyle === 'default' ? this.#customProperties : {}),
-			...getShapeCssProperties(this.toShape(), shapeProperty, codeStyle)
-		};
-
-		return properties;
+	toCssDeclarationBlock({ shapeProperty, codeStyle }: OutputConfig) {
+		const customProperties: CssDeclarationBlock =
+			codeStyle === 'default' ? [...this.#customProperties, { type: 'blank-line' }] : [];
+		return getShapeCssDeclarationBlock(this.toShape(), shapeProperty, codeStyle, customProperties);
 	}
 }

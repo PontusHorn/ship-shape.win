@@ -1,8 +1,8 @@
 import { curveTo } from '$lib/commands/Curve';
 import { from } from '$lib/commands/From';
-import type { CssProperties } from '$lib/util/css';
+import type { CssDeclarationBlock } from '$lib/util/css';
 import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
-import { getShapeCssProperties } from '$lib/util/output';
+import { getShapeCssDeclarationBlock } from '$lib/util/output';
 import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
 import type { Vector } from '$lib/util/vector';
@@ -21,14 +21,14 @@ export class Squircle implements ParametricShape {
 		return this.unit === 'percent' ? percent : px;
 	}
 
-	get #customProperties(): CssProperties {
-		const properties: CssProperties = {
+	get #customProperties(): CssDeclarationBlock {
+		const properties = {
 			['--curvature']: this.#unitFactory(this.curvature).toCss(),
 			['--start']: `var(--curvature)`,
 			['--end']: `calc(100% - var(--curvature))`
 		};
 
-		return properties;
+		return Object.entries(properties).map(([key, value]) => ({ type: 'property', key, value }));
 	}
 
 	toShape([maxX, maxY]: Vector): Shape {
@@ -54,12 +54,10 @@ export class Squircle implements ParametricShape {
 		]);
 	}
 
-	toCssProperties({ shapeProperty, codeStyle, previewSize }: OutputConfig) {
-		const properties = {
-			...(codeStyle === 'default' ? this.#customProperties : {}),
-			...getShapeCssProperties(this.toShape(previewSize), shapeProperty, codeStyle)
-		};
-
-		return properties;
+	toCssDeclarationBlock({ shapeProperty, codeStyle, previewSize }: OutputConfig) {
+		const shape = this.toShape(previewSize);
+		const customProperties: CssDeclarationBlock =
+			codeStyle === 'default' ? [...this.#customProperties, { type: 'blank-line' }] : [];
+		return getShapeCssDeclarationBlock(shape, shapeProperty, codeStyle, customProperties);
 	}
 }

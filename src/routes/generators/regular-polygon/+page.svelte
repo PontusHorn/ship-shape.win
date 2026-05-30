@@ -21,7 +21,7 @@
 	const polygon = $derived(new RegularPolygon(sides, 'percent', radius, center, rotation, swell));
 
 	const shape = $derived(polygon.toShape());
-	const cssProperties = $derived(polygon.toCssProperties(outputConfig));
+	const cssDeclarationBlock = $derived(polygon.toCssDeclarationBlock(outputConfig));
 </script>
 
 <Head
@@ -101,11 +101,11 @@
 	</div>
 
 	{#snippet preview()}
-		<ShapePreview {cssProperties} {shape} />
+		<ShapePreview {cssDeclarationBlock} {shape} />
 	{/snippet}
 
 	{#snippet output()}
-		<CssOutput {cssProperties} />
+		<CssOutput {cssDeclarationBlock} />
 	{/snippet}
 </GeneratorLayout>
 

@@ -3,9 +3,9 @@ import type { Command } from '$lib/commands/Command';
 import { FromCommand } from '$lib/commands/From';
 import { LineCommand } from '$lib/commands/Line';
 import { CoordinatePair } from '$lib/CoordinatePair';
-import type { CssProperties } from '$lib/util/css';
+import type { CssDeclarationBlock } from '$lib/util/css';
 import { raw, percent, px, type BaseUnit } from '$lib/LengthPercentage';
-import { getShapeCssProperties } from '$lib/util/output';
+import { getShapeCssDeclarationBlock } from '$lib/util/output';
 import type { OutputConfig } from '$lib/outputConfig.svelte';
 import { Shape } from '$lib/Shape';
 import type { Vector } from '$lib/util/vector';
@@ -81,8 +81,8 @@ export class StarPolygon implements ParametricShape {
 		return coordinates;
 	}
 
-	get #customProperties(): CssProperties {
-		const properties: CssProperties = {
+	get #customProperties(): CssDeclarationBlock {
+		const properties: Record<string, string> = {
 			['--points']: this.points.toString(),
 			['--outer-radius']: this.#unitFactory(this.outerRadius).toCss(),
 			['--inner-radius']: this.#unitFactory(this.innerRadius).toCss(),
@@ -95,7 +95,7 @@ export class StarPolygon implements ParametricShape {
 			delete properties['--rotation'];
 		}
 
-		return properties;
+		return Object.entries(properties).map(([key, value]) => ({ type: 'property', key, value }));
 	}
 
 	toShape(): Shape {
@@ -105,12 +105,9 @@ export class StarPolygon implements ParametricShape {
 		return new Shape(new FromCommand(fromCoordinate), commands);
 	}
 
-	toCssProperties({ shapeProperty, codeStyle }: OutputConfig) {
-		const properties = {
-			...(codeStyle === 'default' ? this.#customProperties : {}),
-			...getShapeCssProperties(this.toShape(), shapeProperty, codeStyle)
-		};
-
-		return properties;
+	toCssDeclarationBlock({ shapeProperty, codeStyle }: OutputConfig) {
+		const customProperties: CssDeclarationBlock =
+			codeStyle === 'default' ? [...this.#customProperties, { type: 'blank-line' }] : [];
+		return getShapeCssDeclarationBlock(this.toShape(), shapeProperty, codeStyle, customProperties);
 	}
 }

@@ -11,7 +11,7 @@
 
 <Story
 	name="Single rule"
-	args={{ cssProperties: { foo: 'bar' } }}
+	args={{ cssDeclarationBlock: [{ type: 'property', key: 'foo', value: 'bar' }] }}
 	play={async ({ canvasElement }) => {
 		const expectedCode = 'foo: bar;\n';
 
@@ -29,7 +29,12 @@
 
 <Story
 	name="Multiple rules"
-	args={{ cssProperties: { foo: 'bar', baz: 'quux' } }}
+	args={{
+		cssDeclarationBlock: [
+			{ type: 'property', key: 'foo', value: 'bar' },
+			{ type: 'property', key: 'baz', value: 'quux' }
+		]
+	}}
 	play={async ({ canvasElement }) => {
 		const expectedCode = 'foo: bar;\nbaz: quux;\n';
 

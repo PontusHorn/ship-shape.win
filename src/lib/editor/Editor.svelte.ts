@@ -1,5 +1,5 @@
 import { outputConfig } from '$lib/outputConfig.svelte';
-import { getShapeCssProperties } from '$lib/util/output';
+import { getShapeCssDeclarationBlock } from '$lib/util/output';
 import { Drawing, type SerializedDrawing } from './Drawing.svelte';
 import { StateHistory } from './StateHistory.svelte';
 import { Vertex } from './Vertex';
@@ -94,11 +94,11 @@ export class Editor {
 		return this.#shape;
 	}
 
-	#cssProperties = $derived(
-		getShapeCssProperties(this.#shape, outputConfig.shapeProperty, outputConfig.codeStyle)
+	#cssDeclarationBlock = $derived(
+		getShapeCssDeclarationBlock(this.#shape, outputConfig.shapeProperty, outputConfig.codeStyle)
 	);
-	get drawingCssProperties() {
-		return this.#cssProperties;
+	get drawingCssDeclarationBlock() {
+		return this.#cssDeclarationBlock;
 	}
 
 	recordChange(description: string): void {

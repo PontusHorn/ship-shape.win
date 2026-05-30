@@ -1,20 +1,24 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
-	import { cssPropertiesToCss, type CssProperties } from './util/css';
-	import { getSvgPath, OFFSET_PATH_KEYFRAMES } from './util/output';
+	import { cssDeclarationBlockToCss, type CssDeclarationBlock } from './util/css';
+	import {
+		BORDERED_SHAPE_CLASS_NAME,
+		CLIPPED_SHAPE_CLASS_NAME,
+		getSvgPath,
+		PATH_FOLLOWER_CLASS_NAME
+	} from './util/output';
 	import { outputConfig } from './outputConfig.svelte';
 	import type { Shape } from './Shape';
 
 	type Props = {
-		cssProperties: CssProperties;
+		cssDeclarationBlock: CssDeclarationBlock;
 		shape: Shape;
 		children?: Snippet;
 	};
 
-	const { cssProperties, shape, children }: Props = $props();
+	const { cssDeclarationBlock, shape, children }: Props = $props();
 
-	const css = $derived(cssPropertiesToCss(cssProperties));
-	const offsetPathStyle = $derived(`<style>${OFFSET_PATH_KEYFRAMES}</style>`);
+	const css = $derived(cssDeclarationBlockToCss(cssDeclarationBlock));
 </script>
 
 <div
@@ -26,16 +30,19 @@
 		<svg class="offsetPath" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
 			<path d={getSvgPath(shape)} />
 		</svg>
-		<div class="arrow" style={css}></div>
-		{@html offsetPathStyle}
+		<div class="arrow {PATH_FOLLOWER_CLASS_NAME}"></div>
 	{:else if outputConfig.shapeProperty === 'border-shape'}
-		<div class="borderedShape" style={css}></div>
+		<div class="bordered {BORDERED_SHAPE_CLASS_NAME}"></div>
 	{:else}
-		<div class="clippedShape" style={css}></div>
+		<div class="clipped {CLIPPED_SHAPE_CLASS_NAME}"></div>
 	{/if}
 
 	{@render children?.()}
 </div>
+
+<svelte:head>
+	{@html `<style>${css}</style>`}
+</svelte:head>
 
 <style>
 	.preview {
@@ -64,7 +71,7 @@
 		clip-path: shape(from 0% 10%, line to 100% 50%, line to 0% 90%, line to 10% 50%, close);
 	}
 
-	.clippedShape {
+	.clipped {
 		background-color: var(--brand-400);
 		width: 100%;
 		height: 100%;
@@ -73,9 +80,10 @@
 		outline: 9999px solid color-mix(in srgb, var(--brand-400), transparent 90%);
 	}
 
-	.borderedShape {
+	.bordered {
 		background-color: var(--brand-100);
 		border: 4px solid var(--brand-400);
+		box-shadow: 0.1em 0.2em 0.15em 0.1em color-mix(in srgb, var(--neutral-950), transparent 90%);
 		width: 100%;
 		height: 100%;
 	}

@@ -23,7 +23,7 @@
 	);
 
 	const shape = $derived(polygon.toShape());
-	let cssProperties = $derived(polygon.toCssProperties(outputConfig));
+	let cssDeclarationBlock = $derived(polygon.toCssDeclarationBlock(outputConfig));
 </script>
 
 <Head title="Star shape() generator" description="Generates that most pointy of shapes." />
@@ -84,11 +84,11 @@
 	</div>
 
 	{#snippet preview()}
-		<ShapePreview {cssProperties} {shape} />
+		<ShapePreview {cssDeclarationBlock} {shape} />
 	{/snippet}
 
 	{#snippet output()}
-		<CssOutput {cssProperties} />
+		<CssOutput {cssDeclarationBlock} />
 	{/snippet}
 </GeneratorLayout>
 

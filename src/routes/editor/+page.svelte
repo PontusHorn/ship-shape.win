@@ -46,6 +46,6 @@
 	<VertexForm />
 
 	{#snippet output()}
-		<CssOutput cssProperties={editor.drawingCssProperties} />
+		<CssOutput cssDeclarationBlock={editor.drawingCssDeclarationBlock} />
 	{/snippet}
 </EditorLayout>

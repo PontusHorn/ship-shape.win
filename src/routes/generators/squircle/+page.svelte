@@ -21,7 +21,7 @@
 		)
 	);
 	const shape = $derived(squircle.toShape(outputConfig.previewSize));
-	const cssProperties = $derived(squircle.toCssProperties(outputConfig));
+	const cssDeclarationBlock = $derived(squircle.toCssDeclarationBlock(outputConfig));
 </script>
 
 <Head
@@ -79,11 +79,11 @@
 	</div>
 
 	{#snippet preview()}
-		<ShapePreview {cssProperties} {shape} />
+		<ShapePreview {cssDeclarationBlock} {shape} />
 	{/snippet}
 
 	{#snippet output()}
-		<CssOutput {cssProperties} />
+		<CssOutput {cssDeclarationBlock} />
 	{/snippet}
 </GeneratorLayout>
 

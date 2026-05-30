@@ -134,7 +134,7 @@ really applicable to add semantics for. -->
 		<span class="visually-hidden">Clear selection</span>
 	</button>
 
-	<ShapePreview cssProperties={editor.drawingCssProperties} shape={editor.drawingShape}>
+	<ShapePreview cssDeclarationBlock={editor.drawingCssDeclarationBlock} shape={editor.drawingShape}>
 		{#if display.showEditorHandles}
 			{#each editor.drawing.vertices as vertex, index (vertex.id)}
 				{#if editor.tool === 'select'}

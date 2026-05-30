@@ -82,7 +82,7 @@ function extractShapeCommands(cssText: string): string[] {
 		cssText
 			// Trim everything except the contents of the shape() function
 			.replace(/^.+: shape\(/s, '')
-			.replace(/\);\s*$/, '')
+			.replace(/\);.*$/s, '')
 			// Split into an array of individual commands
 			.split(',')
 			// Normalize whitespace for simpler, stabler assertions

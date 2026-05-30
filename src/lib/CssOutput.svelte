@@ -2,13 +2,10 @@
 	import { Check, Copy } from '@lucide/svelte';
 	import Button from './Button.svelte';
 	import { copyTextToClipboard } from './util/copyTextToClipboard';
-	import type { CssProperties } from './util/css';
+	import type { CssDeclarationBlock } from './util/css';
 	import { outputConfig } from './outputConfig.svelte';
-	import { getShapeExtraCss } from './util/output';
 
-	const { cssProperties }: { cssProperties: CssProperties } = $props();
-
-	const extraCss = $derived(getShapeExtraCss(outputConfig.shapeProperty));
+	const { cssDeclarationBlock }: { cssDeclarationBlock: CssDeclarationBlock } = $props();
 
 	let codeElement: HTMLElement;
 </script>
@@ -58,12 +55,39 @@
 		</div>
 	</header>
 
-	<code bind:this={codeElement} data-testid="css-output"
-		>{#each Object.entries(cssProperties) as [property, value] (property)}<span class="property"
-				>{property}</span
-			>:
-			<span class="value">{value}</span>;{'\n'}{/each}{extraCss}</code
-	>
+	{#if outputConfig.shapeProperty === 'border-shape'}
+		<div class="border-shape-warning">
+			<p>
+				The <code>border-shape</code> property is experimental, and support is limited (at the time
+				of writing). Validate that the
+				<a href="https://caniuse.com/mdn-css_properties_border-shape">browser support</a> meets your
+				targets and/or include an acceptable fallback when using.
+			</p>
+		</div>
+	{/if}
+
+	{#snippet declarationBlock(block: CssDeclarationBlock, indentLevel = 0)}
+		{@const indent = '\t'.repeat(indentLevel)}
+		{#each block as declaration (declaration)}
+			{#if declaration.type === 'property'}
+				{indent}<span class="property">{declaration.key}</span>:
+				<span class="value">{declaration.value.replaceAll('\n', `\n${indent}`)}</span>;{'\n'}
+			{:else if declaration.type === 'comment'}
+				{indent}<span class="comment">/* {declaration.value} */</span>{'\n'}
+			{:else if declaration.type === 'blank-line'}
+				{'\n'}
+			{:else if declaration.type === 'statement'}
+				{indent}<span class="statement">{declaration.value}</span>{' {\n'}{@render declarationBlock(
+					declaration.block,
+					indentLevel + 1
+				)}{`${indent}}\n`}
+			{/if}
+		{/each}
+	{/snippet}
+
+	<code class="output" bind:this={codeElement} data-testid="css-output">
+		{@render declarationBlock(cssDeclarationBlock)}
+	</code>
 </section>
 
 <style>
@@ -143,7 +167,23 @@
 		}
 	}
 
-	code {
+	.border-shape-warning {
+		display: flex;
+		align-items: center;
+		gap: 0.5em;
+		padding: 0.5em;
+
+		&::before {
+			content: '⚠️';
+			font-size: 1.5em;
+		}
+
+		p {
+			text-wrap: balance;
+		}
+	}
+
+	.output {
 		--inner-border-radius: calc(var(--border-radius) - var(--border-width));
 		display: block;
 		background-color: var(--secondary-100);
@@ -157,6 +197,10 @@
 		tab-size: 2;
 		white-space: pre;
 		anchor-name: --css-output;
+	}
+
+	.statement {
+		color: #15379a;
 	}
 
 	.property {
