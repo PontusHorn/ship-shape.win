@@ -96,11 +96,10 @@
 	</p>
 	<h3>Browser support</h3>
 	<p>
-		<code>shape()</code> is a newer function, but it is supported in Chrome, Edge, and Safari since
-		early 2025. At the time of writing this, Firefox has implemented it in their nightly build, but
-		not yet in a stable release. As such, this site is best viewed in an up-to-date Chromium-based
-		browser or Safari for the moment. Normally I wouldn't be too happy about that, but since the
-		site is specifically about <code>shape()</code> I think it's acceptable.
+		<code>shape()</code> is a newer function, but it is supported across modern browsers since February
+		2026. Some of the output properties used, like `border-shape`, are even newer. As such, not everything
+		on display here may work in your browser - or your users' browsers. Remember to include decent fallbacks
+		when using the output code.
 	</p>
 </div>
 
