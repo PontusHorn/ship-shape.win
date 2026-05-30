@@ -1,5 +1,6 @@
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { sveltekit } from '@sveltejs/kit/vite';
+import { playwright } from '@vitest/browser-playwright';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
@@ -24,7 +25,13 @@ export default defineConfig({
 					browser: {
 						enabled: true,
 						headless: true,
-						provider: 'playwright',
+						provider: playwright({
+							contextOptions: {
+								// Clipboard permissions are required for the clipboard tests in
+								// src/lib/CssOutput.stories.svelte
+								permissions: ['clipboard-read', 'clipboard-write']
+							}
+						}),
 						instances: [{ browser: 'chromium' }]
 					},
 					setupFiles: ['.storybook/vitest.setup.ts']
