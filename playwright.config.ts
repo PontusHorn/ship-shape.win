@@ -11,6 +11,11 @@ export default defineConfig({
 	},
 	testDir: 'e2e',
 
+	// Run tests within a file in parallel, not just across files. Keeps workers
+	// busy on the large editor specs.
+	fullyParallel: true,
+	workers: '50%',
+
 	use: {
 		baseURL: 'http://localhost:8787/'
 	},

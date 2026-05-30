@@ -20,7 +20,8 @@
 		"build-storybook": "storybook build",
 		"test": "npm run test:unit && npm run test:e2e",
 		"test:unit": "vitest run",
-		"test:e2e": "playwright test"
+		"test:e2e": "playwright test",
+		"test:e2e:fast": "playwright test --project=chromium --project=\"webkit (mobile)\""
 	},
 	"devDependencies": {
 		"@chromatic-com/storybook": "^5.2.1",
