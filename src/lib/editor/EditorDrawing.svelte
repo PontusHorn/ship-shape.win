@@ -121,6 +121,9 @@
 
 <svelte:window onkeydown={handleKeyDown} />
 
+<!-- The pointer listeners here just add an extra nicety for pointer users. Not
+really applicable to add semantics for. -->
+<!-- svelte-ignore a11y_no_static_element_interactions -->
 <div
 	class="drawing"
 	class:hasSelection={!!editor.selection}
